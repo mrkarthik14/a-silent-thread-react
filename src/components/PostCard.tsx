@@ -27,6 +27,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   // Check if current user has liked this post
   const userHasLiked = useQuery(api.posts.hasUserLiked, { postId: post._id });
 
+  // Get presence status for post author
+  const userPresence = useQuery(
+    api.presence.getUserPresence,
+    post.user?._id ? { userId: post.user._id } : "skip"
+  );
+
   // Update local state when query result changes
   useEffect(() => {
     if (userHasLiked !== undefined) {
@@ -57,12 +63,17 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     >
       <Card className={`${color} border-none shadow-sm hover:shadow-md transition-shadow p-4 rounded-2xl`}>
         <div className="flex gap-3">
-          <Avatar className="h-10 w-10 border-2 border-white">
-            <AvatarImage src={post.user?.image} />
-            <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
-              {post.user?.name?.[0] || "U"}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="h-10 w-10 border-2 border-white">
+              <AvatarImage src={post.user?.image} />
+              <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+                {post.user?.name?.[0] || "U"}
+              </AvatarFallback>
+            </Avatar>
+            {userPresence?.isOnline && (
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+            )}
+          </div>
           
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
