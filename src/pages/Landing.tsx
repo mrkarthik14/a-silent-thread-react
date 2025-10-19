@@ -119,6 +119,127 @@ export default function Landing() {
           ))}
         </div>
       </div>
+
+      {/* Create Post Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Post</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Button
+                variant={postType === "post" ? "default" : "outline"}
+                onClick={() => setPostType("post")}
+                className="flex-1 rounded-xl"
+              >
+                Post
+              </Button>
+              <Button
+                variant={postType === "service" ? "default" : "outline"}
+                onClick={() => setPostType("service")}
+                className="flex-1 rounded-xl"
+              >
+                Service/Listing
+              </Button>
+            </div>
+
+            <div>
+              <Label>Content</Label>
+              <Textarea
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+                placeholder="What's on your mind?"
+                className="rounded-xl resize-none"
+                rows={4}
+              />
+            </div>
+
+            {postType === "service" && (
+              <>
+                <div>
+                  <Label>Title</Label>
+                  <Input
+                    value={serviceTitle}
+                    onChange={(e) => setServiceTitle(e.target.value)}
+                    placeholder="Service title"
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Category</Label>
+                    <Input
+                      value={serviceCategory}
+                      onChange={(e) => setServiceCategory(e.target.value)}
+                      placeholder="e.g., Electronics"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <Label>Price per day ($)</Label>
+                    <Input
+                      type="number"
+                      value={servicePrice}
+                      onChange={(e) => setServicePrice(e.target.value)}
+                      placeholder="50"
+                      className="rounded-xl"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div>
+              <Label>Images (Max 20)</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageSelect}
+                className="rounded-xl"
+              />
+              {selectedImages.length > 0 && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedImages.length} image(s) selected
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label>Videos (Max 10)</Label>
+              <Input
+                type="file"
+                accept="video/*"
+                multiple
+                onChange={handleVideoSelect}
+                className="rounded-xl"
+              />
+              {selectedVideos.length > 0 && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedVideos.length} video(s) selected
+                </p>
+              )}
+            </div>
+
+            <Button
+              onClick={handleCreatePost}
+              disabled={isUploading}
+              className="w-full rounded-xl"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Uploading...
+                </>
+              ) : (
+                "Create"
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
