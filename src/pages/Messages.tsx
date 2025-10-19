@@ -8,7 +8,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
 import { Loader2, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -18,13 +18,30 @@ export default function Messages() {
   const navigate = useNavigate();
   const [selectedUserId, setSelectedUserId] = useState<Id<"users"> | null>(null);
   const [message, setMessage] = useState("");
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const conversations = useQuery(api.messages.getConversations, {});
   const currentConversation = useQuery(
     api.messages.getConversation,
     selectedUserId ? { userId: selectedUserId } : "skip"
   );
+  const isOtherUserTyping = useQuery(
+    api.typingIndicators.getTypingStatus,
+    selectedUserId ? { userId: selectedUserId } : "skip"
+  );
+  
   const sendMessage = useMutation(api.messages.send);
+  const setTyping = useMutation(api.typingIndicators.setTyping);
+  const clearTyping = useMutation(api.typingIndicators.clearTyping);
+
+  // Clear typing indicator on unmount or when changing conversations
+  useEffect(() => {
+    return () => {
+      if (selectedUserId) {
+        clearTyping({ recipientId: selectedUserId });
+      }
+    };
+  }, [selectedUserId, clearTyping]);
 
   if (isLoading) {
     return (
@@ -39,15 +56,46 @@ export default function Messages() {
     return null;
   }
 
+  const handleTyping = (value: string) => {
+    setMessage(value);
+    
+    if (!selectedUserId) return;
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set typing indicator
+    if (value.trim()) {
+      setTyping({ recipientId: selectedUserId, isTyping: true });
+
+      // Clear typing indicator after 3 seconds of no typing
+      typingTimeoutRef.current = setTimeout(() => {
+        clearTyping({ recipientId: selectedUserId });
+      }, 3000);
+    } else {
+      clearTyping({ recipientId: selectedUserId });
+    }
+  };
+
   const handleSend = async () => {
     if (!message.trim() || !selectedUserId) return;
 
     try {
+      // Clear typing indicator
+      await clearTyping({ recipientId: selectedUserId });
+      
       await sendMessage({
         recipientId: selectedUserId,
         content: message,
       });
       setMessage("");
+      
+      // Clear timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     } catch (error) {
       toast.error("Failed to send message");
     }
@@ -114,6 +162,9 @@ export default function Messages() {
                     <p className="font-semibold text-slate-900">
                       {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
                     </p>
+                    {isOtherUserTyping && (
+                      <p className="text-xs text-purple-600">typing...</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -138,6 +189,34 @@ export default function Messages() {
                       </div>
                     </motion.div>
                   ))}
+                  
+                  {isOtherUserTyping && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex justify-start"
+                    >
+                      <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-sm">
+                        <div className="flex gap-1">
+                          <motion.span
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+                            className="w-2 h-2 bg-slate-400 rounded-full"
+                          />
+                          <motion.span
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+                            className="w-2 h-2 bg-slate-400 rounded-full"
+                          />
+                          <motion.span
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+                            className="w-2 h-2 bg-slate-400 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </ScrollArea>
 
@@ -145,7 +224,7 @@ export default function Messages() {
                 <div className="flex gap-2">
                   <Input
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={(e) => handleTyping(e.target.value)}
                     placeholder="Type a message..."
                     className="rounded-xl border-slate-200"
                     onKeyDown={(e) => {

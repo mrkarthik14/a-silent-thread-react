@@ -24,6 +24,7 @@ import type * as messages from "../messages.js";
 import type * as posts from "../posts.js";
 import type * as search from "../search.js";
 import type * as share from "../share.js";
+import type * as typingIndicators from "../typingIndicators.js";
 import type * as users from "../users.js";
 
 /**
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   posts: typeof posts;
   search: typeof search;
   share: typeof share;
+  typingIndicators: typeof typingIndicators;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

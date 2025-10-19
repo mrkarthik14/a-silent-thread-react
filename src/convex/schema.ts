@@ -122,6 +122,13 @@ const schema = defineSchema(
       message: v.optional(v.string()),
     }).index("by_post", ["postId"])
       .index("by_user", ["userId"]),
+
+    typingIndicators: defineTable({
+      senderId: v.id("users"),
+      recipientId: v.id("users"),
+      timestamp: v.number(),
+    }).index("by_sender_and_recipient", ["senderId", "recipientId"])
+      .index("by_recipient", ["recipientId"]),
   },
   {
     schemaValidation: false,
