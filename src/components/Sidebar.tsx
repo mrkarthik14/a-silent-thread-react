@@ -25,6 +25,7 @@ export function Sidebar() {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+  const [isHovered, setIsHovered] = useState(false);
   
   const createPost = useMutation(api.posts.create);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
@@ -70,11 +71,9 @@ export function Sidebar() {
 
     setIsUploading(true);
     try {
-      // Upload images and videos
       const uploadedImageUrls: string[] = [];
       const uploadedVideoUrls: string[] = [];
 
-      // Upload images
       for (const image of selectedImages) {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
@@ -86,7 +85,6 @@ export function Sidebar() {
         uploadedImageUrls.push(storageId);
       }
 
-      // Upload videos
       for (const video of selectedVideos) {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
@@ -130,8 +128,14 @@ export function Sidebar() {
     <>
       <motion.div
         initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        className="w-64 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col"
+        animate={{ 
+          x: isHovered ? 0 : -200,
+          opacity: isHovered ? 1 : 0.3
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="fixed left-0 top-0 z-50 w-64 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col"
       >
         <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
           <div className="flex items-center gap-2">
@@ -195,6 +199,12 @@ export function Sidebar() {
           </Button>
         </div>
       </motion.div>
+
+      {/* Hover trigger area */}
+      <div 
+        className="fixed left-0 top-0 w-4 h-screen z-40"
+        onMouseEnter={() => setIsHovered(true)}
+      />
 
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">

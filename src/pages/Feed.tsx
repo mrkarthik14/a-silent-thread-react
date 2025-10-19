@@ -30,7 +30,23 @@ export default function Feed() {
     return null;
   }
 
-  const colors = ["bg-gradient-to-br from-pink-100 to-pink-200", "bg-gradient-to-br from-yellow-100 to-yellow-200", "bg-gradient-to-br from-emerald-100 to-emerald-200", "bg-gradient-to-br from-purple-100 to-purple-200", "bg-gradient-to-br from-blue-100 to-blue-200"];
+  const colors = [
+    "bg-gradient-to-br from-pink-100 to-pink-200", 
+    "bg-gradient-to-br from-yellow-100 to-yellow-200", 
+    "bg-gradient-to-br from-emerald-100 to-emerald-200", 
+    "bg-gradient-to-br from-purple-100 to-purple-200", 
+    "bg-gradient-to-br from-blue-100 to-blue-200"
+  ];
+
+  // Ensure no adjacent posts have the same color
+  const getColorForIndex = (index: number) => {
+    const colorIndex = index % colors.length;
+    // If this would be the same as the previous, shift by 1
+    if (index > 0 && colorIndex === ((index - 1) % colors.length)) {
+      return colors[(colorIndex + 1) % colors.length];
+    }
+    return colors[colorIndex];
+  };
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
@@ -62,7 +78,7 @@ export default function Feed() {
                 )}
                 <PostCard
                   post={post}
-                  color={colors[index % colors.length]}
+                  color={getColorForIndex(index)}
                   onLike={() => likePost({ postId: post._id })}
                 />
               </div>

@@ -5,6 +5,8 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -15,6 +17,16 @@ interface PostCardProps {
 
 export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+
+  // Get URLs for images
+  const imageUrls = post.images?.map(storageId => 
+    useQuery(api.files.getImageUrl, { storageId })
+  ).filter(Boolean) || [];
+
+  // Get URLs for videos
+  const videoUrls = post.videos?.map(storageId => 
+    useQuery(api.files.getImageUrl, { storageId })
+  ).filter(Boolean) || [];
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -46,12 +58,41 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             
             <p className="text-sm mb-3 leading-relaxed text-slate-800">{post.content}</p>
             
+            {/* Display legacy single image */}
             {post.image && (
               <img 
                 src={post.image} 
                 alt="Post" 
                 className="rounded-xl mb-3 w-full object-cover max-h-64"
               />
+            )}
+
+            {/* Display multiple images */}
+            {imageUrls.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {imageUrls.map((url, idx) => url && (
+                  <img 
+                    key={idx}
+                    src={url} 
+                    alt={`Post image ${idx + 1}`} 
+                    className="rounded-xl w-full object-cover max-h-48"
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Display videos */}
+            {videoUrls.length > 0 && (
+              <div className="space-y-2 mb-3">
+                {videoUrls.map((url, idx) => url && (
+                  <video 
+                    key={idx}
+                    src={url} 
+                    controls
+                    className="rounded-xl w-full max-h-64"
+                  />
+                ))}
+              </div>
             )}
             
             {post.serviceDetails && (
