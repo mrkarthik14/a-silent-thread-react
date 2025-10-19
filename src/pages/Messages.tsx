@@ -28,8 +28,8 @@ export default function Messages() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-pink-400" />
+      <div className="h-screen flex items-center justify-center bg-[#F5F3EF]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#D4A5A5]" />
       </div>
     );
   }
@@ -54,13 +54,13 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="flex h-screen bg-[#F5F3EF]">
       <Sidebar />
       
       <div className="flex-1 flex">
-        <div className="w-80 border-r border-pink-100 bg-white/50 backdrop-blur-sm">
-          <div className="p-4 border-b border-pink-100">
-            <h2 className="font-bold text-lg">Messages</h2>
+        <div className="w-80 border-r border-[#E8E4DC] bg-white/50 backdrop-blur-sm">
+          <div className="p-4 border-b border-[#E8E4DC]">
+            <h2 className="font-bold text-lg text-[#4A4A4A]">Messages</h2>
           </div>
           
           <ScrollArea className="h-[calc(100vh-73px)]">
@@ -69,27 +69,27 @@ export default function Messages() {
                 key={conv.user?._id}
                 whileHover={{ x: 4 }}
                 onClick={() => setSelectedUserId(conv.user?._id || null)}
-                className={`p-4 cursor-pointer border-b border-pink-50 hover:bg-pink-50/50 transition-colors ${
-                  selectedUserId === conv.user?._id ? "bg-pink-100/50" : ""
+                className={`p-4 cursor-pointer border-b border-[#E8E4DC] hover:bg-[#FFE5D9]/30 transition-colors ${
+                  selectedUserId === conv.user?._id ? "bg-[#FFE5D9]/50" : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12 border-2 border-white">
                     <AvatarImage src={conv.user?.image} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-300 to-purple-300">
+                    <AvatarFallback className="bg-gradient-to-br from-[#D4E8D4] to-[#D4E4F0]">
                       {conv.user?.name?.[0] || "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className="font-semibold text-sm truncate">{conv.user?.name || "User"}</p>
+                      <p className="font-semibold text-sm truncate text-[#4A4A4A]">{conv.user?.name || "User"}</p>
                       {conv.unreadCount > 0 && (
-                        <span className="bg-pink-400 text-white text-xs rounded-full px-2 py-0.5">
+                        <span className="bg-[#D4A5A5] text-white text-xs rounded-full px-2 py-0.5">
                           {conv.unreadCount}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-xs text-[#8B8B8B] truncate">
                       {conv.lastMessage.content}
                     </p>
                   </div>
@@ -102,16 +102,16 @@ export default function Messages() {
         <div className="flex-1 flex flex-col">
           {selectedUserId ? (
             <>
-              <div className="p-4 border-b border-pink-100 bg-white/50 backdrop-blur-sm">
+              <div className="p-4 border-b border-[#E8E4DC] bg-white/50 backdrop-blur-sm">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 border-2 border-white">
                     <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-300 to-purple-300">
+                    <AvatarFallback className="bg-gradient-to-br from-[#D4E8D4] to-[#D4E4F0]">
                       {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold">
+                    <p className="font-semibold text-[#4A4A4A]">
                       {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
                     </p>
                   </div>
@@ -130,8 +130,8 @@ export default function Messages() {
                       <div
                         className={`max-w-xs px-4 py-2 rounded-2xl ${
                           msg.senderId === user?._id
-                            ? "bg-gradient-to-br from-pink-400 to-purple-400 text-white"
-                            : "bg-white border border-pink-100"
+                            ? "bg-gradient-to-br from-[#D4A5A5] to-[#E5D4F7] text-white"
+                            : "bg-white border border-[#E8E4DC]"
                         }`}
                       >
                         <p className="text-sm">{msg.content}</p>
@@ -141,13 +141,13 @@ export default function Messages() {
                 </div>
               </ScrollArea>
 
-              <div className="p-4 border-t border-pink-100 bg-white/50 backdrop-blur-sm">
+              <div className="p-4 border-t border-[#E8E4DC] bg-white/50 backdrop-blur-sm">
                 <div className="flex gap-2">
                   <Input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="rounded-xl border-pink-100"
+                    className="rounded-xl border-[#E8E4DC]"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -158,7 +158,7 @@ export default function Messages() {
                   <Button
                     onClick={handleSend}
                     disabled={!message.trim()}
-                    className="rounded-xl bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500"
+                    className="rounded-xl bg-gradient-to-r from-[#D4A5A5] to-[#E5D4F7] hover:from-[#C49595] hover:to-[#D5C4E7]"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -166,7 +166,7 @@ export default function Messages() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+            <div className="flex-1 flex items-center justify-center text-[#8B8B8B]">
               Select a conversation to start messaging
             </div>
           )}

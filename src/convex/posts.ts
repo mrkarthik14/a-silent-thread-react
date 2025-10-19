@@ -2,10 +2,19 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUser } from "./users";
 
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
 export const create = mutation({
   args: {
     content: v.string(),
     image: v.optional(v.string()),
+    images: v.optional(v.array(v.string())),
+    videos: v.optional(v.array(v.string())),
     type: v.union(v.literal("post"), v.literal("service")),
     serviceDetails: v.optional(v.object({
       title: v.string(),
@@ -21,6 +30,8 @@ export const create = mutation({
       userId: user._id,
       content: args.content,
       image: args.image,
+      images: args.images,
+      videos: args.videos,
       type: args.type,
       serviceDetails: args.serviceDetails,
       likes: 0,

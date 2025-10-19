@@ -19,8 +19,8 @@ export default function Bookings() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-pink-400" />
+      <div className="h-screen flex items-center justify-center bg-[#F5F3EF]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#D4A5A5]" />
       </div>
     );
   }
@@ -41,16 +41,16 @@ export default function Bookings() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "accepted": return "bg-green-100 text-green-800";
-      case "rejected": return "bg-red-100 text-red-800";
-      case "completed": return "bg-blue-100 text-blue-800";
+      case "pending": return "bg-[#FFE5B4] text-[#8B7355]";
+      case "accepted": return "bg-[#D4E8D4] text-[#4A7C59]";
+      case "rejected": return "bg-[#FFD4D4] text-[#8B4A4A]";
+      case "completed": return "bg-[#D4E4F0] text-[#4A5A8B]";
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-yellow-50 via-green-50 to-blue-50">
+    <div className="flex h-screen bg-[#F5F3EF]">
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto">
@@ -60,8 +60,8 @@ export default function Bookings() {
             animate={{ y: 0, opacity: 1 }}
             className="mb-6"
           >
-            <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
-            <p className="text-muted-foreground">Manage your rental requests</p>
+            <h1 className="text-3xl font-bold tracking-tight text-[#4A4A4A]">Bookings</h1>
+            <p className="text-[#8B8B8B]">Manage your rental requests</p>
           </motion.div>
 
           <div className="space-y-4">
@@ -75,14 +75,14 @@ export default function Bookings() {
                 <Card className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border-none shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-1">
+                      <h3 className="font-semibold text-lg mb-1 text-[#4A4A4A]">
                         {booking.service?.serviceDetails?.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-sm text-[#8B8B8B] mb-2">
                         {booking.renterId === user?._id ? "Renting from" : "Renting to"}{" "}
                         {booking.renterId === user?._id ? booking.owner?.name : booking.renter?.name}
                       </p>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 text-sm text-[#8B8B8B]">
                         <Calendar className="h-4 w-4" />
                         {booking.date}
                       </div>
@@ -92,7 +92,7 @@ export default function Bookings() {
                     </Badge>
                   </div>
 
-                  <p className="text-sm mb-4 p-3 bg-pink-50 rounded-xl">
+                  <p className="text-sm mb-4 p-3 bg-[#FFE5D9] rounded-xl text-[#4A4A4A]">
                     {booking.message}
                   </p>
 
@@ -100,14 +100,14 @@ export default function Bookings() {
                     <div className="flex gap-2">
                       <Button
                         onClick={() => handleStatusUpdate(booking._id, "accepted")}
-                        className="flex-1 rounded-xl bg-green-400 hover:bg-green-500"
+                        className="flex-1 rounded-xl bg-[#D4E8D4] hover:bg-[#C4D8C4] text-[#4A7C59]"
                       >
                         Accept
                       </Button>
                       <Button
                         onClick={() => handleStatusUpdate(booking._id, "rejected")}
                         variant="outline"
-                        className="flex-1 rounded-xl"
+                        className="flex-1 rounded-xl border-[#E8E4DC]"
                       >
                         Reject
                       </Button>
@@ -118,7 +118,7 @@ export default function Bookings() {
             ))}
 
             {bookings?.length === 0 && (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="text-center py-12 text-[#8B8B8B]">
                 No bookings yet
               </div>
             )}
