@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { Bell, Bookmark, Home, LogOut, MessageSquare, Package, User, Plus, Settings } from "lucide-react";
+import { Bell, Bookmark, Home, LogOut, MessageSquare, Package, User, Plus, Settings, Search } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,6 +12,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { UserSearch } from "@/components/UserSearch";
 
 export function Sidebar() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export function Sidebar() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
   const [isHovered, setIsHovered] = useState(false);
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   
   const createPost = useMutation(api.posts.create);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
@@ -175,6 +177,21 @@ export function Sidebar() {
           >
             <Button
               variant="ghost"
+              className="w-full justify-start gap-3 hover:bg-blue-100/50 rounded-xl text-slate-900"
+              onClick={() => setSearchDialogOpen(true)}
+            >
+              <Search className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
+              <span>Search Users</span>
+            </Button>
+          </motion.div>
+
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: (menuItems.length + 1) * 0.05 }}
+          >
+            <Button
+              variant="ghost"
               className="w-full justify-start gap-3 hover:bg-emerald-100/50 rounded-xl text-slate-900 font-semibold"
               onClick={() => setCreateDialogOpen(true)}
             >
@@ -319,6 +336,8 @@ export function Sidebar() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <UserSearch open={searchDialogOpen} onOpenChange={setSearchDialogOpen} />
     </>
   );
 }

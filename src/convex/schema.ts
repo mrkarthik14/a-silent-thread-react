@@ -99,6 +99,29 @@ const schema = defineSchema(
     }).index("by_user", ["userId"])
       .index("by_post", ["postId"])
       .index("by_user_and_post", ["userId", "postId"]),
+
+    follows: defineTable({
+      followerId: v.id("users"),
+      followingId: v.id("users"),
+    }).index("by_follower", ["followerId"])
+      .index("by_following", ["followingId"])
+      .index("by_follower_and_following", ["followerId", "followingId"]),
+
+    comments: defineTable({
+      postId: v.id("posts"),
+      userId: v.id("users"),
+      content: v.string(),
+      parentCommentId: v.optional(v.id("comments")),
+    }).index("by_post", ["postId"])
+      .index("by_user", ["userId"])
+      .index("by_parent", ["parentCommentId"]),
+
+    sharedPosts: defineTable({
+      postId: v.id("posts"),
+      userId: v.id("users"),
+      message: v.optional(v.string()),
+    }).index("by_post", ["postId"])
+      .index("by_user", ["userId"]),
   },
   {
     schemaValidation: false,

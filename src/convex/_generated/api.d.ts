@@ -16,10 +16,14 @@ import type {
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as auth from "../auth.js";
 import type * as bookings from "../bookings.js";
+import type * as comments from "../comments.js";
 import type * as files from "../files.js";
+import type * as follows from "../follows.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as posts from "../posts.js";
+import type * as search from "../search.js";
+import type * as share from "../share.js";
 import type * as users from "../users.js";
 
 /**
@@ -34,10 +38,14 @@ declare const fullApi: ApiFromModules<{
   "auth/emailOtp": typeof auth_emailOtp;
   auth: typeof auth;
   bookings: typeof bookings;
+  comments: typeof comments;
   files: typeof files;
+  follows: typeof follows;
   http: typeof http;
   messages: typeof messages;
   posts: typeof posts;
+  search: typeof search;
+  share: typeof share;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

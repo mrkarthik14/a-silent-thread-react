@@ -7,6 +7,12 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { CommentSection } from "@/components/CommentSection";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
