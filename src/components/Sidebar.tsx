@@ -200,12 +200,6 @@ export function Sidebar() {
         </div>
       </motion.div>
 
-      {/* Hover trigger area */}
-      <div 
-        className="fixed left-0 top-0 w-4 h-screen z-40"
-        onMouseEnter={() => setIsHovered(true)}
-      />
-
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
