@@ -19,8 +19,8 @@ export default function Feed() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#F5F3EF]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#D4A5A5]" />
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
       </div>
     );
   }
@@ -30,10 +30,10 @@ export default function Feed() {
     return null;
   }
 
-  const colors = ["bg-[#FFE5D9]", "bg-[#D4E8D4]", "bg-[#E5D4F7]", "bg-[#FFE5B4]", "bg-[#D4E4F0]"];
+  const colors = ["bg-gradient-to-br from-pink-100 to-pink-200", "bg-gradient-to-br from-yellow-100 to-yellow-200", "bg-gradient-to-br from-emerald-100 to-emerald-200", "bg-gradient-to-br from-purple-100 to-purple-200", "bg-gradient-to-br from-blue-100 to-blue-200"];
 
   return (
-    <div className="flex h-screen bg-[#F5F3EF]">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto">
@@ -44,10 +44,10 @@ export default function Feed() {
             className="mb-6 sticky top-0 z-10 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm"
           >
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-[#8B8B8B]" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search threads..."
-                className="pl-10 rounded-xl border-[#E8E4DC] bg-white"
+                className="pl-10 rounded-xl border-slate-200 bg-white"
               />
             </div>
           </motion.div>
@@ -57,7 +57,7 @@ export default function Feed() {
               <div key={post._id} className="relative">
                 {index > 0 && (
                   <div className="absolute -top-2 left-8 w-0.5 h-4">
-                    <ThreadLine color="bg-[#D4A5A5]" vertical />
+                    <ThreadLine color="bg-purple-300" vertical />
                   </div>
                 )}
                 <PostCard

@@ -131,16 +131,16 @@ export function Sidebar() {
       <motion.div
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className="w-64 h-screen bg-[#F5F3EF] border-r border-[#E8E4DC] p-4 flex flex-col"
+        className="w-64 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col"
       >
         <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#FFE5B4] to-[#FFD4A3] rounded-xl flex items-center justify-center shadow-sm">
-              <span className="text-[#8B7355] font-bold text-lg">🧵</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+              <span className="text-white font-bold text-lg">🧵</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg tracking-tight text-[#4A4A4A]">A Silent Thread</h1>
-              <p className="text-xs text-[#8B8B8B]">Connected experiences</p>
+              <h1 className="font-bold text-lg tracking-tight text-slate-900">A Silent Thread</h1>
+              <p className="text-xs text-slate-600">Connected experiences</p>
             </div>
           </div>
         </div>
@@ -155,7 +155,7 @@ export function Sidebar() {
             >
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 hover:bg-[#FFE5D9]/30 rounded-xl text-[#4A4A4A]"
+                className="w-full justify-start gap-3 hover:bg-purple-100/50 rounded-xl text-slate-900"
                 onClick={() => navigate(item.path)}
               >
                 <item.icon className="h-5 w-5" />
@@ -171,7 +171,7 @@ export function Sidebar() {
           >
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-[#D4E8D4]/30 rounded-xl text-[#4A4A4A] font-semibold"
+              className="w-full justify-start gap-3 hover:bg-emerald-100/50 rounded-xl text-slate-900 font-semibold"
               onClick={() => setCreateDialogOpen(true)}
             >
               <Plus className="h-5 w-5" />
@@ -180,10 +180,10 @@ export function Sidebar() {
           </motion.div>
         </nav>
 
-        <div className="border-t border-[#E8E4DC] pt-4 space-y-2">
+        <div className="border-t border-slate-200 pt-4 space-y-2">
           <div className="px-3 py-2 bg-white/50 rounded-xl">
-            <p className="text-sm font-medium truncate text-[#4A4A4A]">{user?.name || "User"}</p>
-            <p className="text-xs text-[#8B8B8B] truncate">{user?.email}</p>
+            <p className="text-sm font-medium truncate text-slate-900">{user?.name || "User"}</p>
+            <p className="text-xs text-slate-600 truncate">{user?.email}</p>
           </div>
           <Button
             variant="ghost"

@@ -16,8 +16,8 @@ export default function Services() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#F5F3EF]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#D4A5A5]" />
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
       </div>
     );
   }
@@ -27,10 +27,10 @@ export default function Services() {
     return null;
   }
 
-  const colors = ["bg-[#D4E8D4]", "bg-[#D4E4F0]", "bg-[#FFE5B4]", "bg-[#FFE5D9]", "bg-[#E5D4F7]"];
+  const colors = ["bg-gradient-to-br from-emerald-100 to-emerald-200", "bg-gradient-to-br from-blue-100 to-blue-200", "bg-gradient-to-br from-yellow-100 to-yellow-200", "bg-gradient-to-br from-pink-100 to-pink-200", "bg-gradient-to-br from-purple-100 to-purple-200"];
 
   return (
-    <div className="flex h-screen bg-[#F5F3EF]">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto">
@@ -40,8 +40,8 @@ export default function Services() {
             animate={{ y: 0, opacity: 1 }}
             className="mb-6"
           >
-            <h1 className="text-3xl font-bold tracking-tight text-[#4A4A4A]">Services</h1>
-            <p className="text-[#8B8B8B]">Discover and rent amazing things</p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Services</h1>
+            <p className="text-slate-600">Discover and rent amazing things</p>
           </motion.div>
 
           <div className="grid gap-4">
