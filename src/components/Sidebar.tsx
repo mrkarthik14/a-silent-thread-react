@@ -158,7 +158,7 @@ export function Sidebar() {
                 className="w-full justify-start gap-3 hover:bg-purple-100/50 rounded-xl text-slate-900"
                 onClick={() => navigate(item.path)}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
                 <span>{item.label}</span>
               </Button>
             </motion.div>
@@ -174,7 +174,7 @@ export function Sidebar() {
               className="w-full justify-start gap-3 hover:bg-emerald-100/50 rounded-xl text-slate-900 font-semibold"
               onClick={() => setCreateDialogOpen(true)}
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
               <span>Create Post</span>
             </Button>
           </motion.div>
@@ -190,7 +190,7 @@ export function Sidebar() {
             className="w-full justify-start gap-3 hover:bg-red-50 rounded-xl text-red-500"
             onClick={() => signOut()}
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-5 w-5" strokeWidth={1.5} />
             <span>Sign Out</span>
           </Button>
         </div>

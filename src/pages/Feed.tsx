@@ -20,7 +20,7 @@ export default function Feed() {
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-900" strokeWidth={1.5} />
       </div>
     );
   }
@@ -44,7 +44,7 @@ export default function Feed() {
             className="mb-6 sticky top-0 z-10 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm"
           >
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900" strokeWidth={1.5} />
               <Input
                 placeholder="Search threads..."
                 className="pl-10 rounded-xl border-slate-200 bg-white"

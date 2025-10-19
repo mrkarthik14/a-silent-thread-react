@@ -38,13 +38,13 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
           
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold text-sm">{post.user?.name || "Anonymous"}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="font-semibold text-sm text-slate-900">{post.user?.name || "Anonymous"}</span>
+              <span className="text-xs text-slate-500">
                 {new Date(post._creationTime).toLocaleDateString()}
               </span>
             </div>
             
-            <p className="text-sm mb-3 leading-relaxed">{post.content}</p>
+            <p className="text-sm mb-3 leading-relaxed text-slate-800">{post.content}</p>
             
             {post.image && (
               <img 
@@ -56,10 +56,10 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             
             {post.serviceDetails && (
               <div className="bg-white/50 rounded-xl p-3 mb-3 border border-white">
-                <div className="font-semibold text-sm mb-1">{post.serviceDetails.title}</div>
+                <div className="font-semibold text-sm mb-1 text-slate-900">{post.serviceDetails.title}</div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{post.serviceDetails.category}</span>
-                  <span className="font-bold text-sm">${post.serviceDetails.price}/day</span>
+                  <span className="text-xs text-slate-600">{post.serviceDetails.category}</span>
+                  <span className="font-bold text-sm text-slate-900">${post.serviceDetails.price}/day</span>
                 </div>
               </div>
             )}
@@ -71,8 +71,8 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 className="h-8 gap-2 hover:bg-white/50"
                 onClick={handleLike}
               >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : ''}`} />
-                <span className="text-xs">{post.likes}</span>
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
+                <span className="text-xs text-slate-900">{post.likes}</span>
               </Button>
               
               <Button
@@ -81,8 +81,8 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 className="h-8 gap-2 hover:bg-white/50"
                 onClick={onReply}
               >
-                <MessageCircle className="h-4 w-4" />
-                <span className="text-xs">{post.replies}</span>
+                <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <span className="text-xs text-slate-900">{post.replies}</span>
               </Button>
               
               <Button
@@ -90,7 +90,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 size="sm"
                 className="h-8 hover:bg-white/50"
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
               </Button>
             </div>
           </div>
