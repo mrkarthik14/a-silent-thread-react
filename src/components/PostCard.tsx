@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Doc } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -17,6 +17,16 @@ interface PostCardProps {
 
 export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+
+  // Check if current user has liked this post
+  const userHasLiked = useQuery(api.posts.hasUserLiked, { postId: post._id });
+
+  // Update local state when query result changes
+  useEffect(() => {
+    if (userHasLiked !== undefined) {
+      setIsLiked(userHasLiked);
+    }
+  }, [userHasLiked]);
 
   // Get URLs for images
   const imageUrls = post.images?.map(storageId => 

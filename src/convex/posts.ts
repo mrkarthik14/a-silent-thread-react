@@ -106,9 +106,49 @@ export const like = mutation({
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
 
-    await ctx.db.patch(args.postId, {
-      likes: post.likes + 1,
-    });
+    // Check if user has already liked this post
+    const existingLike = await ctx.db
+      .query("likes")
+      .withIndex("by_user_and_post", (q) => 
+        q.eq("userId", user._id).eq("postId", args.postId)
+      )
+      .unique();
+
+    if (existingLike) {
+      // Unlike: remove the like record and decrement count
+      await ctx.db.delete(existingLike._id);
+      await ctx.db.patch(args.postId, {
+        likes: Math.max(0, post.likes - 1),
+      });
+      return { liked: false };
+    } else {
+      // Like: create like record and increment count
+      await ctx.db.insert("likes", {
+        userId: user._id,
+        postId: args.postId,
+      });
+      await ctx.db.patch(args.postId, {
+        likes: post.likes + 1,
+      });
+      return { liked: true };
+    }
+  },
+});
+
+export const hasUserLiked = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return false;
+
+    const like = await ctx.db
+      .query("likes")
+      .withIndex("by_user_and_post", (q) => 
+        q.eq("userId", user._id).eq("postId", args.postId)
+      )
+      .unique();
+
+    return !!like;
   },
 });
 
