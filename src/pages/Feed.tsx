@@ -162,68 +162,6 @@ export default function Feed() {
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto">
-        {/* Top Header */}
-        <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200">
-          <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900">Feed</h2>
-            
-            <div className="flex items-center gap-3">
-              {/* Create Post Button */}
-              <Button
-                size="sm"
-                onClick={() => setCreateDialogOpen(true)}
-                className="bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 text-white rounded-xl"
-              >
-                <Plus className="h-4 w-4 mr-1" strokeWidth={1.5} />
-                Create
-              </Button>
-
-              {/* Notifications */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative rounded-xl hover:bg-purple-100/50"
-                onClick={() => navigate("/notifications")}
-              >
-                <Bell className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
-                  3
-                </Badge>
-              </Button>
-
-              {/* Profile Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Avatar className="h-8 w-8 border-2 border-white">
-                      <AvatarImage src={user?.image} />
-                      <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
-                        {user?.name?.[0] || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 rounded-xl">
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col">
-                      <span className="font-semibold">{user?.name || "User"}</span>
-                      <span className="text-xs text-muted-foreground">{user?.email}</span>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
-                    <User className="h-4 w-4 mr-2" strokeWidth={1.5} />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
-                    Settings
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-
         <div className="max-w-2xl mx-auto p-6">
           <motion.div
             initial={{ y: -20, opacity: 0 }}
