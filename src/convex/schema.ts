@@ -80,6 +80,25 @@ const schema = defineSchema(
       read: v.boolean(),
       relatedId: v.optional(v.string()),
     }).index("by_user", ["userId"]),
+
+    hiddenPosts: defineTable({
+      userId: v.id("users"),
+      postId: v.id("posts"),
+    }).index("by_user", ["userId"])
+      .index("by_post", ["postId"]),
+
+    blockedUsers: defineTable({
+      userId: v.id("users"),
+      blockedUserId: v.id("users"),
+    }).index("by_user", ["userId"])
+      .index("by_blocked", ["blockedUserId"]),
+
+    likes: defineTable({
+      userId: v.id("users"),
+      postId: v.id("posts"),
+    }).index("by_user", ["userId"])
+      .index("by_post", ["postId"])
+      .index("by_user_and_post", ["userId", "postId"]),
   },
   {
     schemaValidation: false,
