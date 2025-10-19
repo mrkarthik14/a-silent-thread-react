@@ -28,6 +28,7 @@ const schema = defineSchema(
       role: v.optional(roleValidator),
       bio: v.optional(v.string()),
       location: v.optional(v.string()),
+      lastSeen: v.optional(v.number()),
     }).index("email", ["email"]),
 
     posts: defineTable({

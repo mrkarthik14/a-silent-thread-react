@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/use-auth";
+import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
 import { Loader2, Send } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
@@ -20,6 +21,9 @@ export default function Messages() {
   const [message, setMessage] = useState("");
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
+  // Track presence
+  usePresence();
+  
   const conversations = useQuery(api.messages.getConversations, {});
   const currentConversation = useQuery(
     api.messages.getConversation,
@@ -27,6 +31,12 @@ export default function Messages() {
   );
   const isOtherUserTyping = useQuery(
     api.typingIndicators.getTypingStatus,
+    selectedUserId ? { userId: selectedUserId } : "skip"
+  );
+  
+  // Get presence for selected user
+  const selectedUserPresence = useQuery(
+    api.presence.getUserPresence,
     selectedUserId ? { userId: selectedUserId } : "skip"
   );
   
@@ -122,12 +132,14 @@ export default function Messages() {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                    <AvatarImage src={conv.user?.image} />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                      {conv.user?.name?.[0] || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative">
+                    <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                      <AvatarImage src={conv.user?.image} />
+                      <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
+                        {conv.user?.name?.[0] || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-sm truncate text-slate-900">{conv.user?.name || "User"}</p>
@@ -152,18 +164,27 @@ export default function Messages() {
             <>
               <div className="p-4 border-b border-slate-200 bg-white/50 backdrop-blur-sm">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                    <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                      {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative">
+                    <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                      <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
+                      <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
+                        {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    {selectedUserPresence?.isOnline && (
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+                    )}
+                  </div>
                   <div>
                     <p className="font-semibold text-slate-900">
                       {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
                     </p>
-                    {isOtherUserTyping && (
+                    {isOtherUserTyping ? (
                       <p className="text-xs text-purple-600">typing...</p>
+                    ) : selectedUserPresence?.isOnline ? (
+                      <p className="text-xs text-emerald-600">online</p>
+                    ) : (
+                      <p className="text-xs text-slate-500">offline</p>
                     )}
                   </div>
                 </div>

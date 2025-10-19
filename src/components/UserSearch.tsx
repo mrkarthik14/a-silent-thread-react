@@ -22,6 +22,13 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
   
   const searchResults = useQuery(api.search.searchUsers, { query: searchQuery });
   const followUser = useMutation(api.follows.follow);
+  
+  // Get presence for all search results
+  const userIds = searchResults?.map(u => u._id) || [];
+  const presenceMap = useQuery(
+    api.presence.getBulkPresence,
+    userIds.length > 0 ? { userIds } : "skip"
+  );
 
   const handleFollow = async (userId: Id<"users">) => {
     try {
@@ -56,47 +63,56 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
           </div>
 
           <div className="space-y-2">
-            {searchResults?.map((user, index) => (
-              <motion.div
-                key={user._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="flex items-center justify-between p-3 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl hover:shadow-sm transition-shadow"
-              >
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 border-2 border-white">
-                    <AvatarImage src={user.image} />
-                    <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
-                      {user.name?.[0] || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-sm text-slate-900">{user.name || "Anonymous"}</p>
-                    <p className="text-xs text-slate-600">{user.email}</p>
+            {searchResults?.map((user, index) => {
+              const isOnline = presenceMap?.[user._id] || false;
+              
+              return (
+                <motion.div
+                  key={user._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex items-center justify-between p-3 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl hover:shadow-sm transition-shadow"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Avatar className="h-10 w-10 border-2 border-white">
+                        <AvatarImage src={user.image} />
+                        <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+                          {user.name?.[0] || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      {isOnline && (
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-slate-900">{user.name || "Anonymous"}</p>
+                      <p className="text-xs text-slate-600">{user.email}</p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleFollow(user._id)}
-                    className="rounded-xl"
-                  >
-                    <UserPlus className="h-4 w-4" strokeWidth={1.5} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleMessage(user._id)}
-                    className="rounded-xl"
-                  >
-                    <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleFollow(user._id)}
+                      className="rounded-xl"
+                    >
+                      <UserPlus className="h-4 w-4" strokeWidth={1.5} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleMessage(user._id)}
+                      className="rounded-xl"
+                    >
+                      <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
+                    </Button>
+                  </div>
+                </motion.div>
+              );
+            })}
 
             {searchQuery && searchResults?.length === 0 && (
               <p className="text-center text-slate-600 py-8">No users found</p>

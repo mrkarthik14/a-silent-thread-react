@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { ThreadLine } from "@/components/ThreadLine";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
+import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
 import { Loader2, Search } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
@@ -13,6 +14,9 @@ import { Input } from "@/components/ui/input";
 export default function Feed() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  
+  // Track presence
+  usePresence();
   
   const posts = useQuery(api.posts.list, {});
   const likePost = useMutation(api.posts.like);
