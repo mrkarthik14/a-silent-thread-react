@@ -2,7 +2,6 @@ import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { Infer, v } from "convex/values";
 
-// default user roles. can add / remove based on the project as needed
 export const ROLES = {
   ADMIN: "admin",
   USER: "user",
@@ -18,26 +17,67 @@ export type Role = Infer<typeof roleValidator>;
 
 const schema = defineSchema(
   {
-    // default auth tables using convex auth.
-    ...authTables, // do not remove or modify
+    ...authTables,
 
-    // the users table is the default users table that is brought in by the authTables
     users: defineTable({
-      name: v.optional(v.string()), // name of the user. do not remove
-      image: v.optional(v.string()), // image of the user. do not remove
-      email: v.optional(v.string()), // email of the user. do not remove
-      emailVerificationTime: v.optional(v.number()), // email verification time. do not remove
-      isAnonymous: v.optional(v.boolean()), // is the user anonymous. do not remove
+      name: v.optional(v.string()),
+      image: v.optional(v.string()),
+      email: v.optional(v.string()),
+      emailVerificationTime: v.optional(v.number()),
+      isAnonymous: v.optional(v.boolean()),
+      role: v.optional(roleValidator),
+      bio: v.optional(v.string()),
+      location: v.optional(v.string()),
+    }).index("email", ["email"]),
 
-      role: v.optional(roleValidator), // role of the user. do not remove
-    }).index("email", ["email"]), // index for the email. do not remove or modify
+    posts: defineTable({
+      userId: v.id("users"),
+      content: v.string(),
+      image: v.optional(v.string()),
+      type: v.union(v.literal("post"), v.literal("service")),
+      serviceDetails: v.optional(v.object({
+        title: v.string(),
+        price: v.number(),
+        category: v.string(),
+      })),
+      parentId: v.optional(v.id("posts")),
+      likes: v.number(),
+      replies: v.number(),
+    }).index("by_user", ["userId"])
+      .index("by_parent", ["parentId"])
+      .index("by_type", ["type"]),
 
-    // add other tables here
+    bookings: defineTable({
+      serviceId: v.id("posts"),
+      renterId: v.id("users"),
+      ownerId: v.id("users"),
+      message: v.string(),
+      date: v.string(),
+      status: v.union(
+        v.literal("pending"),
+        v.literal("accepted"),
+        v.literal("rejected"),
+        v.literal("completed")
+      ),
+    }).index("by_renter", ["renterId"])
+      .index("by_owner", ["ownerId"])
+      .index("by_service", ["serviceId"]),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    messages: defineTable({
+      senderId: v.id("users"),
+      recipientId: v.id("users"),
+      content: v.string(),
+      read: v.boolean(),
+    }).index("by_sender", ["senderId"])
+      .index("by_recipient", ["recipientId"]),
+
+    notifications: defineTable({
+      userId: v.id("users"),
+      type: v.string(),
+      content: v.string(),
+      read: v.boolean(),
+      relatedId: v.optional(v.string()),
+    }).index("by_user", ["userId"]),
   },
   {
     schemaValidation: false,
