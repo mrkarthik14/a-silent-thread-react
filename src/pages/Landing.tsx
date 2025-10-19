@@ -9,7 +9,7 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDE8DC' }}>
       {/* Header */}
       <nav className="px-6 py-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -66,37 +66,41 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* Feature Cards */}
+      {/* Feature Cards - Waving Thread Style */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
           {[
             {
               icon: MessageCircle,
               title: "Thread Connections",
               description: "Connect with others through beautiful, flowing conversations",
-              color: "from-pink-200 to-pink-300",
-              textColor: "text-pink-900"
+              bgColor: "#F9E79F",
+              textColor: "#8B7355",
+              yOffset: 0
             },
             {
               icon: Search,
               title: "Discover Services",
               description: "Find and offer services in your community",
-              color: "from-yellow-200 to-yellow-300",
-              textColor: "text-yellow-900"
+              bgColor: "#F8D7E8",
+              textColor: "#8B5A7D",
+              yOffset: 40
             },
             {
               icon: Calendar,
               title: "Easy Bookings",
               description: "Seamless booking experience with visual connections",
-              color: "from-emerald-200 to-emerald-300",
-              textColor: "text-emerald-900"
+              bgColor: "#D4E8D4",
+              textColor: "#5A7D5A",
+              yOffset: 0
             },
             {
               icon: Sparkles,
               title: "Beautiful Design",
               description: "Soft, minimal interface that feels alive",
-              color: "from-purple-200 to-purple-300",
-              textColor: "text-purple-900"
+              bgColor: "#D4E4F0",
+              textColor: "#5A6D8B",
+              yOffset: 40
             }
           ].map((feature, index) => (
             <motion.div
@@ -104,15 +108,19 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-              className={`bg-gradient-to-br ${feature.color} rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow`}
+              className="rounded-3xl p-8 shadow-sm hover:shadow-md transition-all duration-300"
+              style={{ 
+                backgroundColor: feature.bgColor,
+                transform: `translateY(${feature.yOffset}px)`
+              }}
             >
               <div className="mb-4">
-                <feature.icon className={`h-10 w-10 ${feature.textColor}`} strokeWidth={1.5} />
+                <feature.icon className="h-10 w-10" style={{ color: feature.textColor }} strokeWidth={1.5} />
               </div>
-              <h3 className={`text-xl font-bold mb-3 ${feature.textColor}`}>
+              <h3 className="text-xl font-bold mb-3" style={{ color: feature.textColor }}>
                 {feature.title}
               </h3>
-              <p className={`text-sm ${feature.textColor} opacity-80`}>
+              <p className="text-sm" style={{ color: feature.textColor, opacity: 0.8 }}>
                 {feature.description}
               </p>
             </motion.div>
