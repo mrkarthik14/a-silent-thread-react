@@ -129,17 +129,7 @@ export function Sidebar() {
 
   return (
     <>
-      <motion.div
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ 
-          x: isHovered ? 0 : -200,
-          opacity: isHovered ? 1 : 0.3
-        }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className="fixed left-0 top-0 z-50 w-64 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col"
-      >
+      <div className="fixed left-0 top-0 z-50 w-64 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col">
         <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-sm">
@@ -216,7 +206,7 @@ export function Sidebar() {
             <span>Sign Out</span>
           </Button>
         </div>
-      </motion.div>
+      </div>
 
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
