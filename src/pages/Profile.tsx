@@ -411,19 +411,24 @@ export default function Profile() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max">
                 {profileData?.posts && profileData.posts.length > 0 ? (
                   profileData.posts.map((post, idx) => (
-                    <motion.div
-                      key={post._id}
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                      transition={{ 
-                        delay: idx * 0.1,
-                        duration: 0.4,
-                        ease: "easeOut"
-                      }}
-                      whileHover={{ scale: 1.02, y: -4 }}
-                      className="relative"
-                    >
+                <motion.div
+                  key={post._id}
+                  initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                  transition={{ 
+                    delay: idx * 0.08,
+                    duration: 0.5,
+                    ease: [0.25, 0.46, 0.45, 0.94]
+                  }}
+                  whileHover={{ 
+                    scale: 1.03, 
+                    y: -8,
+                    transition: { duration: 0.2, ease: "easeOut" }
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative"
+                >
                       {/* Connection thread lines */}
                       {idx > 0 && (
                         <>
