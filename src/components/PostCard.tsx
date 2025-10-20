@@ -349,41 +349,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
               </Button>
             </div>
-
-            {/* Author action buttons (only if not current user's post) */}
-            {currentUser?._id !== post.user?._id && post.user?._id && (
-              <div className="flex gap-2 pt-2 border-t border-white/30">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleFollow}
-                  disabled={loadingAction === "follow"}
-                  className="flex-1 rounded-xl h-8 text-xs hover:bg-purple-100 active:scale-95 transition-all duration-150 disabled:opacity-70"
-                >
-                  {isFollowing ? (
-                    <>
-                      <UserMinus className="h-3 w-3 mr-1" strokeWidth={1.5} />
-                      Following
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="h-3 w-3 mr-1" strokeWidth={1.5} />
-                      Follow
-                    </>
-                  )}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleMessage}
-                  disabled={loadingAction === "message"}
-                  className="flex-1 rounded-xl h-8 text-xs hover:bg-blue-100 hover:shadow-sm active:scale-95 transition-all duration-150 disabled:opacity-70"
-                >
-                  <MessageCircleMore className="h-3 w-3 mr-1" strokeWidth={1.5} />
-                  Message
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </Card>
