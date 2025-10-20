@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Calendar, Search, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router";
+import { LoadingLogo } from "@/components/LoadingLogo";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
@@ -38,9 +39,7 @@ export default function Landing() {
           transition={{ duration: 0.6 }}
         >
           <div className="inline-block mb-8">
-            <div className="w-24 h-24 bg-gradient-to-br from-slate-700 to-slate-900 rounded-3xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-5xl">🧵</span>
-            </div>
+            <LoadingLogo size="lg" />
           </div>
           
           <h1 className="text-6xl md:text-7xl font-bold text-slate-900 mb-6 tracking-tight">
