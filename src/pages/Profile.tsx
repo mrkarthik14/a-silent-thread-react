@@ -299,10 +299,13 @@ export default function Profile() {
                   <>
                     <Button
                       onClick={handleFollow}
+                      disabled={isFollowLoading}
                       variant="outline"
-                      className="rounded-xl hover:bg-purple-100 active:scale-95 transition-all duration-150"
+                      className="rounded-xl hover:bg-purple-100 active:scale-95 transition-all duration-150 disabled:opacity-70"
                     >
-                      {isFollowing ? (
+                      {isFollowLoading ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" strokeWidth={1.5} />
+                      ) : isFollowing ? (
                         <>
                           <UserMinus className="h-4 w-4 mr-2" strokeWidth={1.5} />
                           Following
