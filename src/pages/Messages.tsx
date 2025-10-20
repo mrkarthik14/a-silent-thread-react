@@ -8,17 +8,19 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, Search, UserPlus, MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { UserSearch } from "@/components/UserSearch";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [selectedUserId, setSelectedUserId] = useState<Id<"users"> | null>(null);
   const [message, setMessage] = useState("");
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Track presence
@@ -117,45 +119,68 @@ export default function Messages() {
       
       <div className="flex-1 flex ml-0 md:ml-20">
         <div className="w-80 border-r border-slate-200 bg-white/50 backdrop-blur-sm">
-          <div className="p-4 border-b border-slate-200">
+          <div className="p-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="font-bold text-lg text-slate-900">Messages</h2>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSearchDialogOpen(true)}
+              className="rounded-xl hover:bg-purple-100/50"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
           </div>
           
           <ScrollArea className="h-[calc(100vh-73px)]">
-            {conversations?.map((conv) => (
-              <motion.div
-                key={conv.user?._id}
-                whileHover={{ x: 4 }}
-                onClick={() => setSelectedUserId(conv.user?._id || null)}
-                className={`p-4 cursor-pointer border-b border-slate-200 hover:bg-purple-50/50 transition-colors ${
-                  selectedUserId === conv.user?._id ? "bg-purple-100/50" : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                      <AvatarImage src={conv.user?.image} />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                        {conv.user?.name?.[0] || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-sm truncate text-slate-900">{conv.user?.name || "User"}</p>
-                      {conv.unreadCount > 0 && (
-                        <span className="bg-purple-400 text-white text-xs rounded-full px-2 py-0.5">
-                          {conv.unreadCount}
-                        </span>
-                      )}
+            {conversations && conversations.length > 0 ? (
+              conversations.map((conv) => (
+                <motion.div
+                  key={conv.user?._id}
+                  whileHover={{ x: 4 }}
+                  onClick={() => setSelectedUserId(conv.user?._id || null)}
+                  className={`p-4 cursor-pointer border-b border-slate-200 hover:bg-purple-50/50 transition-colors ${
+                    selectedUserId === conv.user?._id ? "bg-purple-100/50" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                        <AvatarImage src={conv.user?.image} />
+                        <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
+                          {conv.user?.name?.[0] || "U"}
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
-                    <p className="text-xs text-slate-600 truncate">
-                      {conv.lastMessage.content}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-sm truncate text-slate-900">{conv.user?.name || "User"}</p>
+                        {conv.unreadCount > 0 && (
+                          <span className="bg-purple-400 text-white text-xs rounded-full px-2 py-0.5">
+                            {conv.unreadCount}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-600 truncate">
+                        {conv.lastMessage.content}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                <MessageCircle className="h-12 w-12 text-slate-300 mb-4" />
+                <p className="text-slate-600 mb-2">No conversations yet</p>
+                <p className="text-xs text-slate-500 mb-4">Find users to start chatting</p>
+                <Button
+                  onClick={() => setSearchDialogOpen(true)}
+                  className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500"
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  Find Users
+                </Button>
+              </div>
+            )}
           </ScrollArea>
         </div>
 
@@ -284,12 +309,23 @@ export default function Messages() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-slate-600">
-              Select a conversation to start messaging
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-600 p-6">
+              <MessageCircle className="h-16 w-16 text-slate-300 mb-4" />
+              <p className="text-lg font-semibold mb-2">Select a conversation</p>
+              <p className="text-sm text-slate-500 mb-4">Choose a conversation from the list or find new users</p>
+              <Button
+                onClick={() => setSearchDialogOpen(true)}
+                className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Find Users
+              </Button>
             </div>
           )}
         </div>
       </div>
+
+      <UserSearch open={searchDialogOpen} onOpenChange={setSearchDialogOpen} />
     </div>
   );
 }

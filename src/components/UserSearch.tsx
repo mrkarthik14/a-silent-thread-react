@@ -38,7 +38,7 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
     try {
       const result = await followUser({ userId });
       if (result.following) {
-        toast.success("Followed user! You can now message them.");
+        toast.success("Followed! You can now message them.");
       } else {
         toast.success("Unfollowed user");
       }
@@ -51,10 +51,12 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
 
   const handleMessage = (userId: Id<"users">) => {
     setMessagingId(userId);
+    // Close dialog and navigate to messages
+    onOpenChange(false);
+    navigate("/messages");
+    // Small delay to ensure navigation completes
     setTimeout(() => {
-      navigate("/messages");
       setMessagingId(null);
-      onOpenChange(false);
     }, 500);
   };
 
@@ -145,7 +147,10 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
             )}
 
             {!searchQuery && (
-              <p className="text-center text-slate-600 py-8">Start typing to search for users</p>
+              <div className="text-center py-8 space-y-2">
+                <p className="text-slate-600">Start typing to search for users</p>
+                <p className="text-xs text-slate-500">Follow users to start messaging them</p>
+              </div>
             )}
           </div>
         </div>
