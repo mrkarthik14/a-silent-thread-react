@@ -209,7 +209,7 @@ export function Sidebar() {
           </div>
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 hover:bg-red-50 rounded-xl text-red-500"
+            className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150"
             onClick={() => signOut()}
           >
             <LogOut className="h-5 w-5" strokeWidth={1.5} />

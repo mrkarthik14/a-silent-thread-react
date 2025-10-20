@@ -123,7 +123,7 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
                       variant="outline"
                       onClick={() => handleMessage(user._id)}
                       disabled={isMessaging}
-                      className="rounded-xl hover:bg-blue-50 active:scale-95 transition-all duration-150 disabled:opacity-70"
+                      className="rounded-xl hover:bg-blue-100 hover:shadow-sm active:scale-95 transition-all duration-150 disabled:opacity-70"
                     >
                       {isMessaging ? (
                         <LoadingLogo size="sm" variant="handshake" />

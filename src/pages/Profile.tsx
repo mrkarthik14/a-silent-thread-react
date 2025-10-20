@@ -218,10 +218,10 @@ export default function Profile() {
               </div>
 
               {user?._id === profileData?._id && (
-                <Button 
-                  onClick={handleEditClick}
-                  className="rounded-xl mb-2"
-                >
+              <Button 
+                onClick={handleEditClick}
+                className="rounded-xl mb-2 hover:shadow-md active:scale-95 transition-all duration-150"
+              >
                   <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
                   Edit Profile
                 </Button>
