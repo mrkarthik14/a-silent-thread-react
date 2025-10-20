@@ -6,9 +6,9 @@ import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
-import { Loader2, Camera, X } from "lucide-react";
+import { Loader2, Camera, UserPlus, UserMinus, MessageCircle } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { PostCard } from "@/components/PostCard";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,10 +17,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LoadingLogo } from "@/components/LoadingLogo";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function Profile() {
-  const { isLoading, isAuthenticated, user } = useAuth();
+  const { isLoading, isAuthenticated, user: currentUser } = useAuth();
   const navigate = useNavigate();
+  const { userId: paramUserId } = useParams();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editName, setEditName] = useState("");
   const [editBio, setEditBio] = useState("");
@@ -30,13 +32,26 @@ export default function Profile() {
   const [profileImagePreview, setProfileImagePreview] = useState("");
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [coverImagePreview, setCoverImagePreview] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false);
 
   // Track presence
   usePresence();
 
-  const profileData = useQuery(api.profile.getCurrentUserProfile, {});
+  // Determine which user to display
+  const isOwnProfile = !paramUserId || paramUserId === currentUser?._id;
+  const targetUserId = paramUserId ? (paramUserId as Id<"users">) : currentUser?._id;
+
+  // Fetch profile data
+  const profileData = useQuery(
+    isOwnProfile 
+      ? api.profile.getCurrentUserProfile 
+      : api.profile.getUserProfile,
+    isOwnProfile ? {} : (targetUserId ? { userId: targetUserId } : "skip")
+  );
+
   const updateProfile = useMutation(api.profile.updateProfile);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
+  const followMutation = useMutation(api.follows.follow);
 
   // Fetch image URLs
   const profileImageUrl = useQuery(
@@ -46,6 +61,22 @@ export default function Profile() {
   const coverImageUrl = useQuery(
     api.files.getImageUrl,
     profileData?.coverImage ? { storageId: profileData.coverImage } : "skip"
+  );
+
+  // Get follower/following counts
+  const followerCount = useQuery(
+    api.follows.getFollowerCount,
+    targetUserId ? { userId: targetUserId } : "skip"
+  );
+  const followingCount = useQuery(
+    api.follows.getFollowingCount,
+    targetUserId ? { userId: targetUserId } : "skip"
+  );
+
+  // Check if following this user
+  const checkIsFollowing = useQuery(
+    api.follows.isFollowing,
+    targetUserId && !isOwnProfile ? { userId: targetUserId } : "skip"
   );
 
   if (isLoading) {
@@ -169,6 +200,23 @@ export default function Profile() {
     }
   };
 
+  const handleFollow = async () => {
+    if (!targetUserId) return;
+    try {
+      await followMutation({ userId: targetUserId });
+      setIsFollowing(!isFollowing);
+      toast.success(isFollowing ? "Unfollowed" : "Following!");
+    } catch (error) {
+      toast.error("Failed to follow user");
+    }
+  };
+
+  const handleMessage = () => {
+    if (targetUserId) {
+      navigate("/messages", { state: { selectedUserId: targetUserId } });
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
@@ -204,7 +252,7 @@ export default function Profile() {
                     {profileData?.name?.[0] || "U"}
                   </AvatarFallback>
                 </Avatar>
-                {user?._id === profileData?._id && (
+                {isOwnProfile && (
                   <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-slate-50 transition-colors">
                     <Camera className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
                     <input
@@ -217,20 +265,62 @@ export default function Profile() {
                 )}
               </div>
 
-              {user?._id === profileData?._id && (
-              <Button 
-                onClick={handleEditClick}
-                className="rounded-xl mb-2 hover:shadow-md active:scale-95 transition-all duration-150"
-              >
-                  <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
-                  Edit Profile
-                </Button>
-              )}
+              <div className="flex gap-2 mb-2">
+                {isOwnProfile && (
+                  <Button 
+                    onClick={handleEditClick}
+                    className="rounded-xl hover:shadow-md active:scale-95 transition-all duration-150"
+                  >
+                    <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                    Edit Profile
+                  </Button>
+                )}
+                {!isOwnProfile && currentUser?._id && (
+                  <>
+                    <Button
+                      onClick={handleFollow}
+                      variant="outline"
+                      className="rounded-xl hover:bg-purple-100 active:scale-95 transition-all duration-150"
+                    >
+                      {isFollowing ? (
+                        <>
+                          <UserMinus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                          Follow
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={handleMessage}
+                      className="rounded-xl bg-blue-500 hover:bg-blue-600 active:scale-95 transition-all duration-150"
+                    >
+                      <MessageCircle className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                      Message
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-slate-900 mb-1">{profileData?.name || "User"}</h1>
               <p className="text-slate-600 mb-4">{profileData?.email}</p>
+
+              {/* Follower/Following counts */}
+              <div className="flex gap-6 mb-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-slate-900">{followerCount}</p>
+                  <p className="text-xs text-slate-600">Followers</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-slate-900">{followingCount}</p>
+                  <p className="text-xs text-slate-600">Following</p>
+                </div>
+              </div>
 
               {profileData?.bio && (
                 <p className="text-slate-700 mb-4">{profileData.bio}</p>
@@ -283,119 +373,121 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Edit Profile Dialog */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
-          </DialogHeader>
+      {/* Edit Profile Dialog (only for own profile) */}
+      {isOwnProfile && (
+        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Profile</DialogTitle>
+            </DialogHeader>
 
-          <div className="space-y-4">
-            <div>
-              <Label>Profile Picture</Label>
-              <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20 border-2 border-slate-200">
-                  <AvatarImage src={profileImagePreview} />
-                  <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
-                    {editName?.[0] || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <label className="cursor-pointer">
-                  <Button variant="outline" className="rounded-xl" asChild>
-                    <span>
-                      <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
-                      Upload Picture
-                    </span>
-                  </Button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleProfileImageSelect}
-                    className="hidden"
-                  />
-                </label>
+            <div className="space-y-4">
+              <div>
+                <Label>Profile Picture</Label>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20 border-2 border-slate-200">
+                    <AvatarImage src={profileImagePreview} />
+                    <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+                      {editName?.[0] || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <label className="cursor-pointer">
+                    <Button variant="outline" className="rounded-xl" asChild>
+                      <span>
+                        <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                        Upload Picture
+                      </span>
+                    </Button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleProfileImageSelect}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <Label>Name</Label>
+                <Input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Your name"
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div>
+                <Label>Bio</Label>
+                <Textarea
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  placeholder="Tell us about yourself"
+                  className="rounded-xl resize-none"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <Label>Interests (comma-separated)</Label>
+                <Input
+                  value={editInterests}
+                  onChange={(e) => setEditInterests(e.target.value)}
+                  placeholder="e.g., Photography, Travel, Music"
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div>
+                <Label>Cover Image</Label>
+                <div className="space-y-2">
+                  {coverImagePreview && (
+                    <div className="relative w-full h-32 rounded-xl overflow-hidden">
+                      <img src={coverImagePreview} alt="Cover preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="cursor-pointer">
+                    <Button variant="outline" className="rounded-xl w-full" asChild>
+                      <span>
+                        <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                        Upload Cover Image
+                      </span>
+                    </Button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCoverImageSelect}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <Button
+                  onClick={handleSaveProfile}
+                  disabled={isUpdating}
+                  className="flex-1 rounded-xl hover:bg-slate-900 active:scale-95 transition-all duration-150 disabled:opacity-70"
+                >
+                  {isUpdating ? (
+                    <LoadingLogo size="sm" variant="handshake" />
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+                <Button
+                  onClick={() => setEditDialogOpen(false)}
+                  variant="outline"
+                  className="flex-1 rounded-xl hover:bg-slate-50 active:scale-95 transition-all duration-150"
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
-
-            <div>
-              <Label>Name</Label>
-              <Input
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                placeholder="Your name"
-                className="rounded-xl"
-              />
-            </div>
-
-            <div>
-              <Label>Bio</Label>
-              <Textarea
-                value={editBio}
-                onChange={(e) => setEditBio(e.target.value)}
-                placeholder="Tell us about yourself"
-                className="rounded-xl resize-none"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label>Interests (comma-separated)</Label>
-              <Input
-                value={editInterests}
-                onChange={(e) => setEditInterests(e.target.value)}
-                placeholder="e.g., Photography, Travel, Music"
-                className="rounded-xl"
-              />
-            </div>
-
-            <div>
-              <Label>Cover Image</Label>
-              <div className="space-y-2">
-                {coverImagePreview && (
-                  <div className="relative w-full h-32 rounded-xl overflow-hidden">
-                    <img src={coverImagePreview} alt="Cover preview" className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <label className="cursor-pointer">
-                  <Button variant="outline" className="rounded-xl w-full" asChild>
-                    <span>
-                      <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
-                      Upload Cover Image
-                    </span>
-                  </Button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCoverImageSelect}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                onClick={handleSaveProfile}
-                disabled={isUpdating}
-                className="flex-1 rounded-xl hover:bg-slate-900 active:scale-95 transition-all duration-150 disabled:opacity-70"
-              >
-                {isUpdating ? (
-                  <LoadingLogo size="sm" variant="handshake" />
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
-              <Button
-                onClick={() => setEditDialogOpen(false)}
-                variant="outline"
-                className="flex-1 rounded-xl hover:bg-slate-50 active:scale-95 transition-all duration-150"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
