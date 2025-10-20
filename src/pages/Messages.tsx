@@ -219,31 +219,34 @@ export default function Messages() {
               </div>
 
               <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4">
-                  {currentConversation?.slice().reverse().map((msg) => (
+                <div className="space-y-3">
+                  {currentConversation?.slice().reverse().map((msg, idx) => (
                     <motion.div
                       key={msg._id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.02 }}
                       className={`flex ${msg.senderId === user?._id ? "justify-end" : "justify-start"}`}
                     >
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1.5 max-w-xs">
                         <div
-                          className={`max-w-xs px-4 py-2 rounded-2xl shadow-sm ${
+                          className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
                             msg.senderId === user?._id
-                              ? "bg-gradient-to-br from-purple-400 to-blue-400 text-white"
-                              : "bg-white border border-slate-200 text-slate-900"
+                              ? "bg-gradient-to-br from-purple-500 to-blue-500 text-white rounded-br-sm"
+                              : "bg-white border-2 border-slate-100 text-slate-900 rounded-bl-sm"
                           }`}
                         >
-                          <p className="text-sm">{msg.content}</p>
+                          <p className="text-sm leading-relaxed break-words">{msg.content}</p>
                         </div>
                         {msg.senderId === user?._id && (
                           <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex items-center gap-1 px-4"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex items-center justify-end gap-1 px-2"
                           >
-                            <span className="text-xs text-slate-500">
+                            <span className={`text-xs font-medium ${
+                              msg.read ? "text-blue-500" : "text-slate-400"
+                            }`}>
                               {msg.read ? "✓✓ Read" : "✓ Sent"}
                             </span>
                           </motion.div>
