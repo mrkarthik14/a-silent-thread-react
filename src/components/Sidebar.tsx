@@ -326,10 +326,12 @@ export function Sidebar() {
               </motion.div>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150 active:scale-95"
+                className="w-full justify-start gap-3 rounded-xl text-slate-900 hover:bg-transparent transition-all duration-150 active:scale-95"
                 onClick={() => signOut()}
               >
-                <LogOut className="h-6 w-6 hover:text-red-600 transition-colors" strokeWidth={2.5} />
+                <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-transparent hover:bg-red-200/60 transition-colors duration-200">
+                  <LogOut className="h-6 w-6 text-slate-900" strokeWidth={2.5} />
+                </div>
                 <span>Sign Out</span>
               </Button>
             </motion.div>
