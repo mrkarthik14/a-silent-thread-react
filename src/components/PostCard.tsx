@@ -229,6 +229,42 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 </span>
               </div>
               
+              {/* Follow/Message Buttons - Right of Username */}
+              {currentUser?._id !== post.user?._id && (
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 hover:bg-purple-100/50 active:scale-95 transition-all duration-150"
+                    onClick={handleFollow}
+                    disabled={loadingAction === "follow"}
+                    title={isFollowing ? "Following" : "Follow"}
+                  >
+                    {loadingAction === "follow" ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-slate-600" strokeWidth={1.5} />
+                    ) : isFollowing ? (
+                      <Users className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                    ) : (
+                      <UserPlus className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 hover:bg-blue-100/50 active:scale-95 transition-all duration-150"
+                    onClick={handleMessage}
+                    disabled={loadingAction === "message"}
+                    title="Message"
+                  >
+                    {loadingAction === "message" ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-slate-600" strokeWidth={1.5} />
+                    ) : (
+                      <Mail className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                    )}
+                  </Button>
+                </div>
+              )}
+              
               {/* Post Actions Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
