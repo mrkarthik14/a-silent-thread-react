@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
-import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2, MoreVertical, Trash2, Edit2, Eye } from "lucide-react";
+import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2, MoreVertical, Trash2, Edit2, Eye, Users, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
