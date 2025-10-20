@@ -12,13 +12,16 @@ import { Loader2, Send, Search, UserPlus, MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { UserSearch } from "@/components/UserSearch";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
-  const [selectedUserId, setSelectedUserId] = useState<Id<"users"> | null>(null);
+  const location = useLocation();
+  const [selectedUserId, setSelectedUserId] = useState<Id<"users"> | null>(
+    (location.state as any)?.selectedUserId || null
+  );
   const [message, setMessage] = useState("");
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);

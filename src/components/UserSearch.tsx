@@ -51,10 +51,10 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
 
   const handleMessage = (userId: Id<"users">) => {
     setMessagingId(userId);
-    // Close dialog and navigate to messages
+    // Close dialog and navigate to messages with user ID
     onOpenChange(false);
-    navigate("/messages");
-    // Small delay to ensure navigation completes
+    // Navigate with state to pre-select the user
+    navigate("/messages", { state: { selectedUserId: userId } });
     setTimeout(() => {
       setMessagingId(null);
     }, 500);
