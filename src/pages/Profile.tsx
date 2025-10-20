@@ -24,10 +24,11 @@ export default function Profile() {
   const [editName, setEditName] = useState("");
   const [editBio, setEditBio] = useState("");
   const [editInterests, setEditInterests] = useState("");
-  const [editCoverImage, setEditCoverImage] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState("");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState("");
 
   // Track presence
   usePresence();
@@ -35,6 +36,16 @@ export default function Profile() {
   const profileData = useQuery(api.profile.getCurrentUserProfile, {});
   const updateProfile = useMutation(api.profile.updateProfile);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
+
+  // Fetch image URLs
+  const profileImageUrl = useQuery(
+    api.files.getImageUrl,
+    profileData?.image ? { storageId: profileData.image } : "skip"
+  );
+  const coverImageUrl = useQuery(
+    api.files.getImageUrl,
+    profileData?.coverImage ? { storageId: profileData.coverImage } : "skip"
+  );
 
   if (isLoading) {
     return (
@@ -69,9 +80,10 @@ export default function Profile() {
     setEditName(profileData?.name || "");
     setEditBio(profileData?.bio || "");
     setEditInterests(profileData?.interests?.join(", ") || "");
-    setEditCoverImage(profileData?.coverImage || "");
-    setProfileImagePreview(profileData?.image || "");
+    setProfileImagePreview(profileImageUrl || "");
     setProfileImageFile(null);
+    setCoverImagePreview(coverImageUrl || "");
+    setCoverImageFile(null);
     setEditDialogOpen(true);
   };
 
@@ -87,6 +99,18 @@ export default function Profile() {
     }
   };
 
+  const handleCoverImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSaveProfile = async () => {
     if (!editName.trim()) {
       toast.error("Name cannot be empty");
@@ -96,6 +120,7 @@ export default function Profile() {
     setIsUpdating(true);
     try {
       let uploadedImageUrl = profileData?.image;
+      let uploadedCoverUrl = profileData?.coverImage;
 
       // Upload profile picture if selected
       if (profileImageFile) {
@@ -109,6 +134,18 @@ export default function Profile() {
         uploadedImageUrl = storageId;
       }
 
+      // Upload cover image if selected
+      if (coverImageFile) {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": coverImageFile.type },
+          body: coverImageFile,
+        });
+        const { storageId } = await result.json();
+        uploadedCoverUrl = storageId;
+      }
+
       const interestsArray = editInterests
         .split(",")
         .map((i) => i.trim())
@@ -118,7 +155,7 @@ export default function Profile() {
         name: editName,
         bio: editBio,
         interests: interestsArray.length > 0 ? interestsArray : undefined,
-        coverImage: editCoverImage || undefined,
+        coverImage: uploadedCoverUrl || undefined,
         image: uploadedImageUrl || undefined,
       });
 
@@ -143,8 +180,8 @@ export default function Profile() {
             animate={{ opacity: 1 }}
             className="relative h-64 bg-gradient-to-br from-purple-300 to-blue-300 rounded-b-3xl overflow-hidden"
           >
-            {profileData?.coverImage ? (
-              <img src={profileData.coverImage} alt="Cover" className="w-full h-full object-cover" />
+            {coverImageUrl ? (
+              <img src={coverImageUrl} alt="Cover" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <Camera className="h-12 w-12 text-white/50" strokeWidth={1.5} />
@@ -161,7 +198,7 @@ export default function Profile() {
             <div className="flex items-end gap-4 -mt-16 mb-6">
               <div className="relative">
                 <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
-                  <AvatarImage src={profileData?.image} />
+                  <AvatarImage src={profileImageUrl || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 text-2xl">
                     {profileData?.name?.[0] || "U"}
                   </AvatarFallback>
@@ -325,13 +362,28 @@ export default function Profile() {
             </div>
 
             <div>
-              <Label>Cover Image URL</Label>
-              <Input
-                value={editCoverImage}
-                onChange={(e) => setEditCoverImage(e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                className="rounded-xl"
-              />
+              <Label>Cover Image</Label>
+              <div className="space-y-2">
+                {coverImagePreview && (
+                  <div className="relative w-full h-32 rounded-xl overflow-hidden">
+                    <img src={coverImagePreview} alt="Cover preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <label className="cursor-pointer">
+                  <Button variant="outline" className="rounded-xl w-full" asChild>
+                    <span>
+                      <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                      Upload Cover Image
+                    </span>
+                  </Button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCoverImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              </div>
             </div>
 
             <div className="flex gap-2 pt-4">
