@@ -299,10 +299,21 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             
             {post.serviceDetails && (
               <div className="bg-white/50 rounded-xl p-3 mb-3 border border-white">
-                <div className="font-semibold text-sm mb-1 text-slate-900">{post.serviceDetails.title}</div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-600">{post.serviceDetails.category}</span>
-                  <span className="font-extrabold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
+                <div className="font-semibold text-sm mb-2 text-slate-900">{post.serviceDetails.title}</div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-slate-700 bg-purple-100 px-2.5 py-1 rounded-lg">
+                      {post.serviceDetails.category}
+                    </span>
+                  </div>
+                  {post.serviceDetails.location && (
+                    <div className="text-xs text-slate-600 font-medium">
+                      📍 {post.serviceDetails.location}
+                    </div>
+                  )}
+                  <div className="pt-1">
+                    <span className="font-extrabold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
+                  </div>
                 </div>
               </div>
             )}
