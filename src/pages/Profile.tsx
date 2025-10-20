@@ -372,13 +372,26 @@ export default function Profile() {
               )}
 
               {profileData?.interests && profileData.interests.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <motion.div 
+                  className="flex flex-wrap gap-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
                   {profileData.interests.map((interest, idx) => (
-                    <Badge key={idx} className="bg-purple-200 text-purple-900 rounded-full">
-                      {interest}
-                    </Badge>
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      whileHover={{ scale: 1.1, y: -2 }}
+                    >
+                      <Badge className="bg-purple-200 text-purple-900 rounded-full hover:shadow-md transition-shadow cursor-pointer">
+                        {interest}
+                      </Badge>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </div>
           </motion.div>
