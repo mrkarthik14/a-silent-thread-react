@@ -115,7 +115,7 @@ export default function Messages() {
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
       
-      <div className="flex-1 flex">
+      <div className="flex-1 flex ml-20">
         <div className="w-80 border-r border-slate-200 bg-white/50 backdrop-blur-sm">
           <div className="p-4 border-b border-slate-200">
             <h2 className="font-bold text-lg text-slate-900">Messages</h2>
