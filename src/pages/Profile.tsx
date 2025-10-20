@@ -386,7 +386,14 @@ export default function Profile() {
               </div>
 
               {profileData?.bio && (
-                <p className="text-slate-700 mb-4">{profileData.bio}</p>
+                <motion.p 
+                  className="text-slate-700 mb-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  {profileData.bio}
+                </motion.p>
               )}
 
               {profileData?.interests && profileData.interests.length > 0 && (
