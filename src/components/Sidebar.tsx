@@ -21,10 +21,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 const MENU_ITEMS = [
   { icon: Home, label: "Feed", path: "/feed" },
-  { icon: Package, label: "Services", path: "/services" },
   { icon: MessageSquare, label: "Messages", path: "/messages" },
   { icon: Bookmark, label: "Bookings", path: "/bookings" },
-  { icon: Bell, label: "Notifications", path: "/notifications" },
   { icon: User, label: "Profile", path: "/profile" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
