@@ -254,13 +254,13 @@ export default function Messages() {
                 </div>
               </ScrollArea>
 
-              <div className="p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm">
+              <div className="p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm sticky bottom-0">
                 <div className="flex gap-2">
                   <Input
                     value={message}
                     onChange={(e) => handleTyping(e.target.value)}
                     placeholder="Type a message..."
-                    className="rounded-xl border-slate-200"
+                    className="rounded-xl border-slate-200 focus:ring-2 focus:ring-purple-400"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -268,13 +268,18 @@ export default function Messages() {
                       }
                     }}
                   />
-                  <Button
-                    onClick={handleSend}
-                    disabled={!message.trim()}
-                    className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500"
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <Send className="h-4 w-4" />
-                  </Button>
+                    <Button
+                      onClick={handleSend}
+                      disabled={!message.trim()}
+                      className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 active:scale-95 transition-all duration-150 disabled:opacity-70"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             </>
