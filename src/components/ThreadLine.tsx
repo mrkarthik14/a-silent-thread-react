@@ -15,13 +15,13 @@ export function ThreadLine({
 }: ThreadLineProps) {
   return (
     <div className={`relative ${vertical ? 'h-full w-0.5' : 'w-full h-0.5'} ${className}`}>
-      <div className={`absolute inset-0 ${color} opacity-30`} />
+      <div className={`absolute inset-0 ${color} opacity-40`} />
       {animated && (
         <motion.div
-          className={`absolute ${color} ${vertical ? 'w-full h-4' : 'h-full w-4'}`}
-          animate={vertical ? { y: [0, 100, 0] } : { x: [0, 100, 0] }}
+          className={`absolute ${color} ${vertical ? 'w-full h-8' : 'h-full w-8'}`}
+          animate={vertical ? { y: [0, 50, 0] } : { x: [0, 50, 0] }}
           transition={{
-            duration: 3,
+            duration: 2.5,
             repeat: Infinity,
             ease: "easeInOut",
           }}

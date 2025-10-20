@@ -4,10 +4,42 @@ import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Calendar, Search, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router";
 import { LoadingLogo } from "@/components/LoadingLogo";
+import { ThreadLine } from "@/components/ThreadLine";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const features = [
+    {
+      icon: MessageCircle,
+      title: "Thread Connections",
+      description: "Connect with others through beautiful, flowing conversations",
+      color: "from-pink-200 to-pink-300",
+      textColor: "text-pink-900"
+    },
+    {
+      icon: Search,
+      title: "Discover Services",
+      description: "Find and offer services in your community",
+      color: "from-yellow-200 to-yellow-300",
+      textColor: "text-yellow-900"
+    },
+    {
+      icon: Calendar,
+      title: "Easy Bookings",
+      description: "Seamless booking experience with visual connections",
+      color: "from-emerald-200 to-emerald-300",
+      textColor: "text-emerald-900"
+    },
+    {
+      icon: Sparkles,
+      title: "Beautiful Design",
+      description: "Soft, minimal interface that feels alive",
+      color: "from-purple-200 to-purple-300",
+      textColor: "text-purple-900"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
@@ -65,57 +97,47 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* Feature Cards */}
+      {/* Feature Cards with Thread Connections */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
-        <div className="grid md:grid-cols-4 gap-6">
-          {[
-            {
-              icon: MessageCircle,
-              title: "Thread Connections",
-              description: "Connect with others through beautiful, flowing conversations",
-              color: "from-pink-200 to-pink-300",
-              textColor: "text-pink-900"
-            },
-            {
-              icon: Search,
-              title: "Discover Services",
-              description: "Find and offer services in your community",
-              color: "from-yellow-200 to-yellow-300",
-              textColor: "text-yellow-900"
-            },
-            {
-              icon: Calendar,
-              title: "Easy Bookings",
-              description: "Seamless booking experience with visual connections",
-              color: "from-emerald-200 to-emerald-300",
-              textColor: "text-emerald-900"
-            },
-            {
-              icon: Sparkles,
-              title: "Beautiful Design",
-              description: "Soft, minimal interface that feels alive",
-              color: "from-purple-200 to-purple-300",
-              textColor: "text-purple-900"
-            }
-          ].map((feature, index) => (
+        <div className="relative">
+          {/* Grid with connecting threads */}
+          <div className="grid md:grid-cols-4 gap-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+                className="relative"
+              >
+                {/* Thread connecting to center */}
+                {index > 0 && (
+                  <div className="absolute -top-6 left-1/2 w-0.5 h-6 bg-gradient-to-b from-purple-300 to-transparent" />
+                )}
+                
+                <div className={`bg-gradient-to-br ${feature.color} rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow h-full`}>
+                  <div className="mb-4">
+                    <feature.icon className={`h-10 w-10 ${feature.textColor}`} strokeWidth={1.5} />
+                  </div>
+                  <h3 className={`text-xl font-bold mb-3 ${feature.textColor}`}>
+                    {feature.title}
+                  </h3>
+                  <p className={`text-sm ${feature.textColor} opacity-80`}>
+                    {feature.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Central connecting thread animation */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
             <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-              className={`bg-gradient-to-br ${feature.color} rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow`}
-            >
-              <div className="mb-4">
-                <feature.icon className={`h-10 w-10 ${feature.textColor}`} strokeWidth={1.5} />
-              </div>
-              <h3 className={`text-xl font-bold mb-3 ${feature.textColor}`}>
-                {feature.title}
-              </h3>
-              <p className={`text-sm ${feature.textColor} opacity-80`}>
-                {feature.description}
-              </p>
-            </motion.div>
-          ))}
+              className="w-96 h-1 bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 rounded-full blur-sm"
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity }}
+            />
+          </div>
         </div>
       </div>
     </div>
