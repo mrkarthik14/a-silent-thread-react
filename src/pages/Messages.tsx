@@ -28,6 +28,7 @@ export default function Messages() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   
   // Track presence
   usePresence();
@@ -117,6 +118,16 @@ export default function Messages() {
       }
     } catch (error) {
       toast.error("Failed to send message");
+    }
+  };
+
+  const handleCancelUpload = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsUploading(false);
+      setUploadProgress(0);
+      toast.info("Upload cancelled");
     }
   };
 
@@ -300,7 +311,17 @@ export default function Messages() {
                       <span className="text-xs font-medium text-slate-600">Uploading...</span>
                       <span className="text-xs font-semibold text-purple-600">{Math.round(uploadProgress)}%</span>
                     </div>
-                    <Progress value={uploadProgress} className="h-2 rounded-full" />
+                    <div className="flex gap-2 items-center">
+                      <Progress value={uploadProgress} className="h-2 rounded-full flex-1" />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleCancelUpload}
+                        className="h-6 w-6 p-0 hover:bg-red-100 active:scale-95 transition-all duration-150"
+                      >
+                        <X className="h-4 w-4 text-red-500" strokeWidth={2} />
+                      </Button>
+                    </div>
                   </motion.div>
                 )}
                 <div className="flex gap-2">
