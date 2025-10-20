@@ -216,11 +216,11 @@ export function Sidebar() {
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
-                      className={`w-full gap-3 hover:bg-purple-100/50 rounded-xl text-slate-900 ${isCollapsed ? "justify-center" : "justify-start"}`}
+                      className={`w-full gap-3 hover:bg-purple-100/50 rounded-xl text-black font-bold ${isCollapsed ? "justify-center" : "justify-start"}`}
                       onClick={() => navigate(item.path)}
                       title={item.label}
                     >
-                      <item.icon className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
+                      <item.icon className="h-5 w-5 text-black flex-shrink-0" strokeWidth={2.5} />
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
