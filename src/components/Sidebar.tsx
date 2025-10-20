@@ -13,6 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { UserSearch } from "@/components/UserSearch";
+import { LoadingLogo } from "@/components/LoadingLogo";
 
 export function Sidebar() {
   const navigate = useNavigate();
