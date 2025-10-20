@@ -386,66 +386,9 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </Button>
             </div>
 
-            {post.type === "service" && currentUser?._id !== post.user?._id && (
-              <Button
-                onClick={() => setBookingDialogOpen(true)}
-                className="w-full rounded-xl bg-gradient-to-br from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white active:scale-95 transition-all duration-150 mt-3"
-              >
-                Book Now
-              </Button>
-            )}
           </div>
         </div>
       </Card>
-
-      {/* Booking Dialog */}
-      <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
-        <DialogContent className="rounded-2xl max-w-md">
-          <DialogHeader>
-            <DialogTitle>Book {post.serviceDetails?.title}</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <Label>Preferred Date</Label>
-              <Input
-                type="date"
-                value={bookingDate}
-                onChange={(e) => setBookingDate(e.target.value)}
-                className="rounded-xl"
-              />
-            </div>
-
-            <div>
-              <Label>Message</Label>
-              <Textarea
-                value={bookingMessage}
-                onChange={(e) => setBookingMessage(e.target.value)}
-                placeholder="Tell the owner about your booking request..."
-                className="rounded-xl resize-none"
-                rows={3}
-              />
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                onClick={handleBooking}
-                disabled={isBooking}
-                className="flex-1 rounded-xl active:scale-95 transition-all duration-150 disabled:opacity-70"
-              >
-                {isBooking ? "Booking..." : "Send Request"}
-              </Button>
-              <Button
-                onClick={() => setBookingDialogOpen(false)}
-                variant="outline"
-                className="flex-1 rounded-xl active:scale-95 transition-all duration-150"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Edit Post Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
