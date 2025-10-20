@@ -225,7 +225,7 @@ export function Sidebar() {
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden whitespace-nowrap"
+                        className="overflow-hidden whitespace-nowrap font-bold text-black"
                       >
                         {item.label}
                       </motion.span>
