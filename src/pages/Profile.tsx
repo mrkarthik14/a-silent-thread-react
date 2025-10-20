@@ -319,16 +319,45 @@ export default function Profile() {
                 </div>
 
                 {/* Follower/Following counts */}
-                <div className="flex gap-6">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-slate-900">{followerCount}</p>
+                <motion.div 
+                  className="flex gap-6"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <motion.button
+                    onClick={() => {}}
+                    className="text-center hover:scale-110 active:scale-95 transition-transform"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.p 
+                      className="text-2xl font-bold text-slate-900"
+                      key={followerCount}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {followerCount}
+                    </motion.p>
                     <p className="text-xs text-slate-600">Followers</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-slate-900">{followingCount}</p>
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {}}
+                    className="text-center hover:scale-110 active:scale-95 transition-transform"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.p 
+                      className="text-2xl font-bold text-slate-900"
+                      key={followingCount}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {followingCount}
+                    </motion.p>
                     <p className="text-xs text-slate-600">Following</p>
-                  </div>
-                </div>
+                  </motion.button>
+                </motion.div>
               </div>
 
               {profileData?.bio && (
