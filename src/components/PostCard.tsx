@@ -198,7 +198,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 <div className="font-semibold text-sm mb-1 text-slate-900">{post.serviceDetails.title}</div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-600">{post.serviceDetails.category}</span>
-                  <span className="font-bold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
+                  <span className="font-bold text-sm text-slate-900 font-extrabold">₹{post.serviceDetails.price}/day</span>
                 </div>
               </div>
             )}
