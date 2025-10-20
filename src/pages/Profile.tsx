@@ -232,13 +232,20 @@ export default function Profile() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="relative h-64 bg-gradient-to-br from-purple-300 to-blue-300 rounded-b-3xl overflow-hidden"
+            className="relative h-64 bg-gradient-to-br from-purple-300 to-blue-300 rounded-b-3xl overflow-hidden group cursor-pointer"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
           >
             {coverImageUrl ? (
-              <img src={coverImageUrl} alt="Cover" className="w-full h-full object-cover" />
+              <motion.img 
+                src={coverImageUrl} 
+                alt="Cover" 
+                className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+              />
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Camera className="h-12 w-12 text-white/50" strokeWidth={1.5} />
+              <div className="w-full h-full flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300">
+                <Camera className="h-12 w-12 text-white/50 group-hover:text-white/80 transition-colors duration-300" strokeWidth={1.5} />
               </div>
             )}
           </motion.div>
