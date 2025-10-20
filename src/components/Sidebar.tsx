@@ -317,7 +317,7 @@ export function Sidebar() {
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
           <DialogHeader>
-            <DialogTitle>Create New Post</DialogTitle>
+            <DialogTitle>Posts, Listings & Places</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
