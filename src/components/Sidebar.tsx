@@ -312,25 +312,27 @@ export function Sidebar() {
           {/* ================================================================
               FOOTER: User Info & Sign Out
               ================================================================ */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isCollapsed ? 0 : 1 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={`border-t border-slate-200 pt-4 space-y-2 overflow-hidden ${isCollapsed ? "hidden" : ""}`}
-          >
-            <div className="px-3 py-2 bg-white/50 rounded-xl">
-              <p className="text-sm font-medium truncate text-slate-900">{user?.name || "User"}</p>
-              <p className="text-xs text-slate-600 truncate">{user?.email}</p>
-            </div>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150"
-              onClick={() => signOut()}
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="border-t border-slate-200 pt-4 space-y-2"
             >
-              <LogOut className="h-5 w-5" strokeWidth={1.5} />
-              <span>Sign Out</span>
-            </Button>
-          </motion.div>
+              <div className="px-3 py-2 bg-white/50 rounded-xl">
+                <p className="text-sm font-medium truncate text-slate-900">{user?.name || "User"}</p>
+                <p className="text-xs text-slate-600 truncate">{user?.email}</p>
+              </div>
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150"
+                onClick={() => signOut()}
+              >
+                <LogOut className="h-5 w-5" strokeWidth={1.5} />
+                <span>Sign Out</span>
+              </Button>
+            </motion.div>
+          )}
         </motion.div>
       </TooltipProvider>
 
