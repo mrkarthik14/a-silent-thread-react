@@ -33,6 +33,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     post.user?._id ? { userId: post.user._id } : "skip"
   );
 
+  // Get user profile image URL
+  const userImageUrl = useQuery(
+    api.files.getImageUrl,
+    post.user?.image ? { storageId: post.user.image } : "skip"
+  );
+
   // Update local state when query result changes
   useEffect(() => {
     if (userHasLiked !== undefined) {
@@ -65,7 +71,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
         <div className="flex gap-3">
           <div className="relative">
             <Avatar className="h-10 w-10 border-2 border-white">
-              <AvatarImage src={post.user?.image} />
+              <AvatarImage src={userImageUrl || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
                 {post.user?.name?.[0] || "U"}
               </AvatarFallback>
