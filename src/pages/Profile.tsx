@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { LoadingLogo } from "@/components/LoadingLogo";
 
 export default function Profile() {
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -379,20 +380,7 @@ export default function Profile() {
                 className="flex-1 rounded-xl"
               >
                 {isUpdating ? (
-                  <>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-4 h-4 mr-2"
-                    >
-                      <img
-                        src="https://harmless-tapir-303.convex.cloud/api/storage/1d202220-a6f3-4d1f-bc57-9727f260a5f6"
-                        alt="Loading"
-                        className="w-full h-full"
-                      />
-                    </motion.div>
-                    Saving...
-                  </>
+                  <LoadingLogo size="sm" />
                 ) : (
                   "Save Changes"
                 )}

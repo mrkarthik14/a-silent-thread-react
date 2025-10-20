@@ -19,6 +19,8 @@ interface UserSearchProps {
 
 export function UserSearch({ open, onOpenChange }: UserSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [followingId, setFollowingId] = useState<string | null>(null);
+  const [messagingId, setMessagingId] = useState<string | null>(null);
   const navigate = useNavigate();
   
   const searchResults = useQuery(api.search.searchUsers, { query: searchQuery });
@@ -32,17 +34,24 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
   );
 
   const handleFollow = async (userId: Id<"users">) => {
+    setFollowingId(userId);
     try {
       const result = await followUser({ userId });
       toast.success(result.following ? "Followed user" : "Unfollowed user");
     } catch (error) {
       toast.error("Failed to follow user");
+    } finally {
+      setFollowingId(null);
     }
   };
 
   const handleMessage = (userId: Id<"users">) => {
-    navigate("/messages");
-    onOpenChange(false);
+    setMessagingId(userId);
+    setTimeout(() => {
+      navigate("/messages");
+      setMessagingId(null);
+      onOpenChange(false);
+    }, 500);
   };
 
   return (
@@ -66,6 +75,8 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
           <div className="space-y-2">
             {searchResults?.map((user, index) => {
               const isOnline = presenceMap?.[user._id] || false;
+              const isFollowing = followingId === user._id;
+              const isMessaging = messagingId === user._id;
               
               return (
                 <motion.div
@@ -98,17 +109,27 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
                       size="sm"
                       variant="outline"
                       onClick={() => handleFollow(user._id)}
+                      disabled={isFollowing}
                       className="rounded-xl"
                     >
-                      <UserPlus className="h-4 w-4" strokeWidth={1.5} />
+                      {isFollowing ? (
+                        <LoadingLogo size="sm" />
+                      ) : (
+                        <UserPlus className="h-4 w-4" strokeWidth={1.5} />
+                      )}
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleMessage(user._id)}
+                      disabled={isMessaging}
                       className="rounded-xl"
                     >
-                      <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
+                      {isMessaging ? (
+                        <LoadingLogo size="sm" />
+                      ) : (
+                        <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
+                      )}
                     </Button>
                   </div>
                 </motion.div>
