@@ -112,3 +112,18 @@ export const markAsRead = mutation({
     );
   },
 });
+
+export const markMessageAsRead = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    if (message.recipientId === user._id && !message.read) {
+      await ctx.db.patch(args.messageId, { read: true });
+    }
+  },
+});

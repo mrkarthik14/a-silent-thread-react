@@ -199,14 +199,27 @@ export default function Messages() {
                       animate={{ opacity: 1, y: 0 }}
                       className={`flex ${msg.senderId === user?._id ? "justify-end" : "justify-start"}`}
                     >
-                      <div
-                        className={`max-w-xs px-4 py-2 rounded-2xl shadow-sm ${
-                          msg.senderId === user?._id
-                            ? "bg-gradient-to-br from-purple-400 to-blue-400 text-white"
-                            : "bg-white border border-slate-200 text-slate-900"
-                        }`}
-                      >
-                        <p className="text-sm">{msg.content}</p>
+                      <div className="flex flex-col gap-1">
+                        <div
+                          className={`max-w-xs px-4 py-2 rounded-2xl shadow-sm ${
+                            msg.senderId === user?._id
+                              ? "bg-gradient-to-br from-purple-400 to-blue-400 text-white"
+                              : "bg-white border border-slate-200 text-slate-900"
+                          }`}
+                        >
+                          <p className="text-sm">{msg.content}</p>
+                        </div>
+                        {msg.senderId === user?._id && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="flex items-center gap-1 px-4"
+                          >
+                            <span className="text-xs text-slate-500">
+                              {msg.read ? "✓✓ Read" : "✓ Sent"}
+                            </span>
+                          </motion.div>
+                        )}
                       </div>
                     </motion.div>
                   ))}
