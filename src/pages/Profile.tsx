@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LoadingLogo } from "@/components/LoadingLogo";
-import { Id } from "@/convex/_generated/dataModel";
+import { Id, Doc } from "@/convex/_generated/dataModel";
 
 export default function Profile() {
   const { isLoading, isAuthenticated, user: currentUser } = useAuth();
