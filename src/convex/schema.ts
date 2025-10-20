@@ -73,6 +73,17 @@ const schema = defineSchema(
       recipientId: v.id("users"),
       content: v.string(),
       read: v.boolean(),
+      messageType: v.optional(v.union(
+        v.literal("text"),
+        v.literal("image"),
+        v.literal("video"),
+        v.literal("file"),
+        v.literal("gif")
+      )),
+      mediaUrl: v.optional(v.string()),
+      fileName: v.optional(v.string()),
+      fileSize: v.optional(v.number()),
+      fileType: v.optional(v.string()),
     }).index("by_sender", ["senderId"])
       .index("by_recipient", ["recipientId"]),
 

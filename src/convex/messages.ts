@@ -6,6 +6,17 @@ export const send = mutation({
   args: {
     recipientId: v.id("users"),
     content: v.string(),
+    messageType: v.optional(v.union(
+      v.literal("text"),
+      v.literal("image"),
+      v.literal("video"),
+      v.literal("file"),
+      v.literal("gif")
+    )),
+    mediaUrl: v.optional(v.string()),
+    fileName: v.optional(v.string()),
+    fileSize: v.optional(v.number()),
+    fileType: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
@@ -16,7 +27,19 @@ export const send = mutation({
       recipientId: args.recipientId,
       content: args.content,
       read: false,
+      messageType: args.messageType,
+      mediaUrl: args.mediaUrl,
+      fileName: args.fileName,
+      fileSize: args.fileSize,
+      fileType: args.fileType,
     });
+  },
+});
+
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
   },
 });
 
