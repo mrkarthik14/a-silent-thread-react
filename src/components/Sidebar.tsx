@@ -256,7 +256,9 @@ export function Sidebar() {
                     onClick={() => setCreateDialogOpen(true)}
                     title="Create Post"
                   >
-                    <Plus className="h-5 w-5 flex-shrink-0 text-slate-900 hover:text-emerald-600 transition-colors" strokeWidth={2} />
+                    <div className="h-5 w-5 bg-black rounded flex items-center justify-center flex-shrink-0">
+                      <Plus className="h-4 w-4 text-white" strokeWidth={2.5} />
+                    </div>
                     {!isCollapsed && (
                       <span className="text-sm font-medium whitespace-nowrap">
                         Create Post
