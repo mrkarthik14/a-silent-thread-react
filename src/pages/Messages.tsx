@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/use-auth";
@@ -24,6 +25,8 @@ export default function Messages() {
   );
   const [message, setMessage] = useState("");
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Track presence
@@ -287,15 +290,29 @@ export default function Messages() {
               </ScrollArea>
 
               <div className="p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm sticky bottom-0">
+                {isUploading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-3 space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-slate-600">Uploading...</span>
+                      <span className="text-xs font-semibold text-purple-600">{Math.round(uploadProgress)}%</span>
+                    </div>
+                    <Progress value={uploadProgress} className="h-2 rounded-full" />
+                  </motion.div>
+                )}
                 <div className="flex gap-2">
                   <motion.div className="flex-1">
                     <Input
                       value={message}
                       onChange={(e) => handleTyping(e.target.value)}
                       placeholder="Type a message..."
-                      className="rounded-xl border-2 border-slate-200 bg-white/80 transition-all duration-200 focus:border-purple-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-slate-300 hover:bg-white/90"
+                      disabled={isUploading}
+                      className="rounded-xl border-2 border-slate-200 bg-white/80 transition-all duration-200 focus:border-purple-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-slate-300 hover:bg-white/90 disabled:opacity-50"
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
+                        if (e.key === "Enter" && !e.shiftKey && !isUploading) {
                           e.preventDefault();
                           handleSend();
                         }
@@ -308,7 +325,7 @@ export default function Messages() {
                   >
                     <Button
                       onClick={handleSend}
-                      disabled={!message.trim()}
+                      disabled={!message.trim() || isUploading}
                       className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 active:scale-95 transition-all duration-150 disabled:opacity-70"
                     >
                       <Send className="h-4 w-4" />
