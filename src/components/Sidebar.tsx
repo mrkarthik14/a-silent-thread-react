@@ -330,13 +330,13 @@ export function Sidebar() {
                 onClick={() => signOut()}
               >
                 <motion.div 
-                  className="h-10 w-10 rounded-lg flex items-center justify-center bg-transparent hover:bg-red-200/60 transition-colors duration-200"
+                  className="h-10 w-10 rounded-lg flex items-center justify-center bg-transparent hover:bg-gradient-to-br hover:from-red-200 hover:to-pink-200 transition-colors duration-200"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <LogOut className="h-6 w-6 text-slate-900" strokeWidth={2.5} />
+                  <LogOut className="h-6 w-6 text-slate-900 hover:text-slate-700 transition-colors" strokeWidth={2.5} />
                 </motion.div>
-                <span>Sign Out</span>
+                <span className="text-sm font-medium">Sign Out</span>
               </Button>
             </motion.div>
           )}
