@@ -44,7 +44,6 @@ const schema = defineSchema(
         title: v.string(),
         price: v.number(),
         category: v.string(),
-        location: v.optional(v.string()),
       })),
       parentId: v.optional(v.id("posts")),
       likes: v.number(),

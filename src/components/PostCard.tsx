@@ -165,46 +165,17 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               />
             )}
 
-            {/* Display multiple images with details panel */}
+            {/* Display multiple images */}
             {imageUrls.length > 0 && (
-              <div className="flex gap-3 mb-3">
-                <div className="grid grid-cols-2 gap-2 flex-1">
-                  {imageUrls.map((url, idx) => url && (
-                    <img 
-                      key={idx}
-                      src={url} 
-                      alt={`Post image ${idx + 1}`} 
-                      className="rounded-xl w-full object-cover max-h-64"
-                    />
-                  ))}
-                </div>
-                
-                {post.serviceDetails && (
-                  <motion.div 
-                    className="w-40 bg-white/60 rounded-xl p-3 border border-white/50 flex flex-col justify-between"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    <div className="space-y-2">
-                      <div>
-                        <h4 className="font-bold text-sm text-slate-900 line-clamp-2">{post.serviceDetails.title}</h4>
-                        <p className="text-xs text-slate-600 mt-1">{post.serviceDetails.category}</p>
-                      </div>
-                      
-                      {post.serviceDetails.location && (
-                        <p className="text-xs text-slate-600 flex items-center gap-1">
-                          📍 {post.serviceDetails.location}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="pt-2 border-t border-white/30">
-                      <p className="font-bold text-lg text-slate-900">₹{post.serviceDetails.price}</p>
-                      <p className="text-xs text-slate-600">/day</p>
-                    </div>
-                  </motion.div>
-                )}
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {imageUrls.map((url, idx) => url && (
+                  <img 
+                    key={idx}
+                    src={url} 
+                    alt={`Post image ${idx + 1}`} 
+                    className="rounded-xl w-full object-cover max-h-64"
+                  />
+                ))}
               </div>
             )}
 
