@@ -26,12 +26,15 @@ export default function Profile() {
   const [editInterests, setEditInterests] = useState("");
   const [editCoverImage, setEditCoverImage] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState("");
 
   // Track presence
   usePresence();
 
   const profileData = useQuery(api.profile.getCurrentUserProfile, {});
   const updateProfile = useMutation(api.profile.updateProfile);
+  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
 
   if (isLoading) {
     return (
@@ -67,7 +70,21 @@ export default function Profile() {
     setEditBio(profileData?.bio || "");
     setEditInterests(profileData?.interests?.join(", ") || "");
     setEditCoverImage(profileData?.coverImage || "");
+    setProfileImagePreview(profileData?.image || "");
+    setProfileImageFile(null);
     setEditDialogOpen(true);
+  };
+
+  const handleProfileImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -78,6 +95,20 @@ export default function Profile() {
 
     setIsUpdating(true);
     try {
+      let uploadedImageUrl = profileData?.image;
+
+      // Upload profile picture if selected
+      if (profileImageFile) {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": profileImageFile.type },
+          body: profileImageFile,
+        });
+        const { storageId } = await result.json();
+        uploadedImageUrl = storageId;
+      }
+
       const interestsArray = editInterests
         .split(",")
         .map((i) => i.trim())
@@ -88,6 +119,7 @@ export default function Profile() {
         bio: editBio,
         interests: interestsArray.length > 0 ? interestsArray : undefined,
         coverImage: editCoverImage || undefined,
+        image: uploadedImageUrl || undefined,
       });
 
       toast.success("Profile updated successfully");
@@ -127,12 +159,25 @@ export default function Profile() {
             className="px-6 pb-6"
           >
             <div className="flex items-end gap-4 -mt-16 mb-6">
-              <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
-                <AvatarImage src={profileData?.image} />
-                <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 text-2xl">
-                  {profileData?.name?.[0] || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+                  <AvatarImage src={profileData?.image} />
+                  <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 text-2xl">
+                    {profileData?.name?.[0] || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                {user?._id === profileData?._id && (
+                  <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                    <Camera className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleProfileImageSelect}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
 
               {user?._id === profileData?._id && (
                 <Button 
@@ -222,6 +267,32 @@ export default function Profile() {
           </DialogHeader>
 
           <div className="space-y-4">
+            <div>
+              <Label>Profile Picture</Label>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-20 w-20 border-2 border-slate-200">
+                  <AvatarImage src={profileImagePreview} />
+                  <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+                    {editName?.[0] || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <label className="cursor-pointer">
+                  <Button variant="outline" className="rounded-xl" asChild>
+                    <span>
+                      <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                      Upload Picture
+                    </span>
+                  </Button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfileImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
             <div>
               <Label>Name</Label>
               <Input

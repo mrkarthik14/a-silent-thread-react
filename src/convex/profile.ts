@@ -58,6 +58,7 @@ export const updateProfile = mutation({
     bio: v.optional(v.string()),
     interests: v.optional(v.array(v.string())),
     coverImage: v.optional(v.string()),
+    image: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
@@ -68,6 +69,7 @@ export const updateProfile = mutation({
     if (args.bio !== undefined) updates.bio = args.bio;
     if (args.interests !== undefined) updates.interests = args.interests;
     if (args.coverImage !== undefined) updates.coverImage = args.coverImage;
+    if (args.image !== undefined) updates.image = args.image;
 
     await ctx.db.patch(user._id, updates);
     return await ctx.db.get(user._id);
