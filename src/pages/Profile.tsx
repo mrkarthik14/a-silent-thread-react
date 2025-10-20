@@ -34,6 +34,12 @@ export default function Profile() {
   const [coverImagePreview, setCoverImagePreview] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [followersDialogOpen, setFollowersDialogOpen] = useState(false);
+  const [followingDialogOpen, setFollowingDialogOpen] = useState(false);
+  const [followersList, setFollowersList] = useState<any[]>([]);
+  const [followingList, setFollowingList] = useState<any[]>([]);
+  const [followerPage, setFollowerPage] = useState(0);
+  const [followingPage, setFollowingPage] = useState(0);
 
   // Track presence
   usePresence();
