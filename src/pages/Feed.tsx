@@ -10,10 +10,13 @@ import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
+import { GlobalSearch } from "@/components/GlobalSearch";
+import { useState } from "react";
 
 export default function Feed() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [searchOpen, setSearchOpen] = useState(false);
   
   // Track presence
   usePresence();
@@ -61,13 +64,15 @@ export default function Feed() {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-6 sticky top-0 z-10 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm"
+            className="mb-6 sticky top-0 z-10 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setSearchOpen(true)}
           >
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900" strokeWidth={1.5} />
               <Input
-                placeholder="Search threads..."
+                placeholder="Search threads, listings, users..."
                 className="pl-10 rounded-xl border-slate-200 bg-white"
+                readOnly
               />
             </div>
           </motion.div>
@@ -90,6 +95,8 @@ export default function Feed() {
           </div>
         </div>
       </div>
+
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 }
