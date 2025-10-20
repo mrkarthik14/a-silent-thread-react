@@ -326,7 +326,17 @@ export function Sidebar() {
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-4 h-4 mr-2"
+                  >
+                    <img
+                      src="https://harmless-tapir-303.convex.cloud/api/storage/1d202220-a6f3-4d1f-bc57-9727f260a5f6"
+                      alt="Loading"
+                      className="w-full h-full"
+                    />
+                  </motion.div>
                   Uploading...
                 </>
               ) : (

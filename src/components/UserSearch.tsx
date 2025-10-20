@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { Id } from "@/convex/_generated/dataModel";
+import { LoadingLogo } from "@/components/LoadingLogo";
 
 interface UserSearchProps {
   open: boolean;
