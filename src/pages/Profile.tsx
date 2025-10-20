@@ -6,19 +6,32 @@ import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
-import { Loader2, Camera } from "lucide-react";
-import { useQuery } from "convex/react";
+import { Loader2, Camera, X } from "lucide-react";
+import { useQuery, useMutation } from "convex/react";
 import { useNavigate } from "react-router";
 import { PostCard } from "@/components/PostCard";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export default function Profile() {
   const { isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [editInterests, setEditInterests] = useState("");
+  const [editCoverImage, setEditCoverImage] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Track presence
   usePresence();
 
   const profileData = useQuery(api.profile.getCurrentUserProfile, {});
+  const updateProfile = useMutation(api.profile.updateProfile);
 
   if (isLoading) {
     return (
@@ -47,6 +60,43 @@ export default function Profile() {
       return colors[(colorIndex + 1) % colors.length];
     }
     return colors[colorIndex];
+  };
+
+  const handleEditClick = () => {
+    setEditName(profileData?.name || "");
+    setEditBio(profileData?.bio || "");
+    setEditInterests(profileData?.interests?.join(", ") || "");
+    setEditCoverImage(profileData?.coverImage || "");
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!editName.trim()) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const interestsArray = editInterests
+        .split(",")
+        .map((i) => i.trim())
+        .filter((i) => i.length > 0);
+
+      await updateProfile({
+        name: editName,
+        bio: editBio,
+        interests: interestsArray.length > 0 ? interestsArray : undefined,
+        coverImage: editCoverImage || undefined,
+      });
+
+      toast.success("Profile updated successfully");
+      setEditDialogOpen(false);
+    } catch (error) {
+      toast.error("Failed to update profile");
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
@@ -85,7 +135,10 @@ export default function Profile() {
               </Avatar>
 
               {user?._id === profileData?._id && (
-                <Button className="rounded-xl mb-2">
+                <Button 
+                  onClick={handleEditClick}
+                  className="rounded-xl mb-2"
+                >
                   <Camera className="h-4 w-4 mr-2" strokeWidth={1.5} />
                   Edit Profile
                 </Button>
@@ -160,6 +213,82 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Name</Label>
+              <Input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Your name"
+                className="rounded-xl"
+              />
+            </div>
+
+            <div>
+              <Label>Bio</Label>
+              <Textarea
+                value={editBio}
+                onChange={(e) => setEditBio(e.target.value)}
+                placeholder="Tell us about yourself"
+                className="rounded-xl resize-none"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label>Interests (comma-separated)</Label>
+              <Input
+                value={editInterests}
+                onChange={(e) => setEditInterests(e.target.value)}
+                placeholder="e.g., Photography, Travel, Music"
+                className="rounded-xl"
+              />
+            </div>
+
+            <div>
+              <Label>Cover Image URL</Label>
+              <Input
+                value={editCoverImage}
+                onChange={(e) => setEditCoverImage(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                className="rounded-xl"
+              />
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={handleSaveProfile}
+                disabled={isUpdating}
+                className="flex-1 rounded-xl"
+              >
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+              <Button
+                onClick={() => setEditDialogOpen(false)}
+                variant="outline"
+                className="flex-1 rounded-xl"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
