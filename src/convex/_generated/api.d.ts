@@ -17,6 +17,7 @@ import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as auth from "../auth.js";
 import type * as bookings from "../bookings.js";
 import type * as comments from "../comments.js";
+import type * as emails from "../emails.js";
 import type * as files from "../files.js";
 import type * as follows from "../follows.js";
 import type * as http from "../http.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   bookings: typeof bookings;
   comments: typeof comments;
+  emails: typeof emails;
   files: typeof files;
   follows: typeof follows;
   http: typeof http;
