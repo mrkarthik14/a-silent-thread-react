@@ -187,15 +187,17 @@ export function Sidebar() {
               <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-lg">🧵</span>
               </div>
-              <motion.div
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="overflow-hidden"
-              >
-                <h1 className="font-bold text-lg tracking-tight text-slate-900 whitespace-nowrap">A Silent Thread</h1>
-                <p className="text-xs text-slate-600 whitespace-nowrap">Connected experiences</p>
-              </motion.div>
+                {!isCollapsed && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <h1 className="font-bold text-lg tracking-tight text-slate-900 whitespace-nowrap">A Silent Thread</h1>
+                    <p className="text-xs text-slate-600 whitespace-nowrap">Connected experiences</p>
+                  </motion.div>
+                )}
             </div>
           </div>
 
