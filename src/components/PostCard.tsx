@@ -85,9 +85,10 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     if (!post.user?._id) return;
     setLoadingAction("follow");
     try {
-      await followMutation({ userId: post.user._id });
-      setIsFollowing(!isFollowing);
-      toast.success(isFollowing ? "Unfollowed" : "Following!");
+      const result = await followMutation({ userId: post.user._id });
+      // Update state based on the mutation result
+      setIsFollowing(result.following);
+      toast.success(result.following ? "Following!" : "Unfollowed");
     } catch (error) {
       toast.error("Failed to follow user");
     } finally {
