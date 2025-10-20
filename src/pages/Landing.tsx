@@ -97,46 +97,92 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* Feature Cards with Thread Connections */}
+      {/* Feature Cards with Zig-Zag Thread Connections */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         <div className="relative">
-          {/* Grid with connecting threads */}
-          <div className="grid md:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-                className="relative"
-              >
-                {/* Thread connecting to center */}
-                {index > 0 && (
-                  <div className="absolute -top-6 left-1/2 w-0.5 h-6 bg-gradient-to-b from-purple-300 to-transparent" />
-                )}
-                
-                <div className={`bg-gradient-to-br ${feature.color} rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow h-full`}>
-                  <div className="mb-4">
-                    <feature.icon className={`h-10 w-10 ${feature.textColor}`} strokeWidth={1.5} />
+          {/* Zig-zag grid layout */}
+          <div className="flex flex-col gap-12">
+            {features.map((feature, index) => {
+              const isEven = index % 2 === 0;
+              return (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+                  className={`flex ${isEven ? "justify-start" : "justify-end"} relative`}
+                >
+                  {/* Animated thread connecting cards */}
+                  {index > 0 && (
+                    <motion.svg
+                      className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-12 pointer-events-none"
+                      width="200"
+                      height="100"
+                      viewBox="0 0 200 100"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                    >
+                      {/* Purple thread */}
+                      <motion.path
+                        d="M 100 0 Q 100 50 100 100"
+                        stroke="url(#purpleGradient)"
+                        strokeWidth="3"
+                        fill="none"
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ delay: 0.4 + index * 0.1, duration: 0.8 }}
+                      />
+                      {/* Red thread */}
+                      <motion.path
+                        d="M 100 0 Q 100 50 100 100"
+                        stroke="url(#redGradient)"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeDasharray="5,5"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 0.8 }}
+                        transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
+                      />
+                      <defs>
+                        <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#c084fc" />
+                          <stop offset="100%" stopColor="#a855f7" />
+                        </linearGradient>
+                        <linearGradient id="redGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#f87171" />
+                          <stop offset="100%" stopColor="#dc2626" />
+                        </linearGradient>
+                      </defs>
+                    </motion.svg>
+                  )}
+                  
+                  <div className="w-full md:w-1/2 px-4">
+                    <motion.div
+                      className={`bg-gradient-to-br ${feature.color} rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow h-full`}
+                      whileHover={{ scale: 1.02, y: -4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <motion.div 
+                        className="mb-4"
+                        animate={{ y: [0, -8, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+                      >
+                        <feature.icon className={`h-10 w-10 ${feature.textColor}`} strokeWidth={1.5} />
+                      </motion.div>
+                      <h3 className={`text-xl font-bold mb-3 ${feature.textColor}`}>
+                        {feature.title}
+                      </h3>
+                      <p className={`text-sm ${feature.textColor} opacity-80`}>
+                        {feature.description}
+                      </p>
+                    </motion.div>
                   </div>
-                  <h3 className={`text-xl font-bold mb-3 ${feature.textColor}`}>
-                    {feature.title}
-                  </h3>
-                  <p className={`text-sm ${feature.textColor} opacity-80`}>
-                    {feature.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Central connecting thread animation */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-            <motion.div
-              className="w-96 h-1 bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 rounded-full blur-sm"
-              animate={{ opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
