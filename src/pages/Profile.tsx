@@ -407,9 +407,15 @@ export default function Profile() {
                   profileData.posts.map((post, idx) => (
                     <motion.div
                       key={post._id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.1 }}
+                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                      transition={{ 
+                        delay: idx * 0.1,
+                        duration: 0.4,
+                        ease: "easeOut"
+                      }}
+                      whileHover={{ scale: 1.02, y: -4 }}
                       className="relative"
                     >
                       {/* Connection thread lines */}
