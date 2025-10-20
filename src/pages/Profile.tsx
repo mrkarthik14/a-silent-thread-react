@@ -97,6 +97,8 @@ export default function Profile() {
     return null;
   }
 
+  const ITEMS_PER_PAGE = 10;
+
   const colors = [
     "bg-gradient-to-br from-pink-100 to-pink-200",
     "bg-gradient-to-br from-yellow-100 to-yellow-200",
