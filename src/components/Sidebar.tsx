@@ -400,7 +400,7 @@ export function Sidebar() {
                     />
                   </div>
                   <div>
-                    <Label>Price per day ($)</Label>
+                    <Label>Price per day (₹)</Label>
                     <Input
                       type="number"
                       value={servicePrice}
