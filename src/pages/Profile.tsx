@@ -90,6 +90,13 @@ export default function Profile() {
     targetUserId && !isOwnProfile ? { userId: targetUserId } : "skip"
   );
 
+  // Sync the query result with local state
+  useEffect(() => {
+    if (checkIsFollowing !== undefined && !isOwnProfile) {
+      setIsFollowing(checkIsFollowing);
+    }
+  }, [checkIsFollowing, isOwnProfile]);
+
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
