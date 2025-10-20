@@ -14,6 +14,7 @@ import Feed from "./pages/Feed.tsx";
 import Services from "./pages/Services.tsx";
 import Messages from "./pages/Messages.tsx";
 import Bookings from "./pages/Bookings.tsx";
+import Profile from "./pages/Profile.tsx";
 import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);

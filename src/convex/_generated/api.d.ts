@@ -23,6 +23,7 @@ import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as posts from "../posts.js";
 import type * as presence from "../presence.js";
+import type * as profile from "../profile.js";
 import type * as search from "../search.js";
 import type * as share from "../share.js";
 import type * as typingIndicators from "../typingIndicators.js";
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   messages: typeof messages;
   posts: typeof posts;
   presence: typeof presence;
+  profile: typeof profile;
   search: typeof search;
   share: typeof share;
   typingIndicators: typeof typingIndicators;

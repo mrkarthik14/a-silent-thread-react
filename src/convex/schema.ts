@@ -29,6 +29,8 @@ const schema = defineSchema(
       bio: v.optional(v.string()),
       location: v.optional(v.string()),
       lastSeen: v.optional(v.number()),
+      coverImage: v.optional(v.string()),
+      interests: v.optional(v.array(v.string())),
     }).index("email", ["email"]),
 
     posts: defineTable({
