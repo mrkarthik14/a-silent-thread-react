@@ -369,23 +369,27 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 <span className="text-xs text-slate-900">{post.likes}</span>
               </Button>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
-                onClick={onReply}
-              >
-                <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
-                <span className="text-xs text-slate-900">{post.replies}</span>
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
-              >
-                <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
-              </Button>
+              {!post.serviceDetails && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
+                    onClick={onReply}
+                  >
+                    <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                    <span className="text-xs text-slate-900">{post.replies}</span>
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
+                  >
+                    <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                  </Button>
+                </>
+              )}
             </div>
 
           </div>
