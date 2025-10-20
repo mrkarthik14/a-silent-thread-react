@@ -16,6 +16,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
+import { BookingDialog } from "@/components/BookingDialog";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -35,6 +36,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [editCategory, setEditCategory] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editLocation, setEditLocation] = useState("");
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -472,6 +474,13 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Booking Dialog */}
+      <BookingDialog
+        open={bookingDialogOpen}
+        onOpenChange={setBookingDialogOpen}
+        serviceId={post._id}
+      />
     </motion.div>
   );
 }
