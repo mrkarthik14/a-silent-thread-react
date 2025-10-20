@@ -48,6 +48,7 @@ export default function Messages() {
   const sendMessage = useMutation(api.messages.send);
   const setTyping = useMutation(api.typingIndicators.setTyping);
   const clearTyping = useMutation(api.typingIndicators.clearTyping);
+  const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
 
   // Clear typing indicator on unmount or when changing conversations
   useEffect(() => {

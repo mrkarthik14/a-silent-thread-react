@@ -42,11 +42,12 @@ export default function Profile() {
   const targetUserId = paramUserId ? (paramUserId as Id<"users">) : currentUser?._id;
 
   // Fetch profile data
+  const profileDataArgs = isOwnProfile ? {} : (targetUserId ? { userId: targetUserId } : "skip");
   const profileData = useQuery(
     isOwnProfile 
       ? api.profile.getCurrentUserProfile 
       : api.profile.getUserProfile,
-    isOwnProfile ? {} : (targetUserId ? { userId: targetUserId } : "skip")
+    profileDataArgs as any
   );
 
   const updateProfile = useMutation(api.profile.updateProfile);
@@ -63,15 +64,18 @@ export default function Profile() {
     profileData?.coverImage ? { storageId: profileData.coverImage } : "skip"
   );
 
-  // Get follower/following counts
+  // Get follower/following counts - only query when profileData is available
+  const followerCountArgs = profileData ? { userId: profileData._id } : "skip";
   const followerCount = useQuery(
     api.follows.getFollowerCount,
-    profileData ? { userId: profileData._id } : "skip"
-  );
+    followerCountArgs as any
+  ) ?? 0;
+
+  const followingCountArgs = profileData ? { userId: profileData._id } : "skip";
   const followingCount = useQuery(
     api.follows.getFollowingCount,
-    profileData ? { userId: profileData._id } : "skip"
-  );
+    followingCountArgs as any
+  ) ?? 0;
 
   // Check if following this user
   const checkIsFollowing = useQuery(
