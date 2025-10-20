@@ -312,18 +312,22 @@ export default function Profile() {
             </div>
 
             <div className="mb-6">
-              <h1 className="text-3xl font-bold text-slate-900 mb-1">{profileData?.name || "User"}</h1>
-              <p className="text-slate-600 mb-4">{profileData?.email}</p>
-
-              {/* Follower/Following counts */}
-              <div className="flex gap-6 mb-4">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-slate-900">{followerCount}</p>
-                  <p className="text-xs text-slate-600">Followers</p>
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900 mb-1">{profileData?.name || "User"}</h1>
+                  <p className="text-slate-600">{profileData?.email}</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-slate-900">{followingCount}</p>
-                  <p className="text-xs text-slate-600">Following</p>
+
+                {/* Follower/Following counts */}
+                <div className="flex gap-6">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-slate-900">{followerCount}</p>
+                    <p className="text-xs text-slate-600">Followers</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-slate-900">{followingCount}</p>
+                    <p className="text-xs text-slate-600">Following</p>
+                  </div>
                 </div>
               </div>
 
