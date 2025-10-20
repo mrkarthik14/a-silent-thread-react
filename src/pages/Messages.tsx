@@ -305,21 +305,29 @@ export default function Messages() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-3 space-y-2"
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-3 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-4 shadow-sm border border-purple-100"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-slate-600">Uploading...</span>
-                      <span className="text-xs font-semibold text-purple-600">{Math.round(uploadProgress)}%</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full"
+                        />
+                        <span className="text-sm font-semibold text-slate-900">Uploading file...</span>
+                      </div>
+                      <span className="text-sm font-bold text-purple-600">{Math.round(uploadProgress)}%</span>
                     </div>
-                    <div className="flex gap-2 items-center">
-                      <Progress value={uploadProgress} className="h-2 rounded-full flex-1" />
+                    <div className="flex gap-3 items-center">
+                      <Progress value={uploadProgress} className="h-2.5 rounded-full flex-1 bg-white/50" />
                       <Button
                         size="sm"
                         variant="ghost"
                         onClick={handleCancelUpload}
-                        className="h-6 w-6 p-0 hover:bg-red-100 active:scale-95 transition-all duration-150"
+                        className="h-8 w-8 p-0 rounded-xl hover:bg-red-100 hover:shadow-sm active:scale-95 transition-all duration-150"
                       >
-                        <X className="h-4 w-4 text-red-500" strokeWidth={2} />
+                        <X className="h-4 w-4 text-red-500" strokeWidth={2.5} />
                       </Button>
                     </div>
                   </motion.div>
