@@ -241,38 +241,6 @@ export function Sidebar() {
             ))}
 
             {/* ============================================================
-                ACTION: Search Users
-                ============================================================ */}
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: MENU_ITEMS.length * 0.05 }}
-            >
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className={`w-full gap-3 hover:bg-blue-100/50 rounded-xl text-slate-900 ${isCollapsed ? "justify-center" : "justify-start"}`}
-                    onClick={() => setSearchDialogOpen(true)}
-                    title="Search Users"
-                  >
-                    <Search className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
-                    {!isCollapsed && (
-                      <span className="whitespace-nowrap">
-                        Search Users
-                      </span>
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                {isCollapsed && (
-                  <TooltipContent side="right" className="rounded-xl">
-                    Search Users
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </motion.div>
-
-            {/* ============================================================
                 ACTION: Create Post
                 ============================================================ */}
             <motion.div
