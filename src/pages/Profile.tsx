@@ -247,50 +247,36 @@ export default function Profile() {
             </div>
           </motion.div>
 
-          {/* Posts and Services */}
+          {/* Posts and Services Grid */}
           <div className="px-6 pb-6">
-            <div className="grid gap-6">
-              {/* Services Section */}
-              {profileData?.posts && profileData.posts.some((p) => p.type === "service") && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <h2 className="text-2xl font-bold text-slate-900 mb-4">Services</h2>
-                  <div className="space-y-4">
-                    {profileData.posts
-                      .filter((p) => p.type === "service")
-                      .map((post, idx) => (
-                        <PostCard key={post._id} post={post} color={getColorForIndex(idx)} />
-                      ))}
+            <div className="relative">
+              {/* Combined grid of all posts and services */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max">
+                {profileData?.posts && profileData.posts.length > 0 ? (
+                  profileData.posts.map((post, idx) => (
+                    <motion.div
+                      key={post._id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="relative"
+                    >
+                      {/* Connection thread lines */}
+                      {idx > 0 && (
+                        <>
+                          <div className="absolute -top-8 left-1/2 w-0.5 h-8 bg-gradient-to-b from-purple-300 to-transparent" />
+                          <div className="absolute -left-8 top-1/2 h-0.5 w-8 bg-gradient-to-r from-purple-300 to-transparent" />
+                        </>
+                      )}
+                      <PostCard key={post._id} post={post} color={getColorForIndex(idx)} />
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12 text-slate-600">
+                    No posts yet
                   </div>
-                </motion.div>
-              )}
-
-              {/* Posts Section */}
-              {profileData?.posts && profileData.posts.some((p) => p.type === "post") && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <h2 className="text-2xl font-bold text-slate-900 mb-4">Posts</h2>
-                  <div className="space-y-4">
-                    {profileData.posts
-                      .filter((p) => p.type === "post")
-                      .map((post, idx) => (
-                        <PostCard key={post._id} post={post} color={getColorForIndex(idx)} />
-                      ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {!profileData?.posts || profileData.posts.length === 0 && (
-                <div className="text-center py-12 text-slate-600">
-                  No posts yet
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
