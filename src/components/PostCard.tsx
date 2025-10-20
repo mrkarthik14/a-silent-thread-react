@@ -108,7 +108,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                     key={idx}
                     src={url} 
                     alt={`Post image ${idx + 1}`} 
-                    className="rounded-xl w-full object-cover max-h-48"
+                    className="rounded-xl w-full object-cover max-h-64"
                   />
                 ))}
               </div>
