@@ -168,3 +168,67 @@ export const getReplies = query({
     );
   },
 });
+
+export const deletePost = mutation({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+    if (post.userId !== user._id) throw new Error("Unauthorized");
+
+    await ctx.db.delete(args.postId);
+    return { success: true };
+  },
+});
+
+export const updatePost = mutation({
+  args: {
+    postId: v.id("posts"),
+    content: v.string(),
+    serviceDetails: v.optional(v.object({
+      title: v.string(),
+      price: v.number(),
+      category: v.string(),
+      location: v.optional(v.string()),
+    })),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+    if (post.userId !== user._id) throw new Error("Unauthorized");
+
+    await ctx.db.patch(args.postId, {
+      content: args.content,
+      serviceDetails: args.serviceDetails,
+    });
+    return { success: true };
+  },
+});
+
+export const hidePost = mutation({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const existing = await ctx.db
+      .query("hiddenPosts")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+
+    const alreadyHidden = existing.some((h) => h.postId === args.postId);
+    if (alreadyHidden) return { success: true };
+
+    await ctx.db.insert("hiddenPosts", {
+      userId: user._id,
+      postId: args.postId,
+    });
+    return { success: true };
+  },
+});

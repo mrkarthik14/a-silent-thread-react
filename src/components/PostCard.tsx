@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
-import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2, MoreVertical, Trash2, Edit2, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Textarea } from "@/components/ui/textarea";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -26,6 +28,13 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editPrice, setEditPrice] = useState("");
+  const [editLocation, setEditLocation] = useState("");
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -75,6 +84,9 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
 
   const likePostMutation = useMutation(api.posts.like);
   const followMutation = useMutation(api.follows.follow);
+  const deletePostMutation = useMutation(api.posts.deletePost);
+  const updatePostMutation = useMutation(api.posts.updatePost);
+  const hidePostMutation = useMutation(api.posts.hidePost);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -105,6 +117,68 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const handleProfileClick = () => {
     if (post.user?._id) {
       navigate(`/profile/${post.user._id}`);
+    }
+  };
+
+  const handleEditClick = () => {
+    setEditContent(post.content);
+    setEditTitle(post.serviceDetails?.title || "");
+    setEditCategory(post.serviceDetails?.category || "");
+    setEditPrice(post.serviceDetails?.price?.toString() || "");
+    setEditLocation(post.serviceDetails?.location || "");
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editContent.trim()) {
+      toast.error("Content cannot be empty");
+      return;
+    }
+
+    setIsEditing(true);
+    try {
+      await updatePostMutation({
+        postId: post._id,
+        content: editContent,
+        serviceDetails: post.type === "service" ? {
+          title: editTitle,
+          price: parseFloat(editPrice),
+          category: editCategory,
+          location: editLocation || undefined,
+        } : undefined,
+      });
+      toast.success("Post updated successfully");
+      setEditDialogOpen(false);
+    } catch (error) {
+      toast.error("Failed to update post");
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    
+    setLoadingAction("delete");
+    try {
+      await deletePostMutation({ postId: post._id });
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete post");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleHidePost = async () => {
+    setLoadingAction("hide");
+    try {
+      await hidePostMutation({ postId: post._id });
+      toast.success("Post hidden");
+    } catch (error) {
+      toast.error("Failed to hide post");
+    } finally {
+      setLoadingAction(null);
     }
   };
 
@@ -142,16 +216,46 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
           </motion.div>
           
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span 
-                className="font-semibold text-sm text-slate-900 cursor-pointer hover:text-purple-600 transition-colors"
-                onClick={handleProfileClick}
-              >
-                {post.user?.name || "Anonymous"}
-              </span>
-              <span className="text-xs text-slate-500">
-                {new Date(post._creationTime).toLocaleDateString()}
-              </span>
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <div className="flex items-center gap-2">
+                <span 
+                  className="font-semibold text-sm text-slate-900 cursor-pointer hover:text-purple-600 transition-colors"
+                  onClick={handleProfileClick}
+                >
+                  {post.user?.name || "Anonymous"}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {new Date(post._creationTime).toLocaleDateString()}
+                </span>
+              </div>
+              
+              {/* Post Actions Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <MoreVertical className="h-4 w-4 text-slate-600" strokeWidth={1.5} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="rounded-xl">
+                  {currentUser?._id === post.user?._id ? (
+                    <>
+                      <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer">
+                        <Edit2 className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDeletePost} className="cursor-pointer text-red-600">
+                        <Trash2 className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                        Delete
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <DropdownMenuItem onClick={handleHidePost} className="cursor-pointer">
+                      <Eye className="h-4 w-4 mr-2" strokeWidth={1.5} />
+                      Not Interested
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             
             <p className="text-sm mb-3 leading-relaxed text-slate-800">{post.content}</p>
@@ -198,7 +302,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 <div className="font-semibold text-sm mb-1 text-slate-900">{post.serviceDetails.title}</div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-600">{post.serviceDetails.category}</span>
-                  <span className="font-bold text-sm text-slate-900 font-extrabold">₹{post.serviceDetails.price}/day</span>
+                  <span className="font-extrabold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
                 </div>
               </div>
             )}
@@ -272,6 +376,89 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
           </div>
         </div>
       </Card>
+
+      {/* Edit Post Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Post</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Content</Label>
+              <Textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                placeholder="What's on your mind?"
+                className="rounded-xl resize-none"
+                rows={4}
+              />
+            </div>
+
+            {post.type === "service" && (
+              <>
+                <div>
+                  <Label>Title</Label>
+                  <Input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="Service title"
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Category</Label>
+                    <Input
+                      value={editCategory}
+                      onChange={(e) => setEditCategory(e.target.value)}
+                      placeholder="e.g., Electronics"
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <Label>Price per day (₹)</Label>
+                    <Input
+                      type="number"
+                      value={editPrice}
+                      onChange={(e) => setEditPrice(e.target.value)}
+                      placeholder="50"
+                      className="rounded-xl"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label>Location</Label>
+                  <Input
+                    value={editLocation}
+                    onChange={(e) => setEditLocation(e.target.value)}
+                    placeholder="e.g., Downtown"
+                    className="rounded-xl"
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={handleSaveEdit}
+                disabled={isEditing}
+                className="flex-1 rounded-xl active:scale-95 transition-all duration-150 disabled:opacity-70"
+              >
+                {isEditing ? "Saving..." : "Save Changes"}
+              </Button>
+              <Button
+                onClick={() => setEditDialogOpen(false)}
+                variant="outline"
+                className="flex-1 rounded-xl active:scale-95 transition-all duration-150"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
