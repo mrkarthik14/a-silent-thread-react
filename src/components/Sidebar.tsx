@@ -183,8 +183,8 @@ export function Sidebar() {
           <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
             <div className="flex items-center gap-2">
               <img 
-                src="https://harmless-tapir-303.convex.cloud/api/storage/79ab2a66-3ee1-4b0c-a597-07fc7f8dfb0d" 
-                alt="A Silent Thread Logo" 
+                src="https://harmless-tapir-303.convex.cloud/api/storage/79ab2a66-3ee1-4b0c-a597-07fc7f8dfb0d"
+                alt="A Silent Thread Logo"
                 className="w-10 h-10 rounded-xl shadow-sm object-cover"
               />
                 {!isCollapsed && (
