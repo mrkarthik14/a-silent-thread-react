@@ -329,7 +329,7 @@ export function Sidebar() {
                 className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150 active:scale-95"
                 onClick={() => signOut()}
               >
-                <LogOut className="h-5 w-5 hover:text-red-600 transition-colors" strokeWidth={2.5} />
+                <LogOut className="h-6 w-6 hover:text-red-600 transition-colors" strokeWidth={2.5} />
                 <span>Sign Out</span>
               </Button>
             </motion.div>
