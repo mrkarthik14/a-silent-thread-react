@@ -292,14 +292,16 @@ export function Sidebar() {
                     title="Create Post"
                   >
                     <Plus className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden whitespace-nowrap"
-                    >
-                      Create Post
-                    </motion.span>
+                    {!isCollapsed && (
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: "auto" }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden whitespace-nowrap"
+                      >
+                        Create Post
+                      </motion.span>
+                    )}
                   </Button>
                 </TooltipTrigger>
                 {isCollapsed && (
