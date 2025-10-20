@@ -49,6 +49,13 @@ export default function Messages() {
     selectedUserId ? { userId: selectedUserId } : "skip"
   );
   
+  // Get selected user data and image
+  const selectedUserConv = conversations?.find(c => c.user?._id === selectedUserId);
+  const selectedUserImage = useQuery(
+    api.files.getImageUrl,
+    selectedUserConv?.user?.image ? { storageId: selectedUserConv.user.image } : "skip"
+  );
+  
   const sendMessage = useMutation(api.messages.send);
   const setTyping = useMutation(api.typingIndicators.setTyping);
   const clearTyping = useMutation(api.typingIndicators.clearTyping);

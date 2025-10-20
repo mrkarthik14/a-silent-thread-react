@@ -47,7 +47,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   // Check if current user is following the post author
   const checkIsFollowing = useQuery(
     api.follows.isFollowing,
-    post.user?._id ? { userId: post.user._id } : "skip"
+    post.user?._id && currentUser?._id !== post.user._id ? { userId: post.user._id } : "skip"
   );
 
   // Update local state when query result changes
