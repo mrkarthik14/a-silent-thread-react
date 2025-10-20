@@ -323,23 +323,10 @@ export function Sidebar() {
             <Button
               onClick={handleCreatePost}
               disabled={isUploading}
-              className="w-full rounded-xl"
+              className="w-full rounded-xl hover:bg-slate-100 active:scale-95 transition-all duration-150 disabled:opacity-70"
             >
               {isUploading ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 mr-2"
-                  >
-                    <img
-                      src="https://harmless-tapir-303.convex.cloud/api/storage/1d202220-a6f3-4d1f-bc57-9727f260a5f6"
-                      alt="Loading"
-                      className="w-full h-full"
-                    />
-                  </motion.div>
-                  Uploading...
-                </>
+                <LoadingLogo size="sm" variant="handshake" />
               ) : (
                 "Create"
               )}

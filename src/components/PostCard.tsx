@@ -142,17 +142,19 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:bg-white/50"
+                className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
                 onClick={handleLike}
               >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
+                <motion.div animate={isLiked ? { scale: [1, 1.2, 1] } : {}}>
+                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
+                </motion.div>
                 <span className="text-xs text-slate-900">{post.likes}</span>
               </Button>
               
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:bg-white/50"
+                className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
                 onClick={onReply}
               >
                 <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
@@ -162,7 +164,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 hover:bg-white/50"
+                className="h-8 hover:bg-white/50 active:scale-95 transition-all duration-150"
               >
                 <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
               </Button>

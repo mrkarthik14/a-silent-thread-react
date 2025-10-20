@@ -377,10 +377,10 @@ export default function Profile() {
               <Button
                 onClick={handleSaveProfile}
                 disabled={isUpdating}
-                className="flex-1 rounded-xl"
+                className="flex-1 rounded-xl hover:bg-slate-900 active:scale-95 transition-all duration-150 disabled:opacity-70"
               >
                 {isUpdating ? (
-                  <LoadingLogo size="sm" />
+                  <LoadingLogo size="sm" variant="handshake" />
                 ) : (
                   "Save Changes"
                 )}
@@ -388,7 +388,7 @@ export default function Profile() {
               <Button
                 onClick={() => setEditDialogOpen(false)}
                 variant="outline"
-                className="flex-1 rounded-xl"
+                className="flex-1 rounded-xl hover:bg-slate-50 active:scale-95 transition-all duration-150"
               >
                 Cancel
               </Button>

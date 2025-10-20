@@ -110,10 +110,10 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
                       variant="outline"
                       onClick={() => handleFollow(user._id)}
                       disabled={isFollowing}
-                      className="rounded-xl"
+                      className="rounded-xl hover:bg-purple-50 active:scale-95 transition-all duration-150 disabled:opacity-70"
                     >
                       {isFollowing ? (
-                        <LoadingLogo size="sm" />
+                        <LoadingLogo size="sm" variant="handshake" />
                       ) : (
                         <UserPlus className="h-4 w-4" strokeWidth={1.5} />
                       )}
@@ -123,10 +123,10 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
                       variant="outline"
                       onClick={() => handleMessage(user._id)}
                       disabled={isMessaging}
-                      className="rounded-xl"
+                      className="rounded-xl hover:bg-blue-50 active:scale-95 transition-all duration-150 disabled:opacity-70"
                     >
                       {isMessaging ? (
-                        <LoadingLogo size="sm" />
+                        <LoadingLogo size="sm" variant="handshake" />
                       ) : (
                         <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
                       )}
