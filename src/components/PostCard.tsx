@@ -231,7 +231,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               
               {/* Follow/Message Buttons - Right of Username */}
               {currentUser?._id !== post.user?._id && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <Button
                     variant="ghost"
                     size="sm"
