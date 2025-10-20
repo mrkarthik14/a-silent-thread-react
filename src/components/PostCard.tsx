@@ -116,7 +116,15 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     >
       <Card className={`${color} border-none shadow-sm hover:shadow-md transition-shadow p-4 rounded-2xl`}>
         <div className="flex gap-3">
-          <div className="relative cursor-pointer" onClick={handleProfileClick}>
+          <motion.div 
+            className="relative cursor-pointer" 
+            onClick={handleProfileClick}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.1, boxShadow: "0 0 12px rgba(168, 85, 247, 0.4)" }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Avatar className="h-10 w-10 border-2 border-white">
               <AvatarImage src={userImageUrl || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
@@ -124,9 +132,14 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </AvatarFallback>
             </Avatar>
             {userPresence?.isOnline && (
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+              <motion.div 
+                className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+              />
             )}
-          </div>
+          </motion.div>
           
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
