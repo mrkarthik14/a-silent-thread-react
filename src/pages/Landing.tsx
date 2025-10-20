@@ -98,53 +98,53 @@ export default function Landing() {
       </div>
 
       {/* Feature Cards with Zig-Zag Thread Connections */}
-      <div className="max-w-6xl mx-auto px-6 pb-20">
+      <div className="max-w-5xl mx-auto px-6 pb-20">
         <div className="relative">
-          {/* Zig-zag grid layout */}
-          <div className="flex flex-col gap-12">
+          {/* Zig-zag layout with threads */}
+          <div className="space-y-16">
             {features.map((feature, index) => {
               const isEven = index % 2 === 0;
               return (
                 <motion.div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+                  transition={{ delay: 0.2 + index * 0.15, duration: 0.6 }}
                   className={`flex ${isEven ? "justify-start" : "justify-end"} relative`}
                 >
                   {/* Animated thread connecting cards */}
                   {index > 0 && (
                     <motion.svg
-                      className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-12 pointer-events-none"
-                      width="200"
-                      height="100"
-                      viewBox="0 0 200 100"
+                      className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-16 pointer-events-none w-full"
+                      height="120"
+                      viewBox="0 0 400 120"
+                      preserveAspectRatio="none"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
+                      transition={{ delay: 0.3 + index * 0.15 }}
                     >
-                      {/* Purple thread */}
+                      {/* Purple thread - curved path */}
                       <motion.path
-                        d="M 100 0 Q 100 50 100 100"
+                        d={isEven ? "M 200 0 Q 100 60 200 120" : "M 200 0 Q 300 60 200 120"}
                         stroke="url(#purpleGradient)"
-                        strokeWidth="3"
+                        strokeWidth="4"
                         fill="none"
                         strokeLinecap="round"
                         initial={{ pathLength: 0 }}
                         animate={{ pathLength: 1 }}
-                        transition={{ delay: 0.4 + index * 0.1, duration: 0.8 }}
+                        transition={{ delay: 0.4 + index * 0.15, duration: 1 }}
                       />
-                      {/* Red thread */}
+                      {/* Red dashed thread */}
                       <motion.path
-                        d="M 100 0 Q 100 50 100 100"
+                        d={isEven ? "M 200 0 Q 100 60 200 120" : "M 200 0 Q 300 60 200 120"}
                         stroke="url(#redGradient)"
-                        strokeWidth="2"
+                        strokeWidth="2.5"
                         fill="none"
                         strokeLinecap="round"
-                        strokeDasharray="5,5"
+                        strokeDasharray="8,4"
                         initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 0.8 }}
-                        transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
+                        animate={{ pathLength: 1, opacity: 0.7 }}
+                        transition={{ delay: 0.5 + index * 0.15, duration: 1 }}
                       />
                       <defs>
                         <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
