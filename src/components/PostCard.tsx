@@ -356,7 +356,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </div>
             )}
             
-            <div className="flex items-center gap-4 mb-3">
+            <div className="flex items-center gap-4 mb-3 flex-wrap">
               <Button
                 variant="ghost"
                 size="sm"
@@ -369,26 +369,31 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 <span className="text-xs text-slate-900">{post.likes}</span>
               </Button>
               
-              {!post.serviceDetails && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
-                    onClick={onReply}
-                  >
-                    <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
-                    <span className="text-xs text-slate-900">{post.replies}</span>
-                  </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
-                  >
-                    <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
-                  </Button>
-                </>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
+                onClick={onReply}
+              >
+                <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <span className="text-xs text-slate-900">{post.replies}</span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
+              >
+                <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+              </Button>
+
+              {post.serviceDetails && currentUser?._id !== post.user?._id && (
+                <Button
+                  onClick={() => setBookingDialogOpen(true)}
+                  className="h-8 ml-auto rounded-lg bg-gradient-to-br from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
+                >
+                  Book Now
+                </Button>
               )}
             </div>
 
