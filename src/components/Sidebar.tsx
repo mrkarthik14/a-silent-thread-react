@@ -284,20 +284,15 @@ export function Sidebar() {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    className={`w-full gap-3 hover:bg-emerald-100/50 rounded-xl text-slate-900 font-semibold ${isCollapsed ? "justify-center" : "justify-start"}`}
+                    className={`w-full gap-3 rounded-xl text-slate-900 font-semibold hover:bg-emerald-100/50 transition-colors ${isCollapsed ? "justify-center" : "justify-start"}`}
                     onClick={() => setCreateDialogOpen(true)}
                     title="Create Post"
                   >
-                    <Plus className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
+                    <Plus className="h-5 w-5 flex-shrink-0 text-slate-900" strokeWidth={1.5} />
                     {!isCollapsed && (
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: "auto" }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden whitespace-nowrap"
-                      >
+                      <span className="whitespace-nowrap text-sm">
                         Create Post
-                      </motion.span>
+                      </span>
                     )}
                   </Button>
                 </TooltipTrigger>
