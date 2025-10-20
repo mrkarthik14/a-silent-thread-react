@@ -66,11 +66,11 @@ export default function Profile() {
   // Get follower/following counts
   const followerCount = useQuery(
     api.follows.getFollowerCount,
-    targetUserId ? { userId: targetUserId } : "skip"
+    profileData ? { userId: profileData._id } : "skip"
   );
   const followingCount = useQuery(
     api.follows.getFollowingCount,
-    targetUserId ? { userId: targetUserId } : "skip"
+    profileData ? { userId: profileData._id } : "skip"
   );
 
   // Check if following this user

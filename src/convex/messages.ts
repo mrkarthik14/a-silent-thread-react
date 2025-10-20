@@ -96,17 +96,15 @@ export const markAsRead = mutation({
 
     const messages = await ctx.db
       .query("messages")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("senderId"), args.userId),
-          q.eq(q.field("recipientId"), user._id),
-          q.eq(q.field("read"), false)
-        )
-      )
+      .withIndex("by_sender", (q) => q.eq("senderId", args.userId))
       .collect();
 
+    const unreadMessages = messages.filter(
+      (msg) => msg.recipientId === user._id && !msg.read
+    );
+
     await Promise.all(
-      messages.map((message) =>
+      unreadMessages.map((message) =>
         ctx.db.patch(message._id, { read: true })
       )
     );
