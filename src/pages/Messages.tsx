@@ -284,18 +284,20 @@ export default function Messages() {
 
               <div className="p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm sticky bottom-0">
                 <div className="flex gap-2">
-                  <Input
-                    value={message}
-                    onChange={(e) => handleTyping(e.target.value)}
-                    placeholder="Type a message..."
-                    className="rounded-xl border-slate-200 focus:ring-2 focus:ring-purple-400"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSend();
-                      }
-                    }}
-                  />
+                  <motion.div className="flex-1">
+                    <Input
+                      value={message}
+                      onChange={(e) => handleTyping(e.target.value)}
+                      placeholder="Type a message..."
+                      className="rounded-xl border-2 border-slate-200 bg-white/80 transition-all duration-200 focus:border-purple-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-slate-300 hover:bg-white/90"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSend();
+                        }
+                      }}
+                    />
+                  </motion.div>
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
