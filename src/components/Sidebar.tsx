@@ -257,14 +257,11 @@ export function Sidebar() {
                     title="Search Users"
                   >
                     <Search className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden whitespace-nowrap"
-                    >
-                      Search Users
-                    </motion.span>
+                    {!isCollapsed && (
+                      <span className="whitespace-nowrap">
+                        Search Users
+                      </span>
+                    )}
                   </Button>
                 </TooltipTrigger>
                 {isCollapsed && (
