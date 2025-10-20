@@ -173,7 +173,7 @@ export default function Profile() {
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto ml-0 md:ml-20">
         <div className="max-w-4xl mx-auto">
           {/* Cover Image */}
           <motion.div

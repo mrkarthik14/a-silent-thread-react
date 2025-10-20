@@ -172,7 +172,7 @@ export function Sidebar() {
     <>
       <TooltipProvider>
         <motion.div
-          className="fixed left-0 top-0 z-50 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col"
+          className="fixed left-0 top-0 z-50 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col hidden md:flex"
           initial={{ width: 80 }}
           animate={{ width: isCollapsed ? 80 : 256 }}
           onMouseEnter={() => setIsCollapsed(false)}
