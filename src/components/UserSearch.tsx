@@ -37,7 +37,11 @@ export function UserSearch({ open, onOpenChange }: UserSearchProps) {
     setFollowingId(userId);
     try {
       const result = await followUser({ userId });
-      toast.success(result.following ? "Followed user" : "Unfollowed user");
+      if (result.following) {
+        toast.success("Followed user! You can now message them.");
+      } else {
+        toast.success("Unfollowed user");
+      }
     } catch (error) {
       toast.error("Failed to follow user");
     } finally {
