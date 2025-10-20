@@ -11,38 +11,64 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 import { UserSearch } from "@/components/UserSearch";
 import { LoadingLogo } from "@/components/LoadingLogo";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+// ============================================================================
+// STATE AND CONFIGURATION
+// ============================================================================
+
+const MENU_ITEMS = [
+  { icon: Home, label: "Feed", path: "/feed" },
+  { icon: Package, label: "Services", path: "/services" },
+  { icon: MessageSquare, label: "Messages", path: "/messages" },
+  { icon: Bookmark, label: "Bookings", path: "/bookings" },
+  { icon: Bell, label: "Notifications", path: "/notifications" },
+  { icon: User, label: "Profile", path: "/profile" },
+  { icon: Settings, label: "Settings", path: "/settings" },
+];
+
+// ============================================================================
+// SIDEBAR COMPONENT
+// ============================================================================
 
 export function Sidebar() {
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
+
+  // ========================================================================
+  // STATE: Sidebar Expand/Collapse
+  // ========================================================================
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  // ========================================================================
+  // STATE: Dialogs
+  // ========================================================================
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+
+  // ========================================================================
+  // STATE: Post Creation Form
+  // ========================================================================
   const [postContent, setPostContent] = useState("");
   const [postType, setPostType] = useState<"post" | "service">("post");
   const [serviceTitle, setServiceTitle] = useState("");
   const [servicePrice, setServicePrice] = useState("");
   const [serviceCategory, setServiceCategory] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
-  const [isHovered, setIsHovered] = useState(false);
-  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
-  
+  const [isUploading, setIsUploading] = useState(false);
+
+  // ========================================================================
+  // MUTATIONS
+  // ========================================================================
   const createPost = useMutation(api.posts.create);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
 
-  const menuItems = [
-    { icon: Home, label: "Feed", path: "/feed" },
-    { icon: Package, label: "Services", path: "/services" },
-    { icon: MessageSquare, label: "Messages", path: "/messages" },
-    { icon: Bookmark, label: "Bookings", path: "/bookings" },
-    { icon: Bell, label: "Notifications", path: "/notifications" },
-    { icon: User, label: "Profile", path: "/profile" },
-    { icon: Settings, label: "Settings", path: "/settings" },
-  ];
-
+  // ========================================================================
+  // HANDLERS: File Selection
+  // ========================================================================
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (selectedImages.length + files.length > 20) {
@@ -61,12 +87,17 @@ export function Sidebar() {
     setSelectedVideos([...selectedVideos, ...files]);
   };
 
+  // ========================================================================
+  // HANDLERS: Post Creation
+  // ========================================================================
   const handleCreatePost = async () => {
+    // Validate content
     if (!postContent.trim()) {
       toast.error("Please add content");
       return;
     }
 
+    // Validate service details if applicable
     if (postType === "service" && (!serviceTitle || !servicePrice || !serviceCategory)) {
       toast.error("Please fill all service details");
       return;
@@ -77,6 +108,7 @@ export function Sidebar() {
       const uploadedImageUrls: string[] = [];
       const uploadedVideoUrls: string[] = [];
 
+      // Upload images
       for (const image of selectedImages) {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
@@ -88,6 +120,7 @@ export function Sidebar() {
         uploadedImageUrls.push(storageId);
       }
 
+      // Upload videos
       for (const video of selectedVideos) {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
@@ -99,6 +132,7 @@ export function Sidebar() {
         uploadedVideoUrls.push(storageId);
       }
 
+      // Create post with all data
       await createPost({
         content: postContent,
         type: postType,
@@ -112,14 +146,8 @@ export function Sidebar() {
       });
 
       toast.success(postType === "service" ? "Service created!" : "Post created!");
+      resetPostForm();
       setCreateDialogOpen(false);
-      setPostContent("");
-      setServiceTitle("");
-      setServicePrice("");
-      setServiceCategory("");
-      setSelectedImages([]);
-      setSelectedVideos([]);
-      setPostType("post");
     } catch (error) {
       toast.error("Failed to create post");
     } finally {
@@ -127,94 +155,196 @@ export function Sidebar() {
     }
   };
 
+  const resetPostForm = () => {
+    setPostContent("");
+    setServiceTitle("");
+    setServicePrice("");
+    setServiceCategory("");
+    setSelectedImages([]);
+    setSelectedVideos([]);
+    setPostType("post");
+  };
+
+  // ========================================================================
+  // RENDER: Main Sidebar Container
+  // ========================================================================
   return (
     <>
-      <div className="fixed left-0 top-0 z-50 w-64 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col">
-        <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-lg">🧵</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg tracking-tight text-slate-900">A Silent Thread</h1>
-              <p className="text-xs text-slate-600">Connected experiences</p>
+      <TooltipProvider>
+        <motion.div
+          className="fixed left-0 top-0 z-50 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col"
+          initial={{ width: 80 }}
+          animate={{ width: isCollapsed ? 80 : 256 }}
+          onMouseEnter={() => setIsCollapsed(false)}
+          onMouseLeave={() => setIsCollapsed(true)}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          {/* ================================================================
+              HEADER: Logo
+              ================================================================ */}
+          <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold text-lg">🧵</span>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <h1 className="font-bold text-lg tracking-tight text-slate-900 whitespace-nowrap">A Silent Thread</h1>
+                <p className="text-xs text-slate-600 whitespace-nowrap">Connected experiences</p>
+              </motion.div>
             </div>
           </div>
-        </div>
 
-        <nav className="flex-1 space-y-2">
-          {menuItems.map((item, index) => (
+          {/* ================================================================
+              NAVIGATION: Menu Items
+              ================================================================ */}
+          <nav className="flex-1 space-y-2">
+            {MENU_ITEMS.map((item, index) => (
+              <motion.div
+                key={item.path}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className={`w-full gap-3 hover:bg-purple-100/50 rounded-xl text-slate-900 ${isCollapsed ? "justify-center" : "justify-start"}`}
+                      onClick={() => navigate(item.path)}
+                      title={item.label}
+                    >
+                      <item.icon className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden whitespace-nowrap"
+                      >
+                        {item.label}
+                      </motion.span>
+                    </Button>
+                  </TooltipTrigger>
+                  {isCollapsed && (
+                    <TooltipContent side="right" className="rounded-xl">
+                      {item.label}
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </motion.div>
+            ))}
+
+            {/* ============================================================
+                ACTION: Search Users
+                ============================================================ */}
             <motion.div
-              key={item.path}
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: index * 0.05 }}
+              transition={{ delay: MENU_ITEMS.length * 0.05 }}
             >
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 hover:bg-purple-100/50 rounded-xl text-slate-900"
-                onClick={() => navigate(item.path)}
-              >
-                <item.icon className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
-                <span>{item.label}</span>
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`w-full gap-3 hover:bg-blue-100/50 rounded-xl text-slate-900 ${isCollapsed ? "justify-center" : "justify-start"}`}
+                    onClick={() => setSearchDialogOpen(true)}
+                    title="Search Users"
+                  >
+                    <Search className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden whitespace-nowrap"
+                    >
+                      Search Users
+                    </motion.span>
+                  </Button>
+                </TooltipTrigger>
+                {isCollapsed && (
+                  <TooltipContent side="right" className="rounded-xl">
+                    Search Users
+                  </TooltipContent>
+                )}
+              </Tooltip>
             </motion.div>
-          ))}
-          
+
+            {/* ============================================================
+                ACTION: Create Post
+                ============================================================ */}
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: (MENU_ITEMS.length + 1) * 0.05 }}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`w-full gap-3 hover:bg-emerald-100/50 rounded-xl text-slate-900 font-semibold ${isCollapsed ? "justify-center" : "justify-start"}`}
+                    onClick={() => setCreateDialogOpen(true)}
+                    title="Create Post"
+                  >
+                    <Plus className="h-5 w-5 text-slate-900 flex-shrink-0" strokeWidth={1.5} />
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden whitespace-nowrap"
+                    >
+                      Create Post
+                    </motion.span>
+                  </Button>
+                </TooltipTrigger>
+                {isCollapsed && (
+                  <TooltipContent side="right" className="rounded-xl">
+                    Create Post
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </motion.div>
+          </nav>
+
+          {/* ================================================================
+              FOOTER: User Info & Sign Out
+              ================================================================ */}
           <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: menuItems.length * 0.05 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isCollapsed ? 0 : 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className={`border-t border-slate-200 pt-4 space-y-2 overflow-hidden ${isCollapsed ? "hidden" : ""}`}
           >
+            <div className="px-3 py-2 bg-white/50 rounded-xl">
+              <p className="text-sm font-medium truncate text-slate-900">{user?.name || "User"}</p>
+              <p className="text-xs text-slate-600 truncate">{user?.email}</p>
+            </div>
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-blue-100/50 rounded-xl text-slate-900"
-              onClick={() => setSearchDialogOpen(true)}
+              className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150"
+              onClick={() => signOut()}
             >
-              <Search className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
-              <span>Search Users</span>
+              <LogOut className="h-5 w-5" strokeWidth={1.5} />
+              <span>Sign Out</span>
             </Button>
           </motion.div>
+        </motion.div>
+      </TooltipProvider>
 
-          <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: (menuItems.length + 1) * 0.05 }}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-emerald-100/50 rounded-xl text-slate-900 font-semibold"
-              onClick={() => setCreateDialogOpen(true)}
-            >
-              <Plus className="h-5 w-5 text-slate-900" strokeWidth={1.5} />
-              <span>Create Post</span>
-            </Button>
-          </motion.div>
-        </nav>
-
-        <div className="border-t border-slate-200 pt-4 space-y-2">
-          <div className="px-3 py-2 bg-white/50 rounded-xl">
-            <p className="text-sm font-medium truncate text-slate-900">{user?.name || "User"}</p>
-            <p className="text-xs text-slate-600 truncate">{user?.email}</p>
-          </div>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 hover:bg-red-100 hover:shadow-sm rounded-xl text-red-500 transition-all duration-150"
-            onClick={() => signOut()}
-          >
-            <LogOut className="h-5 w-5" strokeWidth={1.5} />
-            <span>Sign Out</span>
-          </Button>
-        </div>
-      </div>
-
+      {/* ==================================================================
+          DIALOG: Create Post
+          ================================================================== */}
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Create New Post</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
+            {/* Post Type Selection */}
             <div className="flex gap-2">
               <Button
                 variant={postType === "post" ? "default" : "outline"}
@@ -232,6 +362,7 @@ export function Sidebar() {
               </Button>
             </div>
 
+            {/* Content Input */}
             <div>
               <Label>Content</Label>
               <Textarea
@@ -243,6 +374,7 @@ export function Sidebar() {
               />
             </div>
 
+            {/* Service-Specific Fields */}
             {postType === "service" && (
               <>
                 <div>
@@ -278,6 +410,7 @@ export function Sidebar() {
               </>
             )}
 
+            {/* Image Upload */}
             <div>
               <Label>Images (Max 20)</Label>
               <Input
@@ -294,6 +427,7 @@ export function Sidebar() {
               )}
             </div>
 
+            {/* Video Upload */}
             <div>
               <Label>Videos (Max 10)</Label>
               <Input
@@ -310,6 +444,7 @@ export function Sidebar() {
               )}
             </div>
 
+            {/* Submit Button */}
             <Button
               onClick={handleCreatePost}
               disabled={isUploading}
@@ -325,6 +460,9 @@ export function Sidebar() {
         </DialogContent>
       </Dialog>
 
+      {/* ==================================================================
+          DIALOG: User Search
+          ================================================================== */}
       <UserSearch open={searchDialogOpen} onOpenChange={setSearchDialogOpen} />
     </>
   );
