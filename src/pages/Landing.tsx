@@ -133,7 +133,7 @@ export default function Landing() {
           {/* Central connecting thread animation */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
             <motion.div
-              className="w-96 h-1 bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 rounded-full blur-sm"
+              className="w-96 h-1 bg-gradient-to-r from-rose-300 via-pink-300 to-purple-300 rounded-full blur-sm"
               animate={{ opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 3, repeat: Infinity }}
             />
