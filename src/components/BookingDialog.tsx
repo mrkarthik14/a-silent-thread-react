@@ -52,29 +52,29 @@ export function BookingDialog({ open, onOpenChange, serviceId }: BookingDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl max-w-md">
+      <DialogContent className="rounded-2xl max-w-md bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 border-slate-200">
         <DialogHeader>
-          <DialogTitle>Book This Service</DialogTitle>
+          <DialogTitle className="text-slate-900">Book This Service</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label>Preferred Date</Label>
+            <Label className="text-slate-900 font-semibold">Preferred Date</Label>
             <Input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="rounded-xl"
+              className="rounded-xl border-slate-200 focus:border-purple-400"
             />
           </div>
 
           <div>
-            <Label>Message</Label>
+            <Label className="text-slate-900 font-semibold">Message</Label>
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Tell the owner about your booking request..."
-              className="rounded-xl resize-none"
+              className="rounded-xl resize-none border-slate-200 focus:border-purple-400"
               rows={3}
             />
           </div>
@@ -83,7 +83,7 @@ export function BookingDialog({ open, onOpenChange, serviceId }: BookingDialogPr
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="flex-1 rounded-xl active:scale-95 transition-all duration-150 disabled:opacity-70"
+              className="flex-1 rounded-xl active:scale-95 transition-all duration-150 disabled:opacity-70 bg-slate-900 hover:bg-slate-800 text-white font-semibold"
             >
               {isLoading ? (
                 <>
@@ -97,7 +97,7 @@ export function BookingDialog({ open, onOpenChange, serviceId }: BookingDialogPr
             <Button
               onClick={() => onOpenChange(false)}
               variant="outline"
-              className="flex-1 rounded-xl active:scale-95 transition-all duration-150"
+              className="flex-1 rounded-xl active:scale-95 transition-all duration-150 border-slate-300 text-slate-900 hover:bg-slate-100"
             >
               Cancel
             </Button>
