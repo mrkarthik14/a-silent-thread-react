@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { Calendar, Loader2 } from "lucide-react";
+import { Calendar, Loader2, Filter, Clock, CheckCircle, XCircle } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -15,6 +15,8 @@ import { useState } from "react";
 export default function Bookings() {
   const { isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+  const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "accepted" | "rejected" | "completed">("all");
+  const [viewMode, setViewMode] = useState<"all" | "renting" | "rented">("all");
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     bookingId: string | null;
@@ -84,6 +86,26 @@ export default function Bookings() {
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "pending": return <Clock className="h-4 w-4" />;
+      case "accepted": return <CheckCircle className="h-4 w-4" />;
+      case "rejected": return <XCircle className="h-4 w-4" />;
+      case "completed": return <CheckCircle className="h-4 w-4" />;
+      default: return null;
+    }
+  };
+
+  // Filter bookings based on selected filters
+  const filteredBookings = bookings?.filter((booking) => {
+    const statusMatch = filterStatus === "all" || booking.status === filterStatus;
+    const viewMatch = 
+      viewMode === "all" ||
+      (viewMode === "renting" && booking.renterId === user?._id) ||
+      (viewMode === "rented" && booking.ownerId === user?._id);
+    return statusMatch && viewMatch;
+  }) || [];
+
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
@@ -99,8 +121,89 @@ export default function Bookings() {
             <p className="text-slate-600">Manage your rental requests</p>
           </motion.div>
 
+          {/* Filter and View Options */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 space-y-4"
+          >
+            {/* View Mode Selector */}
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant={viewMode === "all" ? "default" : "outline"}
+                onClick={() => setViewMode("all")}
+                size="sm"
+                className="rounded-xl"
+              >
+                All Bookings
+              </Button>
+              <Button
+                variant={viewMode === "renting" ? "default" : "outline"}
+                onClick={() => setViewMode("renting")}
+                size="sm"
+                className="rounded-xl"
+              >
+                I'm Renting
+              </Button>
+              <Button
+                variant={viewMode === "rented" ? "default" : "outline"}
+                onClick={() => setViewMode("rented")}
+                size="sm"
+                className="rounded-xl"
+              >
+                I'm Rented To
+              </Button>
+            </div>
+
+            {/* Status Filter */}
+            <div className="flex gap-2 flex-wrap items-center">
+              <Filter className="h-4 w-4 text-slate-600" />
+              <Button
+                variant={filterStatus === "all" ? "default" : "outline"}
+                onClick={() => setFilterStatus("all")}
+                size="sm"
+                className="rounded-xl"
+              >
+                All Status
+              </Button>
+              <Button
+                variant={filterStatus === "pending" ? "default" : "outline"}
+                onClick={() => setFilterStatus("pending")}
+                size="sm"
+                className="rounded-xl"
+              >
+                Pending
+              </Button>
+              <Button
+                variant={filterStatus === "accepted" ? "default" : "outline"}
+                onClick={() => setFilterStatus("accepted")}
+                size="sm"
+                className="rounded-xl"
+              >
+                Accepted
+              </Button>
+              <Button
+                variant={filterStatus === "rejected" ? "default" : "outline"}
+                onClick={() => setFilterStatus("rejected")}
+                size="sm"
+                className="rounded-xl"
+              >
+                Rejected
+              </Button>
+              <Button
+                variant={filterStatus === "completed" ? "default" : "outline"}
+                onClick={() => setFilterStatus("completed")}
+                size="sm"
+                className="rounded-xl"
+              >
+                Completed
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Bookings List */}
           <div className="space-y-4">
-            {bookings?.map((booking, index) => (
+            {filteredBookings.map((booking, index) => (
               <motion.div
                 key={booking._id}
                 initial={{ opacity: 0, y: 20 }}
@@ -122,7 +225,8 @@ export default function Bookings() {
                         {booking.date}
                       </div>
                     </div>
-                    <Badge className={`${getStatusColor(booking.status)} border-none`}>
+                    <Badge className={`${getStatusColor(booking.status)} border-none flex items-center gap-1`}>
+                      {getStatusIcon(booking.status)}
                       {booking.status}
                     </Badge>
                   </div>
@@ -152,9 +256,9 @@ export default function Bookings() {
               </motion.div>
             ))}
 
-            {bookings?.length === 0 && (
+            {filteredBookings.length === 0 && (
               <div className="text-center py-12 text-slate-600">
-                No bookings yet
+                No bookings found with the selected filters
               </div>
             )}
           </div>
