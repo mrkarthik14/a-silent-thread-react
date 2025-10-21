@@ -203,9 +203,9 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               whileHover={{ scale: 1.15, boxShadow: "0 0 20px rgba(168, 85, 247, 0.6)" }}
               whileTap={{ scale: 0.9 }}
             >
-              <Avatar className="h-10 w-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow">
-                <AvatarImage src={userImageUrl || undefined} />
-                <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+              <Avatar className="h-10 w-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow rounded-full">
+                <AvatarImage src={userImageUrl || undefined} className="rounded-full" />
+                <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 rounded-full">
                   {post.user?.name?.[0] || "U"}
                 </AvatarFallback>
               </Avatar>
