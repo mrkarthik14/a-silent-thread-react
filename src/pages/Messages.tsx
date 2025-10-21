@@ -362,7 +362,7 @@ export default function Messages() {
                     <Button
                       onClick={handleSend}
                       disabled={!message.trim() || isUploading}
-                      className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 active:scale-95 transition-all duration-150 disabled:opacity-70"
+                      className="rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 active:scale-95 transition-all duration-150 disabled:opacity-70 text-white font-semibold shadow-md hover:shadow-lg"
                     >
                       <Send className="h-4 w-4" />
                     </Button>
