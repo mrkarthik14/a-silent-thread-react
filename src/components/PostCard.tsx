@@ -195,18 +195,21 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
           <motion.div 
             className="relative cursor-pointer" 
             onClick={handleProfileClick}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-            whileHover={{ scale: 1.1, boxShadow: "0 0 12px rgba(168, 85, 247, 0.4)" }}
-            whileTap={{ scale: 0.95 }}
           >
-            <Avatar className="h-10 w-10 border-2 border-white">
-              <AvatarImage src={userImageUrl || undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
-                {post.user?.name?.[0] || "U"}
-              </AvatarFallback>
-            </Avatar>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ scale: 1.15, boxShadow: "0 0 20px rgba(168, 85, 247, 0.6)" }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Avatar className="h-10 w-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow">
+                <AvatarImage src={userImageUrl || undefined} />
+                <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+                  {post.user?.name?.[0] || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </motion.div>
             {userPresence?.isOnline && (
               <motion.div 
                 className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"
