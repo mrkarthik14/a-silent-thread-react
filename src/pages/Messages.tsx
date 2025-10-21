@@ -414,12 +414,12 @@ export default function Messages() {
                   </motion.div>
                 )}
                 <div className="flex gap-2">
-                  <motion.div className="flex-1">
+                  <motion.div className="flex-1 flex gap-2">
                     <Input
                       value={message}
                       onChange={(e) => handleTyping(e.target.value)}
                       placeholder="Type a message..."
-                      disabled={isUploading}
+                      disabled={isUploading || callStatus === "active"}
                       className="rounded-xl border-2 border-cyan-200 bg-white/80 transition-all duration-200 focus:border-cyan-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-cyan-300 hover:bg-white/90 disabled:opacity-50"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey && !isUploading) {
@@ -428,6 +428,28 @@ export default function Messages() {
                         }
                       }}
                     />
+                    {callStatus !== "active" && (
+                      <>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleStartCall("voice")}
+                          className="px-3 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+                          title="Start voice call"
+                        >
+                          <Phone className="h-4 w-4" strokeWidth={2.5} />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleStartCall("video")}
+                          className="px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
+                          title="Start video call"
+                        >
+                          <Video className="h-4 w-4" strokeWidth={2.5} />
+                        </motion.button>
+                      </>
+                    )}
                   </motion.div>
                   <motion.div
                     whileHover={{ scale: 1.05 }}
