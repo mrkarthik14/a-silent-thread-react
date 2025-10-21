@@ -251,15 +251,15 @@ export default function Messages() {
                       className={`flex ${msg.senderId === user?._id ? "justify-end" : "justify-start"}`}
                     >
                       <div className="flex flex-col gap-1.5 max-w-xs">
-                        <div
-                          className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
-                            msg.senderId === user?._id
-                              ? "bg-gradient-to-br from-purple-500 to-blue-500 text-white rounded-br-sm"
-                              : "bg-white border-2 border-slate-100 text-slate-900 rounded-bl-sm"
-                          }`}
-                        >
-                          <p className="text-sm leading-relaxed break-words">{msg.content}</p>
-                        </div>
+                      <div
+                        className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
+                          msg.senderId === user?._id
+                            ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
+                            : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
+                        }`}
+                      >
+                        <p className="text-sm leading-relaxed break-words">{msg.content}</p>
+                      </div>
                         {msg.senderId === user?._id && (
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
