@@ -125,6 +125,14 @@ export default function Settings() {
     toast.success(`Theme updated to ${themeId}`);
   };
 
+  const handleSaveThemes = () => {
+    localStorage.setItem("appTheme", selectedAppTheme);
+    localStorage.setItem("chatTheme", selectedChatTheme);
+    localStorage.setItem("feedTheme", selectedFeedTheme);
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+    toast.success("Theme preferences saved!");
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />

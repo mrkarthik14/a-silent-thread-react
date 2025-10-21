@@ -147,6 +147,71 @@ export default function Messages() {
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedUserId) return;
+
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File size exceeds 50MB limit");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          setUploadProgress(percentComplete);
+        }
+      });
+
+      xhr.addEventListener("load", async () => {
+        if (xhr.status === 200) {
+          const { storageId } = JSON.parse(xhr.responseText);
+          await sendMessage({
+            recipientId: selectedUserId,
+            content: `Shared a file: ${file.name}`,
+            messageType: "file",
+            mediaUrl: storageId,
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.type,
+          });
+          toast.success("File uploaded successfully");
+          setIsUploading(false);
+          setUploadProgress(0);
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        toast.error("Upload failed");
+        setIsUploading(false);
+        setUploadProgress(0);
+      });
+
+      xhr.addEventListener("abort", () => {
+        toast.info("Upload cancelled");
+        setIsUploading(false);
+        setUploadProgress(0);
+      });
+
+      xhr.open("POST", uploadUrl);
+      xhr.setRequestHeader("Content-Type", file.type);
+      xhr.send(file);
+    } catch (error) {
+      toast.error("Failed to upload file");
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
