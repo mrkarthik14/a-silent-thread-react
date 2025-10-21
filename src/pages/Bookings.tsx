@@ -133,7 +133,7 @@ export default function Bookings() {
                 variant={viewMode === "all" ? "default" : "outline"}
                 onClick={() => setViewMode("all")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-pink-200 to-pink-300 hover:from-pink-300 hover:to-pink-400 text-pink-900 font-semibold border-none"
               >
                 All Bookings
               </Button>
@@ -141,7 +141,7 @@ export default function Bookings() {
                 variant={viewMode === "renting" ? "default" : "outline"}
                 onClick={() => setViewMode("renting")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-purple-200 to-purple-300 hover:from-purple-300 hover:to-purple-400 text-purple-900 font-semibold border-none"
               >
                 I'm Renting
               </Button>
@@ -149,7 +149,7 @@ export default function Bookings() {
                 variant={viewMode === "rented" ? "default" : "outline"}
                 onClick={() => setViewMode("rented")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-blue-200 to-blue-300 hover:from-blue-300 hover:to-blue-400 text-blue-900 font-semibold border-none"
               >
                 I'm Rented To
               </Button>
@@ -162,7 +162,7 @@ export default function Bookings() {
                 variant={filterStatus === "all" ? "default" : "outline"}
                 onClick={() => setFilterStatus("all")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-yellow-200 to-yellow-300 hover:from-yellow-300 hover:to-yellow-400 text-yellow-900 font-semibold border-none"
               >
                 All Status
               </Button>
@@ -170,7 +170,7 @@ export default function Bookings() {
                 variant={filterStatus === "pending" ? "default" : "outline"}
                 onClick={() => setFilterStatus("pending")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-orange-200 to-orange-300 hover:from-orange-300 hover:to-orange-400 text-orange-900 font-semibold border-none"
               >
                 Pending
               </Button>
@@ -178,7 +178,7 @@ export default function Bookings() {
                 variant={filterStatus === "accepted" ? "default" : "outline"}
                 onClick={() => setFilterStatus("accepted")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-emerald-200 to-emerald-300 hover:from-emerald-300 hover:to-emerald-400 text-emerald-900 font-semibold border-none"
               >
                 Accepted
               </Button>
@@ -186,7 +186,7 @@ export default function Bookings() {
                 variant={filterStatus === "rejected" ? "default" : "outline"}
                 onClick={() => setFilterStatus("rejected")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-red-200 to-red-300 hover:from-red-300 hover:to-red-400 text-red-900 font-semibold border-none"
               >
                 Rejected
               </Button>
@@ -194,7 +194,7 @@ export default function Bookings() {
                 variant={filterStatus === "completed" ? "default" : "outline"}
                 onClick={() => setFilterStatus("completed")}
                 size="sm"
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                className="rounded-xl bg-gradient-to-br from-cyan-200 to-cyan-300 hover:from-cyan-300 hover:to-cyan-400 text-cyan-900 font-semibold border-none"
               >
                 Completed
               </Button>
