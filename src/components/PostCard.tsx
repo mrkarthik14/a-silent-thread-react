@@ -314,21 +314,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {imageUrls.length > 0 && (
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {imageUrls.map((url, idx) => url && (
-                  <motion.div
+                  <img 
                     key={idx}
-                    className="flex items-center justify-center"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <motion.img 
-                      src={url} 
-                      alt={`Post image ${idx + 1}`} 
-                      className="rounded-full w-full h-40 object-cover shadow-md hover:shadow-lg transition-shadow"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.1, duration: 0.3 }}
-                      whileHover={{ scale: 1.1 }}
-                    />
-                  </motion.div>
+                    src={url} 
+                    alt={`Post image ${idx + 1}`} 
+                    className="rounded-xl w-full object-cover max-h-64"
+                  />
                 ))}
               </div>
             )}
