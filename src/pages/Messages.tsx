@@ -375,10 +375,10 @@ export default function Messages() {
               <MessageCircle className="h-16 w-16 text-slate-300 mb-4" />
               <p className="text-lg font-semibold mb-2">Select a conversation</p>
               <p className="text-sm text-slate-500 mb-4">Choose a conversation from the list or find new users</p>
-              <Button
-                onClick={() => setSearchDialogOpen(true)}
-                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
-              >
+                    <Button
+                      onClick={() => setSearchDialogOpen(true)}
+                      className="rounded-xl bg-gradient-to-r from-violet-300 to-purple-300 hover:from-violet-400 hover:to-purple-400 text-slate-900 font-semibold"
+                    >
                 <Search className="h-4 w-4 mr-2" />
                 Find Users
               </Button>
