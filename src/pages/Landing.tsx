@@ -140,6 +140,38 @@ export default function Landing() {
           </div>
         </div>
       </div>
+
+      {/* Calendar Section */}
+      <div className="max-w-6xl mx-auto px-6 pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="bg-gradient-to-br from-blue-200 to-cyan-300 rounded-3xl p-12 shadow-sm hover:shadow-md transition-shadow text-center"
+        >
+          <div className="flex justify-center mb-6">
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Calendar className="h-16 w-16 text-blue-900" strokeWidth={1.5} />
+            </motion.div>
+          </div>
+          <h2 className="text-3xl font-bold text-blue-900 mb-3">
+            Plan Your Rentals
+          </h2>
+          <p className="text-blue-800 max-w-2xl mx-auto mb-6">
+            Schedule your bookings with ease. Our intuitive calendar makes it simple to find available dates and manage your rental timeline.
+          </p>
+          <Button
+            onClick={() => navigate(isAuthenticated ? "/bookings" : "/auth")}
+            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-150"
+          >
+            View Calendar
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </motion.div>
+      </div>
     </div>
   );
 }
