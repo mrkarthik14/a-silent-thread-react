@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
+import { LoadingLogo } from "@/components/LoadingLogo";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
