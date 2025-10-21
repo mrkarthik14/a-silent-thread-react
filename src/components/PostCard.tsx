@@ -392,24 +392,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </Button>
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95, rotate: 360 }}
-                  className="ml-auto"
+                <Button
+                  onClick={() => setBookingDialogOpen(true)}
+                  className="ml-auto h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
                 >
-                  <Button
-                    onClick={() => setBookingDialogOpen(true)}
-                    className="h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
-                  >
-                    <motion.span
-                      animate={{ rotate: 0 }}
-                      whileTap={{ rotate: 360 }}
-                      transition={{ duration: 0.6, ease: "easeInOut" }}
-                    >
-                      Book Now
-                    </motion.span>
-                  </Button>
-                </motion.div>
+                  Book Now
+                </Button>
               )}
             </div>
 
