@@ -398,7 +398,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 >
                   <Button
                     onClick={() => setBookingDialogOpen(true)}
-                    className="h-8 rounded-lg bg-gradient-to-br from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
+                    className="h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
                   >
                     Book Now
                   </Button>
