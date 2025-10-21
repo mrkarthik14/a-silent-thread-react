@@ -85,8 +85,14 @@ const schema = defineSchema(
       fileName: v.optional(v.string()),
       fileSize: v.optional(v.number()),
       fileType: v.optional(v.string()),
+      parentMessageId: v.optional(v.id("messages")),
+      isDeleted: v.optional(v.boolean()),
+      isHidden: v.optional(v.boolean()),
+      likes: v.optional(v.array(v.id("users"))),
+      reactions: v.optional(v.record(v.string(), v.array(v.id("users")))),
     }).index("by_sender", ["senderId"])
-      .index("by_recipient", ["recipientId"]),
+      .index("by_recipient", ["recipientId"])
+      .index("by_parent", ["parentMessageId"]),
 
     notifications: defineTable({
       userId: v.id("users"),

@@ -148,3 +148,107 @@ export const markMessageAsRead = mutation({
     }
   },
 });
+
+export const deleteMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    if (message.senderId !== user._id) {
+      throw new Error("Not authorized");
+    }
+
+    await ctx.db.patch(args.messageId, { isDeleted: true });
+  },
+});
+
+export const hideMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    if (message.recipientId !== user._id) {
+      throw new Error("Not authorized");
+    }
+
+    await ctx.db.patch(args.messageId, { isHidden: true });
+  },
+});
+
+export const likeMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const likes = message.likes || [];
+    if (!likes.includes(user._id)) {
+      await ctx.db.patch(args.messageId, { likes: [...likes, user._id] });
+    }
+  },
+});
+
+export const unlikeMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const likes = message.likes || [];
+    await ctx.db.patch(args.messageId, { likes: likes.filter(id => id !== user._id) });
+  },
+});
+
+export const addReaction = mutation({
+  args: { messageId: v.id("messages"), emoji: v.string() },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const reactions = message.reactions || {};
+    const emojiReactions = reactions[args.emoji] || [];
+    
+    if (!emojiReactions.includes(user._id)) {
+      reactions[args.emoji] = [...emojiReactions, user._id];
+      await ctx.db.patch(args.messageId, { reactions });
+    }
+  },
+});
+
+export const removeReaction = mutation({
+  args: { messageId: v.id("messages"), emoji: v.string() },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const reactions = message.reactions || {};
+    const emojiReactions = reactions[args.emoji] || [];
+    
+    reactions[args.emoji] = emojiReactions.filter(id => id !== user._id);
+    if (reactions[args.emoji].length === 0) {
+      delete reactions[args.emoji];
+    }
+    
+    await ctx.db.patch(args.messageId, { reactions });
+  },
+});
