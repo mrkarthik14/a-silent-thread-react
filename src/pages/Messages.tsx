@@ -27,6 +27,9 @@ export default function Messages() {
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<any>(null);
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   

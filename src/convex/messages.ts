@@ -17,6 +17,7 @@ export const send = mutation({
     fileName: v.optional(v.string()),
     fileSize: v.optional(v.number()),
     fileType: v.optional(v.string()),
+    parentMessageId: v.optional(v.id("messages")),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
@@ -32,6 +33,7 @@ export const send = mutation({
       fileName: args.fileName,
       fileSize: args.fileSize,
       fileType: args.fileType,
+      parentMessageId: args.parentMessageId,
     });
   },
 });
