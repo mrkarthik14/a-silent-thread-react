@@ -346,7 +346,7 @@ export default function Messages() {
                       onChange={(e) => handleTyping(e.target.value)}
                       placeholder="Type a message..."
                       disabled={isUploading}
-                      className="rounded-xl border-2 border-slate-200 bg-white/80 transition-all duration-200 focus:border-purple-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-slate-300 hover:bg-white/90 disabled:opacity-50"
+                      className="rounded-xl border-2 border-cyan-200 bg-white/80 transition-all duration-200 focus:border-cyan-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-cyan-300 hover:bg-white/90 disabled:opacity-50"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey && !isUploading) {
                           e.preventDefault();
