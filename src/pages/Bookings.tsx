@@ -133,7 +133,7 @@ export default function Bookings() {
                 variant={viewMode === "all" ? "default" : "outline"}
                 onClick={() => setViewMode("all")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 All Bookings
               </Button>
@@ -141,7 +141,7 @@ export default function Bookings() {
                 variant={viewMode === "renting" ? "default" : "outline"}
                 onClick={() => setViewMode("renting")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 I'm Renting
               </Button>
@@ -149,7 +149,7 @@ export default function Bookings() {
                 variant={viewMode === "rented" ? "default" : "outline"}
                 onClick={() => setViewMode("rented")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 I'm Rented To
               </Button>
@@ -162,7 +162,7 @@ export default function Bookings() {
                 variant={filterStatus === "all" ? "default" : "outline"}
                 onClick={() => setFilterStatus("all")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 All Status
               </Button>
@@ -170,7 +170,7 @@ export default function Bookings() {
                 variant={filterStatus === "pending" ? "default" : "outline"}
                 onClick={() => setFilterStatus("pending")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 Pending
               </Button>
@@ -178,7 +178,7 @@ export default function Bookings() {
                 variant={filterStatus === "accepted" ? "default" : "outline"}
                 onClick={() => setFilterStatus("accepted")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 Accepted
               </Button>
@@ -186,7 +186,7 @@ export default function Bookings() {
                 variant={filterStatus === "rejected" ? "default" : "outline"}
                 onClick={() => setFilterStatus("rejected")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 Rejected
               </Button>
@@ -194,7 +194,7 @@ export default function Bookings() {
                 variant={filterStatus === "completed" ? "default" : "outline"}
                 onClick={() => setFilterStatus("completed")}
                 size="sm"
-                className="rounded-xl"
+                className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
               >
                 Completed
               </Button>
