@@ -362,14 +362,85 @@ export default function Messages() {
                     >
                       <div className="flex flex-col gap-1.5 max-w-xs">
                         <div
-                          className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
+                          className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow relative group ${
                             msg.senderId === user?._id
                               ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
                               : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
                           }`}
+                          onMouseEnter={() => setHoveredMessageId(msg._id as any)}
+                          onMouseLeave={() => setHoveredMessageId(null)}
                         >
                           <p className="text-sm leading-relaxed break-words">{msg.content}</p>
+                          
+                          {/* Reaction Picker on Hover */}
+                          {hoveredMessageId === msg._id && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                              transition={{ duration: 0.2, ease: "easeOut" }}
+                              className="absolute -top-12 left-0 bg-white rounded-2xl shadow-lg border border-slate-200 p-2 flex gap-1 z-20"
+                            >
+                              {["😂", "❤️", "😮", "😢", "🔥", "👍"].map((emoji) => (
+                                <motion.button
+                                  key={emoji}
+                                  whileHover={{ scale: 1.3, y: -2 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => {
+                                    addReaction({ messageId: msg._id, emoji });
+                                    toast.success(`Added ${emoji} reaction`);
+                                  }}
+                                  className="text-lg hover:bg-purple-100 rounded-lg p-1.5 transition-colors cursor-pointer"
+                                  title={`React with ${emoji}`}
+                                >
+                                  {emoji}
+                                </motion.button>
+                              ))}
+                            </motion.div>
+                          )}
                         </div>
+                        
+                        {/* Reactions Display */}
+                        {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="flex gap-1.5 flex-wrap px-2"
+                          >
+                            {Object.entries(msg.reactions).map(([emoji, users], idx) => (
+                              <motion.button
+                                key={emoji}
+                                initial={{ opacity: 0, scale: 0.6 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: idx * 0.05, duration: 0.2 }}
+                                whileHover={{ scale: 1.15 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => {
+                                  if (users.includes(user?._id!)) {
+                                    removeReaction({ messageId: msg._id, emoji });
+                                  } else {
+                                    addReaction({ messageId: msg._id, emoji });
+                                  }
+                                }}
+                                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                                  users.includes(user?._id!)
+                                    ? "bg-gradient-to-r from-purple-200 to-pink-200 text-slate-900"
+                                    : "bg-gray-100 text-slate-600 hover:bg-gray-200"
+                                }`}
+                              >
+                                <motion.span
+                                  animate={{ rotate: [0, -5, 5, 0] }}
+                                  transition={{ duration: 0.4, repeat: Infinity, repeatDelay: 2 }}
+                                >
+                                  {emoji}
+                                </motion.span>
+                                <span>{users.length}</span>
+                              </motion.button>
+                            ))}
+                          </motion.div>
+                        )}
+                        
                         {msg.senderId === user?._id && (
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
