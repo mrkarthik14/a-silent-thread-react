@@ -255,3 +255,93 @@ export const removeReaction = mutation({
     await ctx.db.patch(args.messageId, { reactions });
   },
 });
+
+export const pinMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    if (message.recipientId !== user._id && message.senderId !== user._id) {
+      throw new Error("Not authorized");
+    }
+
+    await ctx.db.patch(args.messageId, { isPinned: true });
+  },
+});
+
+export const unpinMessage = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    if (message.recipientId !== user._id && message.senderId !== user._id) {
+      throw new Error("Not authorized");
+    }
+
+    await ctx.db.patch(args.messageId, { isPinned: false });
+  },
+});
+
+export const addToFavorite = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const favorites = message.isFavorite || [];
+    if (!favorites.includes(user._id)) {
+      await ctx.db.patch(args.messageId, { isFavorite: [...favorites, user._id] });
+    }
+  },
+});
+
+export const removeFromFavorite = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) throw new Error("Message not found");
+
+    const favorites = message.isFavorite || [];
+    await ctx.db.patch(args.messageId, { isFavorite: favorites.filter(id => id !== user._id) });
+  },
+});
+
+export const deleteConversation = mutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const messages = await ctx.db
+      .query("messages")
+      .filter((q) =>
+        q.or(
+          q.and(
+            q.eq(q.field("senderId"), user._id),
+            q.eq(q.field("recipientId"), args.userId)
+          ),
+          q.and(
+            q.eq(q.field("senderId"), args.userId),
+            q.eq(q.field("recipientId"), user._id)
+          )
+        )
+      )
+      .collect();
+
+    await Promise.all(messages.map(msg => ctx.db.delete(msg._id)));
+  },
+});
