@@ -71,6 +71,8 @@ export default function Messages() {
   const unlikeMessage = useMutation(api.messages.unlikeMessage);
   const addReaction = useMutation(api.messages.addReaction);
   const removeReaction = useMutation(api.messages.removeReaction);
+  const pinMessage = useMutation(api.messages.pinMessage);
+  const unpinMessage = useMutation(api.messages.unpinMessage);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
