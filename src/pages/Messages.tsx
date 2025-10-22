@@ -32,6 +32,11 @@ export default function Messages() {
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   const [messageMenuOpen, setMessageMenuOpen] = useState<string | null>(null);
+  const [incomingCall, setIncomingCall] = useState<any>(null);
+  const [activeCall, setActiveCall] = useState<any>(null);
+  const [isRecordingVoice, setIsRecordingVoice] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -74,6 +79,47 @@ export default function Messages() {
   const removeReaction = useMutation(api.messages.removeReaction);
   const pinMessage = useMutation(api.messages.pinMessage);
   const unpinMessage = useMutation(api.messages.unpinMessage);
+
+  const initiateCall = useMutation(api.calls.initiateCall);
+  const acceptCall = useMutation(api.calls.acceptCall);
+  const rejectCall = useMutation(api.calls.rejectCall);
+  const endCall = useMutation(api.calls.endCall);
+
+  const handleAcceptCall = async () => {
+    if (!incomingCall) return;
+    try {
+      await acceptCall({ callId: incomingCall._id });
+      setActiveCall(incomingCall);
+      setIncomingCall(null);
+      toast.success("Call accepted");
+    } catch (error) {
+      toast.error("Failed to accept call");
+    }
+  };
+
+  const handleRejectCall = async () => {
+    if (!incomingCall) return;
+    try {
+      await rejectCall({ callId: incomingCall._id });
+      setIncomingCall(null);
+      toast.info("Call rejected");
+    } catch (error) {
+      toast.error("Failed to reject call");
+    }
+  };
+
+  const handleEndCall = async () => {
+    if (!activeCall) return;
+    try {
+      await endCall({ callId: activeCall._id });
+      setActiveCall(null);
+      setIsRecordingVoice(false);
+      setRecordingTime(0);
+      toast.success("Call ended");
+    } catch (error) {
+      toast.error("Failed to end call");
+    }
+  };
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {

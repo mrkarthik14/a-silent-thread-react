@@ -93,6 +93,7 @@ const schema = defineSchema(
       reactions: v.optional(v.record(v.string(), v.array(v.id("users")))),
       isPinned: v.optional(v.boolean()),
       isFavorite: v.optional(v.array(v.id("users"))),
+      voiceDuration: v.optional(v.number()),
     }).index("by_sender", ["senderId"])
       .index("by_recipient", ["recipientId"])
       .index("by_parent", ["parentMessageId"]),

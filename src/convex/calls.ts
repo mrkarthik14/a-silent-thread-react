@@ -76,3 +76,44 @@ export const getActiveCall = query({
     return activeCall || null;
   },
 });
+
+export const getIncomingCall = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return null;
+
+    const incomingCall = await ctx.db
+      .query("calls")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("recipientId"), user._id),
+          q.eq(q.field("status"), "ringing")
+        )
+      )
+      .first();
+
+    return incomingCall || null;
+  },
+});
+
+export const getCallHistory = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
+
+    const calls = await ctx.db
+      .query("calls")
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("initiatorId"), user._id),
+          q.eq(q.field("recipientId"), user._id)
+        )
+      )
+      .order("desc")
+      .collect();
+
+    return calls;
+  },
+});

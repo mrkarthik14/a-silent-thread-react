@@ -19,6 +19,7 @@ export const send = mutation({
     fileSize: v.optional(v.number()),
     fileType: v.optional(v.string()),
     parentMessageId: v.optional(v.id("messages")),
+    voiceDuration: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
