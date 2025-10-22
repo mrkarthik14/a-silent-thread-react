@@ -31,6 +31,7 @@ export default function Messages() {
   const [replyingTo, setReplyingTo] = useState<any>(null);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
+  const [messageMenuOpen, setMessageMenuOpen] = useState<string | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
