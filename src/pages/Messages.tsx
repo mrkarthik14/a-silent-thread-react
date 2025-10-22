@@ -381,7 +381,7 @@ export default function Messages() {
                 </div>
               </ScrollArea>
 
-              <div className="p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm flex-shrink-0">
+              <div className="p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm flex-shrink-0 overflow-hidden">
                 {isUploading && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
