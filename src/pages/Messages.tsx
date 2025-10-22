@@ -296,29 +296,51 @@ export default function Messages() {
           {selectedUserId ? (
             <>
               <div className="sticky top-0 z-10 p-4 border-b border-slate-200 bg-white/50 backdrop-blur-sm">
-                <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
-                  <div className="relative">
-                    <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                      <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                        {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    {selectedUserPresence?.isOnline && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
-                    )}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
+                    <div className="relative">
+                      <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                        <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
+                        <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
+                          {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      {selectedUserPresence?.isOnline && (
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
+                      </p>
+                      {isOtherUserTyping ? (
+                        <p className="text-xs text-purple-600">typing...</p>
+                      ) : selectedUserPresence?.isOnline ? (
+                        <p className="text-xs text-emerald-600">online</p>
+                      ) : (
+                        <p className="text-xs text-slate-500">offline</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-slate-900">
-                      {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
-                    </p>
-                    {isOtherUserTyping ? (
-                      <p className="text-xs text-purple-600">typing...</p>
-                    ) : selectedUserPresence?.isOnline ? (
-                      <p className="text-xs text-emerald-600">online</p>
-                    ) : (
-                      <p className="text-xs text-slate-500">offline</p>
-                    )}
+                  <div className="flex gap-2">
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        size="sm"
+                        className="rounded-xl bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
+                        title="Start voice call"
+                      >
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        size="sm"
+                        className="rounded-xl bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
+                        title="Start video call"
+                      >
+                        <Video className="h-4 w-4" />
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
               </div>
