@@ -314,7 +314,7 @@ export default function Messages() {
                 </div>
               </div>
 
-              <ScrollArea className="flex-1 p-4">
+              <ScrollArea className="flex-1 p-4 messages-scroll">
                 <div className="space-y-3">
                   {currentConversation?.slice().reverse().map((msg, idx) => (
                     <motion.div
