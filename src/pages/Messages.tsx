@@ -314,7 +314,7 @@ export default function Messages() {
                 </div>
               </div>
 
-              <ScrollArea className="flex-1 p-4 messages-scroll">
+              <ScrollArea className="flex-1 p-4 messages-scroll scroll-snap-type-y">
                 <div className="space-y-3">
                   {currentConversation?.slice().reverse().map((msg, idx) => (
                     <motion.div
@@ -322,7 +322,7 @@ export default function Messages() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.02 }}
-                      className={`flex ${msg.senderId === user?._id ? "justify-end" : "justify-start"}`}
+                      className={`flex ${msg.senderId === user?._id ? "justify-end" : "justify-start"} scroll-snap-align-start`}
                     >
                       <div className="flex flex-col gap-1.5 max-w-xs">
                       <div
