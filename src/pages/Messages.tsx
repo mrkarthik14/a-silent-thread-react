@@ -358,46 +358,15 @@ export default function Messages() {
                       whileHover={{ scale: 1.02, y: -2 }}
                     >
                       <div className="flex flex-col gap-1.5 max-w-xs">
-                        {msg.messageType === "voice" && msg.mediaUrl ? (
-                          <div
-                            className={`px-4 py-3 rounded-3xl shadow-md hover:shadow-lg transition-shadow flex items-center gap-3 ${
-                              msg.senderId === user?._id
-                                ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
-                                : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
-                            }`}
-                          >
-                            <button
-                              onClick={() => handleAudioPlay(msg._id, msg.mediaUrl)}
-                              className="flex-shrink-0 hover:scale-110 transition-transform"
-                            >
-                              {playingAudioId === msg._id ? (
-                                <Pause className="h-5 w-5" />
-                              ) : (
-                                <Play className="h-5 w-5" />
-                              )}
-                            </button>
-                            <div className="flex-1 min-w-0">
-                              <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-white/80 transition-all"
-                                  style={{ width: `${audioProgress[msg._id] || 0}%` }}
-                                />
-                              </div>
-                              <p className="text-xs mt-1 opacity-75">Voice message</p>
-                            </div>
-                            <Volume2 className="h-4 w-4 flex-shrink-0" />
-                          </div>
-                        ) : (
-                          <div
-                            className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
-                              msg.senderId === user?._id
-                                ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
-                                : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
-                            }`}
-                          >
-                            <p className="text-sm leading-relaxed break-words">{msg.content}</p>
-                          </div>
-                        )}
+                        <div
+                          className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
+                            msg.senderId === user?._id
+                              ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
+                              : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
+                          }`}
+                        >
+                          <p className="text-sm leading-relaxed break-words">{msg.content}</p>
+                        </div>
                         {msg.senderId === user?._id && (
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
