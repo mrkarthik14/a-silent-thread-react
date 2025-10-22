@@ -528,16 +528,6 @@ export default function Messages() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="rounded-xl bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
-                        title="Upload file"
-                      >
-                        <Paperclip className="h-4 w-4" />
-                      </Button>
-                    </label>
                     <input
                       id="file-upload"
                       type="file"
@@ -546,6 +536,19 @@ export default function Messages() {
                       className="hidden"
                       accept="*/*"
                     />
+                    <label htmlFor="file-upload" className="cursor-pointer block">
+                      <Button
+                        type="button"
+                        size="sm"
+                        asChild
+                        className="rounded-xl bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
+                        title="Upload file"
+                      >
+                        <span>
+                          <Paperclip className="h-4 w-4" />
+                        </span>
+                      </Button>
+                    </label>
                   </motion.div>
                   <motion.div className="flex-1">
                     <Input
