@@ -273,7 +273,7 @@ export default function Messages() {
                 <p className="text-xs text-slate-500 mb-4">Find users to start chatting</p>
                 <Button
                   onClick={() => setSearchDialogOpen(true)}
-                  className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500"
+                  className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
                 >
                   <Search className="h-4 w-4 mr-2" />
                   Find Users
