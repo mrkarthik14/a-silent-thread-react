@@ -230,7 +230,7 @@ export default function Messages() {
             </Button>
           </div>
           
-          <ScrollArea className="h-[calc(100vh-73px)] conversations-scroll">
+          <ScrollArea className="h-[calc(100vh-73px)] conversations-scroll bg-white/30">
             {conversations && conversations.length > 0 ? (
               conversations.map((conv) => (
                 <motion.div
