@@ -325,6 +325,7 @@ export default function Messages() {
                   <div className="flex gap-2">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
+                        onClick={() => toast.info("Voice call feature coming soon")}
                         size="sm"
                         className="rounded-xl bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
                         title="Start voice call"
@@ -334,6 +335,7 @@ export default function Messages() {
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
+                        onClick={() => toast.info("Video call feature coming soon")}
                         size="sm"
                         className="rounded-xl bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
                         title="Start video call"
