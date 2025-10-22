@@ -33,6 +33,7 @@ export default function Messages() {
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Track presence
   usePresence();
@@ -70,6 +71,13 @@ export default function Messages() {
   const unlikeMessage = useMutation(api.messages.unlikeMessage);
   const addReaction = useMutation(api.messages.addReaction);
   const removeReaction = useMutation(api.messages.removeReaction);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [currentConversation]);
 
   // Clear typing indicator on unmount or when changing conversations
   useEffect(() => {
@@ -315,7 +323,7 @@ export default function Messages() {
                 </div>
               </div>
 
-              <ScrollArea className="flex-1 p-4 messages-scroll scroll-snap-type-y">
+              <ScrollArea className="flex-1 p-4 messages-scroll scroll-snap-type-y overflow-hidden">
                 <div className="space-y-3">
                   {currentConversation?.slice().reverse().map((msg, idx) => (
                     <motion.div
@@ -380,6 +388,8 @@ export default function Messages() {
                       </div>
                     </motion.div>
                   )}
+                  
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
