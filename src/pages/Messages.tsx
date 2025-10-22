@@ -15,7 +15,6 @@ import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate, useLocation } from "react-router";
 import { UserSearch } from "@/components/UserSearch";
-import { CallIndicator } from "@/components/CallIndicator";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();

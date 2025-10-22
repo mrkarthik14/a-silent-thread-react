@@ -150,6 +150,22 @@ const schema = defineSchema(
       timestamp: v.number(),
     }).index("by_sender_and_recipient", ["senderId", "recipientId"])
       .index("by_recipient", ["recipientId"]),
+
+    calls: defineTable({
+      initiatorId: v.id("users"),
+      recipientId: v.id("users"),
+      callType: v.union(v.literal("voice"), v.literal("video")),
+      status: v.union(
+        v.literal("ringing"),
+        v.literal("active"),
+        v.literal("ended"),
+        v.literal("rejected")
+      ),
+      startTime: v.number(),
+      endTime: v.optional(v.number()),
+    }).index("by_initiator", ["initiatorId"])
+      .index("by_recipient", ["recipientId"])
+      .index("by_status", ["status"]),
   },
   {
     schemaValidation: false,
