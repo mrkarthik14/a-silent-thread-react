@@ -567,6 +567,19 @@ export default function Messages() {
                     whileTap={{ scale: 0.95 }}
                   >
                     <Button
+                      onClick={() => toast.info("Voice message feature coming soon")}
+                      disabled={isUploading}
+                      className="rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 disabled:opacity-70"
+                      title="Record voice message"
+                    >
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
                       onClick={handleSend}
                       disabled={!message.trim() || isUploading}
                       className="rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 active:scale-95 transition-all duration-150 disabled:opacity-70 text-white font-semibold shadow-md hover:shadow-lg"
