@@ -11,7 +11,8 @@ export const send = mutation({
       v.literal("image"),
       v.literal("video"),
       v.literal("file"),
-      v.literal("gif")
+      v.literal("gif"),
+      v.literal("voice")
     )),
     mediaUrl: v.optional(v.string()),
     fileName: v.optional(v.string()),

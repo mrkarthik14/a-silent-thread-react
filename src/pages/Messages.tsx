@@ -358,35 +358,34 @@ export default function Messages() {
                       whileHover={{ scale: 1.02, y: -2 }}
                     >
                       <div className="flex flex-col gap-1.5 max-w-xs">
-                        {msg.messageType === "voice" ? (
+                        {msg.messageType === "voice" && msg.mediaUrl ? (
                           <div
-                            className={`px-4 py-3 rounded-3xl shadow-md hover:shadow-lg transition-shadow ${
+                            className={`px-4 py-3 rounded-3xl shadow-md hover:shadow-lg transition-shadow flex items-center gap-3 ${
                               msg.senderId === user?._id
                                 ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
                                 : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
                             }`}
                           >
-                            <div className="flex items-center gap-3">
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => msg.mediaUrl && handleAudioPlay(msg._id, msg.mediaUrl)}
-                                className="flex-shrink-0 p-2 rounded-full hover:bg-white/30 transition-colors"
-                              >
-                                {playingAudioId === msg._id ? (
-                                  <Pause className="h-5 w-5" />
-                                ) : (
-                                  <Play className="h-5 w-5" />
-                                )}
-                              </motion.button>
-                              <div className="flex-1 min-w-0">
-                                <Progress 
-                                  value={audioProgress[msg._id] || 0} 
-                                  className="h-1.5 rounded-full"
+                            <button
+                              onClick={() => handleAudioPlay(msg._id, msg.mediaUrl)}
+                              className="flex-shrink-0 hover:scale-110 transition-transform"
+                            >
+                              {playingAudioId === msg._id ? (
+                                <Pause className="h-5 w-5" />
+                              ) : (
+                                <Play className="h-5 w-5" />
+                              )}
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <div className="h-1.5 bg-white/40 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-white/80 transition-all"
+                                  style={{ width: `${audioProgress[msg._id] || 0}%` }}
                                 />
-                                <p className="text-xs mt-1 opacity-70">Voice message</p>
                               </div>
+                              <p className="text-xs mt-1 opacity-75">Voice message</p>
                             </div>
+                            <Volume2 className="h-4 w-4 flex-shrink-0" />
                           </div>
                         ) : (
                           <div

@@ -210,7 +210,11 @@ export default function Bookings() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border-none shadow-sm hover:shadow-md transition-shadow">
+                <Card className={`p-6 rounded-2xl backdrop-blur-sm border-none shadow-sm hover:shadow-md transition-shadow ${
+                  booking.status === "pending"
+                    ? "bg-gradient-to-br from-orange-100 to-amber-100 border-2 border-orange-300"
+                    : "bg-white/80"
+                }`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg mb-1 text-slate-900">
