@@ -113,6 +113,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -152,11 +155,5 @@
   }
   .messages-scroll::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(to bottom, #0891b2, #059669);
-  }
-
-  /* Smooth scrolling for scrollable areas */
-  .conversations-scroll,
-  .messages-scroll {
-    scroll-behavior: smooth;
   }
 }
