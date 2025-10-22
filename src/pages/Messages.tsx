@@ -523,21 +523,6 @@ export default function Messages() {
                   </motion.div>
                 )}
                 <div className="flex gap-2">
-                  <motion.div className="flex-1">
-                    <Input
-                      value={message}
-                      onChange={(e) => handleTyping(e.target.value)}
-                      placeholder="Type a message..."
-                      disabled={isUploading}
-                      className="rounded-xl border-2 border-cyan-200 bg-white/80 transition-all duration-200 focus:border-cyan-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-cyan-300 hover:bg-white/90 disabled:opacity-50"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey && !isUploading) {
-                          e.preventDefault();
-                          handleSend();
-                        }
-                      }}
-                    />
-                  </motion.div>
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -559,6 +544,21 @@ export default function Messages() {
                       disabled={isUploading}
                       className="hidden"
                       accept="*/*"
+                    />
+                  </motion.div>
+                  <motion.div className="flex-1">
+                    <Input
+                      value={message}
+                      onChange={(e) => handleTyping(e.target.value)}
+                      placeholder="Type a message..."
+                      disabled={isUploading}
+                      className="rounded-xl border-2 border-cyan-200 bg-white/80 transition-all duration-200 focus:border-cyan-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-cyan-300 hover:bg-white/90 disabled:opacity-50"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey && !isUploading) {
+                          e.preventDefault();
+                          handleSend();
+                        }
+                      }}
                     />
                   </motion.div>
                   <motion.div
