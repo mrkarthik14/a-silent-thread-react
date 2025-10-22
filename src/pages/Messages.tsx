@@ -286,7 +286,7 @@ export default function Messages() {
         <div className="flex-1 flex flex-col">
           {selectedUserId ? (
             <>
-              <div className="p-4 border-b border-slate-200 bg-white/50 backdrop-blur-sm">
+              <div className="sticky top-0 z-10 p-4 border-b border-slate-200 bg-white/50 backdrop-blur-sm">
                 <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
                   <div className="relative">
                     <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
