@@ -196,7 +196,6 @@ export default function Messages() {
         content: message,
       });
       setMessage("");
-      setReplyingTo(null);
       
       // Clear timeout
       if (typingTimeoutRef.current) {
@@ -314,7 +313,7 @@ export default function Messages() {
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                        <AvatarImage src={conv.user?.image ? (useQuery(api.files.getImageUrl, { storageId: conv.user.image }) || undefined) : undefined} />
+                        <AvatarImage src={conv.user?.image} />
                         <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
                           {conv.user?.name?.[0] || "U"}
                         </AvatarFallback>
@@ -361,9 +360,9 @@ export default function Messages() {
                   <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
                     <div className="relative">
                       <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                        <AvatarImage src={selectedUserImage || undefined} />
+                        <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
                         <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                          {selectedUserConv?.user?.name?.[0] || "U"}
+                          {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
                       {selectedUserPresence?.isOnline && (

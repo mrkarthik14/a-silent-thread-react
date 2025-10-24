@@ -17,7 +17,6 @@ export const create = mutation({
       userId: user._id,
       content: args.content,
       parentCommentId: args.parentCommentId,
-      likes: [],
     });
   },
 });
@@ -64,35 +63,5 @@ export const deleteComment = mutation({
     if (comment.userId !== user._id) throw new Error("Not authorized");
 
     await ctx.db.delete(args.commentId);
-  },
-});
-
-export const likeComment = mutation({
-  args: { commentId: v.id("comments") },
-  handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    if (!user) throw new Error("Not authenticated");
-
-    const comment = await ctx.db.get(args.commentId);
-    if (!comment) throw new Error("Comment not found");
-
-    const likes = comment.likes || [];
-    if (!likes.includes(user._id)) {
-      await ctx.db.patch(args.commentId, { likes: [...likes, user._id] });
-    }
-  },
-});
-
-export const unlikeComment = mutation({
-  args: { commentId: v.id("comments") },
-  handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
-    if (!user) throw new Error("Not authenticated");
-
-    const comment = await ctx.db.get(args.commentId);
-    if (!comment) throw new Error("Comment not found");
-
-    const likes = comment.likes || [];
-    await ctx.db.patch(args.commentId, { likes: likes.filter(id => id !== user._id) });
   },
 });

@@ -18,7 +18,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
 import { LoadingLogo } from "@/components/LoadingLogo";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
