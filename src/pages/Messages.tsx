@@ -361,9 +361,9 @@ export default function Messages() {
                   <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
                     <div className="relative">
                       <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                        <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
+                        <AvatarImage src={useQuery(api.files.getImageUrl, selectedUserConv?.user?.image ? { storageId: selectedUserConv.user.image } : "skip") || undefined} />
                         <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                          {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
+                          {selectedUserConv?.user?.name?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
                       {selectedUserPresence?.isOnline && (
