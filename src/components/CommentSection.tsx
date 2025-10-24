@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, Send, Trash2, Reply } from "lucide-react";
+import { MessageCircle, Send, Trash2, Reply, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
@@ -17,6 +17,7 @@ interface CommentSectionProps {
 export function CommentSection({ postId }: CommentSectionProps) {
   const [commentContent, setCommentContent] = useState("");
   const [replyTo, setReplyTo] = useState<Id<"comments"> | null>(null);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "liked">("newest");
   const { user } = useAuth();
 
   const comments = useQuery(api.comments.list, { postId });
@@ -48,6 +49,19 @@ export function CommentSection({ postId }: CommentSectionProps) {
       toast.error("Failed to delete comment");
     }
   };
+
+  const sortedComments = comments ? [...comments].sort((a, b) => {
+    if (sortBy === "newest") {
+      return b._creationTime - a._creationTime;
+    } else if (sortBy === "oldest") {
+      return a._creationTime - b._creationTime;
+    } else if (sortBy === "liked") {
+      const aLikes = a.likes?.length || 0;
+      const bLikes = b.likes?.length || 0;
+      return bLikes - aLikes;
+    }
+    return 0;
+  }) : [];
 
   return (
     <div className="space-y-4 mt-4">
@@ -94,9 +108,55 @@ export function CommentSection({ postId }: CommentSectionProps) {
         </Button>
       </div>
 
+      {/* Sort Options */}
+      <motion.div
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex gap-2 items-center flex-wrap"
+      >
+        <span className="text-xs font-semibold text-slate-600">Sort by:</span>
+        <Button
+          size="sm"
+          variant={sortBy === "newest" ? "default" : "outline"}
+          onClick={() => setSortBy("newest")}
+          className={`rounded-lg text-xs ${
+            sortBy === "newest"
+              ? "bg-gradient-to-r from-purple-300 to-blue-300 text-slate-900 border-none"
+              : "border-slate-200 hover:bg-slate-100"
+          }`}
+        >
+          Newest
+        </Button>
+        <Button
+          size="sm"
+          variant={sortBy === "oldest" ? "default" : "outline"}
+          onClick={() => setSortBy("oldest")}
+          className={`rounded-lg text-xs ${
+            sortBy === "oldest"
+              ? "bg-gradient-to-r from-purple-300 to-blue-300 text-slate-900 border-none"
+              : "border-slate-200 hover:bg-slate-100"
+          }`}
+        >
+          Oldest
+        </Button>
+        <Button
+          size="sm"
+          variant={sortBy === "liked" ? "default" : "outline"}
+          onClick={() => setSortBy("liked")}
+          className={`rounded-lg text-xs flex items-center gap-1 ${
+            sortBy === "liked"
+              ? "bg-gradient-to-r from-purple-300 to-blue-300 text-slate-900 border-none"
+              : "border-slate-200 hover:bg-slate-100"
+          }`}
+        >
+          <ArrowUp className="h-3 w-3" />
+          Most Liked
+        </Button>
+      </motion.div>
+
       {/* Comments List */}
       <div className="space-y-3">
-        {comments?.map((comment) => (
+        {sortedComments?.map((comment) => (
           <motion.div
             key={comment._id}
             initial={{ opacity: 0, y: 10 }}

@@ -137,6 +137,7 @@ const schema = defineSchema(
       userId: v.id("users"),
       content: v.string(),
       parentCommentId: v.optional(v.id("comments")),
+      likes: v.optional(v.array(v.id("users"))),
     }).index("by_post", ["postId"])
       .index("by_user", ["userId"])
       .index("by_parent", ["parentCommentId"]),
