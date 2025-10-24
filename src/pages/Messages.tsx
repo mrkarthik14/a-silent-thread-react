@@ -196,6 +196,7 @@ export default function Messages() {
         content: message,
       });
       setMessage("");
+      setReplyingTo(null);
       
       // Clear timeout
       if (typingTimeoutRef.current) {
