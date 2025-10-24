@@ -372,24 +372,32 @@ export default function Messages() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} whileInView={{ opacity: 1 }}>
                       <Button
-                        onClick={() => toast.info("Voice call feature coming soon")}
+                        onClick={() => {
+                          toast.success("Initiating voice call...");
+                          initiateCall({ recipientId: selectedUserId!, callType: "voice" });
+                        }}
                         size="sm"
-                        className="rounded-xl bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
+                        className="rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
                         title="Start voice call"
                       >
                         <Phone className="h-4 w-4" />
+                        <span className="text-xs">Call</span>
                       </Button>
                     </motion.div>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} whileInView={{ opacity: 1 }}>
                       <Button
-                        onClick={() => toast.info("Video call feature coming soon")}
+                        onClick={() => {
+                          toast.success("Initiating video call...");
+                          initiateCall({ recipientId: selectedUserId!, callType: "video" });
+                        }}
                         size="sm"
-                        className="rounded-xl bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
+                        className="rounded-xl bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
                         title="Start video call"
                       >
                         <Video className="h-4 w-4" />
+                        <span className="text-xs">Video</span>
                       </Button>
                     </motion.div>
                   </div>
