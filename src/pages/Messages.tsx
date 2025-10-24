@@ -314,7 +314,7 @@ export default function Messages() {
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                        <AvatarImage src={conv.user?.image} />
+                        <AvatarImage src={conv.user?.image ? (useQuery(api.files.getImageUrl, { storageId: conv.user.image }) || undefined) : undefined} />
                         <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
                           {conv.user?.name?.[0] || "U"}
                         </AvatarFallback>
