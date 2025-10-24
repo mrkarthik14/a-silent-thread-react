@@ -121,6 +121,17 @@ export default function Messages() {
     }
   };
 
+  // Handle recording timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRecordingVoice) {
+      interval = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRecordingVoice]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
