@@ -464,6 +464,29 @@ export default function Messages() {
                           onMouseEnter={() => setHoveredMessageId(msg._id as any)}
                           onMouseLeave={() => setHoveredMessageId(null)}
                         >
+                          {/* Display uploaded image */}
+                          {msg.mediaUrl && msg.messageType === "image" && (
+                            <img 
+                              src={msg.mediaUrl} 
+                              alt="Uploaded" 
+                              className="rounded-lg mb-2 max-w-xs w-full object-cover max-h-64"
+                            />
+                          )}
+                          
+                          {/* Display other file types */}
+                          {msg.mediaUrl && msg.messageType === "file" && (
+                            <div className="bg-white/30 rounded-lg p-2 mb-2 flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-slate-600" />
+                              <a 
+                                href={msg.mediaUrl} 
+                                download={msg.fileName}
+                                className="text-xs text-blue-600 hover:underline truncate"
+                              >
+                                {msg.fileName || "Download file"}
+                              </a>
+                            </div>
+                          )}
+                          
                           <p className="text-sm leading-relaxed break-words">{msg.content}</p>
                           
                           {/* Reaction Picker on Hover */}
