@@ -47,6 +47,16 @@ export const generateUploadUrl = mutation({
   },
 });
 
+export const storeFileAndGetUrl = mutation({
+  args: {
+    storageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const url = await ctx.storage.getUrl(args.storageId as any);
+    return url;
+  },
+});
+
 export const getConversation = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {

@@ -243,19 +243,25 @@ export default function Messages() {
 
       xhr.addEventListener("load", async () => {
         if (xhr.status === 200) {
-          const { storageId } = JSON.parse(xhr.responseText);
-          await sendMessage({
-            recipientId: selectedUserId,
-            content: `Shared a file: ${file.name}`,
-            messageType: "file",
-            mediaUrl: storageId,
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: file.type,
-          });
-          toast.success("File uploaded successfully");
-          setIsUploading(false);
-          setUploadProgress(0);
+          try {
+            const { storageId } = JSON.parse(xhr.responseText);
+            await sendMessage({
+              recipientId: selectedUserId,
+              content: `Shared a file: ${file.name}`,
+              messageType: "file",
+              mediaUrl: storageId,
+              fileName: file.name,
+              fileSize: file.size,
+              fileType: file.type,
+            });
+            toast.success("File uploaded successfully");
+            setIsUploading(false);
+            setUploadProgress(0);
+          } catch (parseError) {
+            toast.error("Failed to process upload response");
+            setIsUploading(false);
+            setUploadProgress(0);
+          }
         }
       });
 
