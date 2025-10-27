@@ -36,6 +36,8 @@ export default function Messages() {
   const [activeCall, setActiveCall] = useState<any>(null);
   const [isRecordingVoice, setIsRecordingVoice] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
   
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -226,6 +228,24 @@ export default function Messages() {
       return;
     }
 
+    // Show preview for images
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target?.result as string);
+        setPreviewFile(file);
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    // For non-image files, upload directly
+    await uploadFile(file);
+  };
+
+  const uploadFile = async (file: File) => {
+    if (!selectedUserId) return;
+
     setIsUploading(true);
     setUploadProgress(0);
     abortControllerRef.current = new AbortController();
@@ -248,7 +268,7 @@ export default function Messages() {
             await sendMessage({
               recipientId: selectedUserId,
               content: `Shared a file: ${file.name}`,
-              messageType: "file",
+              messageType: file.type.startsWith("image/") ? "image" : "file",
               mediaUrl: storageId,
               fileName: file.name,
               fileSize: file.size,
@@ -257,6 +277,8 @@ export default function Messages() {
             toast.success("File uploaded successfully");
             setIsUploading(false);
             setUploadProgress(0);
+            setImagePreview(null);
+            setPreviewFile(null);
           } catch (parseError) {
             toast.error("Failed to process upload response");
             setIsUploading(false);
@@ -563,6 +585,45 @@ export default function Messages() {
               </ScrollArea>
 
               <div className="sticky bottom-0 z-10 p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm flex-shrink-0 overflow-hidden">
+                {imagePreview && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 shadow-sm border border-blue-100"
+                  >
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-20 w-20 object-cover rounded-lg border-2 border-white shadow-sm"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-slate-900 mb-2">{previewFile?.name}</p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => uploadFile(previewFile!)}
+                            className="rounded-lg bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 text-white font-semibold active:scale-95 transition-all duration-150"
+                          >
+                            Upload
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setImagePreview(null);
+                              setPreviewFile(null);
+                            }}
+                            className="rounded-lg active:scale-95 transition-all duration-150"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 {isUploading && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
