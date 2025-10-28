@@ -72,7 +72,8 @@ export default function Feed() {
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
-        <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="hidden lg:block"></div>
           <div className="lg:col-span-2">
           <motion.div
             initial={{ y: -20, opacity: 0 }}
@@ -269,6 +270,7 @@ export default function Feed() {
           <div className="hidden lg:block">
             <SuggestedFollowers />
           </div>
+          <div className="hidden lg:block"></div>
         </div>
       </div>
     </div>
