@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
-import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2, MoreVertical, Trash2, Edit2, Eye, Users, Mail } from "lucide-react";
+import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2, MoreVertical, Trash2, Edit2, Eye, Users, Mail, Download, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -38,6 +38,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [editPrice, setEditPrice] = useState("");
   const [editLocation, setEditLocation] = useState("");
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -307,7 +308,8 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <img 
                 src={post.image} 
                 alt="Post" 
-                className="rounded-xl mb-3 w-full object-cover max-h-64"
+                className="rounded-xl mb-3 w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => setSelectedImageUrl(post.image || null)}
               />
             )}
 
@@ -319,7 +321,8 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                     key={idx}
                     src={url} 
                     alt={`Post image ${idx + 1}`} 
-                    className="rounded-xl w-full object-cover max-h-64"
+                    className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => setSelectedImageUrl(url)}
                   />
                 ))}
               </div>
@@ -494,6 +497,73 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
         onOpenChange={setBookingDialogOpen}
         serviceId={post._id}
       />
+
+      {/* Image Modal */}
+      <Dialog open={!!selectedImageUrl} onOpenChange={(open) => !open && setSelectedImageUrl(null)}>
+        <DialogContent className="rounded-2xl max-w-3xl p-0 border-0 bg-black/90">
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 z-50 hover:bg-white/20"
+              onClick={() => setSelectedImageUrl(null)}
+            >
+              <X className="h-6 w-6 text-white" strokeWidth={1.5} />
+            </Button>
+
+            {selectedImageUrl && (
+              <img
+                src={selectedImageUrl}
+                alt="Full view"
+                className="w-full h-auto max-h-[80vh] object-contain rounded-xl"
+              />
+            )}
+
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-3">
+              <Button
+                onClick={() => {
+                  if (selectedImageUrl) {
+                    const link = document.createElement("a");
+                    link.href = selectedImageUrl;
+                    link.download = `image-${Date.now()}.jpg`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    toast.success("Image downloaded");
+                  }
+                }}
+                className="rounded-xl bg-white hover:bg-white/90 text-black font-semibold gap-2"
+              >
+                <Download className="h-4 w-4" strokeWidth={1.5} />
+                Save
+              </Button>
+
+              <Button
+                onClick={() => {
+                  if (selectedImageUrl) {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: "Check out this image",
+                        text: "I found this interesting image on A Silent Thread",
+                        url: selectedImageUrl,
+                      }).catch(() => {
+                        toast.error("Share failed");
+                      });
+                    } else {
+                      navigator.clipboard.writeText(selectedImageUrl);
+                      toast.success("Image URL copied to clipboard");
+                    }
+                  }
+                }}
+                className="rounded-xl bg-white hover:bg-white/90 text-black font-semibold gap-2"
+              >
+                <Share2 className="h-4 w-4" strokeWidth={1.5} />
+                Share
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
