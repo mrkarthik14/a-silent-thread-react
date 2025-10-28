@@ -31,3 +31,37 @@ export const getCurrentUser = async (ctx: QueryCtx) => {
   }
   return await ctx.db.get(userId);
 };
+
+export const getSuggestedUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
+
+    // Get all users
+    const allUsers = await ctx.db.query("users").collect();
+    
+    // Get users that current user is already following
+    const following = await ctx.db
+      .query("follows")
+      .withIndex("by_follower", (q) => q.eq("followerId", user._id))
+      .collect();
+    
+    const followingIds = new Set(following.map(f => f.followingId));
+
+    // Filter out current user and already following users
+    const suggested = allUsers.filter(u => 
+      u._id !== user._id && !followingIds.has(u._id)
+    );
+
+    // Sort by last seen (active users first)
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+    suggested.sort((a, b) => {
+      const aIsOnline = a.lastSeen && a.lastSeen > fiveMinutesAgo ? 1 : 0;
+      const bIsOnline = b.lastSeen && b.lastSeen > fiveMinutesAgo ? 1 : 0;
+      return bIsOnline - aIsOnline;
+    });
+
+    return suggested.slice(0, 10);
+  },
+});
