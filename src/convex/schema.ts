@@ -39,6 +39,7 @@ const schema = defineSchema(
       image: v.optional(v.string()),
       images: v.optional(v.array(v.string())),
       videos: v.optional(v.array(v.string())),
+      imageLayout: v.optional(v.union(v.literal("slider"), v.literal("grid"))),
       type: v.union(v.literal("post"), v.literal("service")),
       serviceDetails: v.optional(v.object({
         title: v.string(),

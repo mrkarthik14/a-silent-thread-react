@@ -38,7 +38,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [editPrice, setEditPrice] = useState("");
   const [editLocation, setEditLocation] = useState("");
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -77,14 +77,14 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   }, [checkIsFollowing]);
 
   // Get URLs for images
-  const imageUrls = post.images?.map(storageId => 
+  const imageUrls = (post.images?.map(storageId => 
     useQuery(api.files.getImageUrl, { storageId })
-  ).filter(Boolean) || [];
+  ).filter((url): url is string => !!url) || []) as string[];
 
   // Get URLs for videos
-  const videoUrls = post.videos?.map(storageId => 
+  const videoUrls = (post.videos?.map(storageId => 
     useQuery(api.files.getImageUrl, { storageId })
-  ).filter(Boolean) || [];
+  ).filter((url): url is string => !!url) || []) as string[];
 
   const likePostMutation = useMutation(api.posts.like);
   const followMutation = useMutation(api.follows.follow);
@@ -309,29 +309,57 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 src={post.image} 
                 alt="Post" 
                 className="rounded-xl mb-3 w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => setSelectedImageUrl(post.image || null)}
+                onClick={() => {
+                  if (post.image) {
+                    setSelectedImageUrl(post.image);
+                  }
+                }}
               />
             )}
 
             {/* Display multiple images */}
             {imageUrls.length > 0 && (
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {imageUrls.map((url, idx) => url && (
-                  <img 
-                    key={idx}
-                    src={url} 
-                    alt={`Post image ${idx + 1}`} 
-                    className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={() => setSelectedImageUrl(url)}
-                  />
-                ))}
-              </div>
+              <>
+                {post.imageLayout === "slider" ? (
+                  <div className="relative mb-3 group">
+                    <div className="overflow-hidden rounded-xl">
+                      <img 
+                        src={imageUrls[0]} 
+                        alt="Post image" 
+                        className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => {
+                          if (imageUrls[0]) {
+                            setSelectedImageUrl(imageUrls[0]);
+                          }
+                        }}
+                      />
+                    </div>
+                    {imageUrls.length > 1 && (
+                      <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-lg">
+                        1/{imageUrls.length}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    {imageUrls.map((url, idx) => (
+                      <img 
+                        key={idx}
+                        src={url} 
+                        alt={`Post image ${idx + 1}`} 
+                        className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => setSelectedImageUrl(url)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {/* Display videos */}
             {videoUrls.length > 0 && (
               <div className="space-y-2 mb-3">
-                {videoUrls.map((url, idx) => url && (
+                {videoUrls.map((url, idx) => (
                   <video 
                     key={idx}
                     src={url} 
@@ -499,14 +527,14 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
       />
 
       {/* Image Modal */}
-      <Dialog open={!!selectedImageUrl} onOpenChange={(open) => !open && setSelectedImageUrl(null)}>
+  <Dialog open={selectedImageUrl !== undefined && selectedImageUrl !== null} onOpenChange={(open) => !open && setSelectedImageUrl(undefined)}>
         <DialogContent className="rounded-2xl max-w-3xl p-0 border-0 bg-black/90">
           <div className="relative w-full h-full flex items-center justify-center">
             <Button
               variant="ghost"
               size="sm"
               className="absolute top-4 right-4 z-50 hover:bg-white/20"
-              onClick={() => setSelectedImageUrl(null)}
+              onClick={() => setSelectedImageUrl(undefined)}
             >
               <X className="h-6 w-6 text-white" strokeWidth={1.5} />
             </Button>

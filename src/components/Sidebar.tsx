@@ -55,6 +55,7 @@ export function Sidebar() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [imageLayout, setImageLayout] = useState<"slider" | "grid" | null>(null);
 
   // ========================================================================
   // MUTATIONS
@@ -134,6 +135,7 @@ export function Sidebar() {
         type: postType,
         images: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
         videos: uploadedVideoUrls.length > 0 ? uploadedVideoUrls : undefined,
+        imageLayout: imageLayout || undefined,
         serviceDetails: postType === "service" ? {
           title: serviceTitle,
           price: parseFloat(servicePrice),
@@ -159,6 +161,7 @@ export function Sidebar() {
     setSelectedImages([]);
     setSelectedVideos([]);
     setPostType("post");
+    setImageLayout(null);
   };
 
   // ========================================================================
@@ -398,9 +401,38 @@ export function Sidebar() {
                 className="rounded-xl"
               />
               {selectedImages.length > 0 && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {selectedImages.length} image(s) selected
-                </p>
+                <>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {selectedImages.length} image(s) selected
+                  </p>
+                  {selectedImages.length > 1 && (
+                    <div className="mt-3 space-y-2">
+                      <Label className="text-xs font-semibold">Layout Style</Label>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setImageLayout("slider")}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                            imageLayout === "slider"
+                              ? "bg-slate-900 text-white shadow-md"
+                              : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                          }`}
+                        >
+                          📱 Instagram Style
+                        </button>
+                        <button
+                          onClick={() => setImageLayout("grid")}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                            imageLayout === "grid"
+                              ? "bg-slate-900 text-white shadow-md"
+                              : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                          }`}
+                        >
+                          🎨 Pinterest Style
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
