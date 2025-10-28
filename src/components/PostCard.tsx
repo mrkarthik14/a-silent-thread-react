@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
 import { LoadingLogo } from "@/components/LoadingLogo";
+import { ImageSlider } from "@/components/ImageSlider";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -321,25 +322,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {imageUrls.length > 0 && (
               <>
                 {post.imageLayout === "slider" ? (
-                  <div className="relative mb-3 group">
-                    <div className="overflow-hidden rounded-xl">
-                      <img 
-                        src={imageUrls[0]} 
-                        alt="Post image" 
-                        className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => {
-                          if (imageUrls[0]) {
-                            setSelectedImageUrl(imageUrls[0]);
-                          }
-                        }}
-                      />
-                    </div>
-                    {imageUrls.length > 1 && (
-                      <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-lg">
-                        1/{imageUrls.length}
-                      </div>
-                    )}
-                  </div>
+                  <ImageSlider images={imageUrls} onImageClick={setSelectedImageUrl} />
                 ) : (
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     {imageUrls.map((url, idx) => (
