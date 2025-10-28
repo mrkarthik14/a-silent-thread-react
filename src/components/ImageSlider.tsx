@@ -23,7 +23,7 @@ export function ImageSlider({ images, onImageClick }: ImageSliderProps) {
       <img
         src={images[currentIndex]}
         alt={`Post image ${currentIndex + 1}`}
-        className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+        className="rounded-xl w-full object-cover max-h-64 cursor-pointer"
         onClick={() => onImageClick(images[currentIndex])}
       />
 
