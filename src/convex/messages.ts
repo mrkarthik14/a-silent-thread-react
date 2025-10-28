@@ -236,11 +236,16 @@ export const addReaction = mutation({
     const message = await ctx.db.get(args.messageId);
     if (!message) throw new Error("Message not found");
 
-    const reactions = message.reactions || {};
-    const emojiReactions = reactions[args.emoji] || [];
+    const reactions = message.reactions || [];
+    const existingReaction = reactions.find(r => r.emoji === args.emoji);
     
-    if (!emojiReactions.includes(user._id)) {
-      reactions[args.emoji] = [...emojiReactions, user._id];
+    if (existingReaction) {
+      if (!existingReaction.userIds.includes(user._id)) {
+        existingReaction.userIds.push(user._id);
+        await ctx.db.patch(args.messageId, { reactions });
+      }
+    } else {
+      reactions.push({ emoji: args.emoji, userIds: [user._id] });
       await ctx.db.patch(args.messageId, { reactions });
     }
   },
@@ -255,15 +260,16 @@ export const removeReaction = mutation({
     const message = await ctx.db.get(args.messageId);
     if (!message) throw new Error("Message not found");
 
-    const reactions = message.reactions || {};
-    const emojiReactions = reactions[args.emoji] || [];
+    const reactions = message.reactions || [];
+    const reactionIndex = reactions.findIndex(r => r.emoji === args.emoji);
     
-    reactions[args.emoji] = emojiReactions.filter(id => id !== user._id);
-    if (reactions[args.emoji].length === 0) {
-      delete reactions[args.emoji];
+    if (reactionIndex !== -1) {
+      reactions[reactionIndex].userIds = reactions[reactionIndex].userIds.filter(id => id !== user._id);
+      if (reactions[reactionIndex].userIds.length === 0) {
+        reactions.splice(reactionIndex, 1);
+      }
+      await ctx.db.patch(args.messageId, { reactions });
     }
-    
-    await ctx.db.patch(args.messageId, { reactions });
   },
 });
 

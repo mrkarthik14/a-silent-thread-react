@@ -90,7 +90,10 @@ const schema = defineSchema(
       isDeleted: v.optional(v.boolean()),
       isHidden: v.optional(v.boolean()),
       likes: v.optional(v.array(v.id("users"))),
-      reactions: v.optional(v.record(v.string(), v.array(v.id("users")))),
+      reactions: v.optional(v.array(v.object({
+        emoji: v.string(),
+        userIds: v.array(v.id("users")),
+      }))),
       isPinned: v.optional(v.boolean()),
       isFavorite: v.optional(v.array(v.id("users"))),
       voiceDuration: v.optional(v.number()),

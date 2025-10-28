@@ -518,30 +518,30 @@ export default function Messages() {
                         </div>
                         
                         {/* Reactions Display */}
-                        {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+                        {msg.reactions && msg.reactions.length > 0 && (
                           <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.3, ease: "easeOut" }}
                             className="flex gap-1.5 flex-wrap px-2"
                           >
-                            {Object.entries(msg.reactions).map(([emoji, users], idx) => (
+                            {msg.reactions.map((reaction, idx) => (
                               <motion.button
-                                key={emoji}
+                                key={reaction.emoji}
                                 initial={{ opacity: 0, scale: 0.6 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: idx * 0.05, duration: 0.2 }}
                                 whileHover={{ scale: 1.15 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => {
-                                  if (users.includes(user?._id!)) {
-                                    removeReaction({ messageId: msg._id, emoji });
+                                  if (reaction.userIds.includes(user?._id!)) {
+                                    removeReaction({ messageId: msg._id, emoji: reaction.emoji });
                                   } else {
-                                    addReaction({ messageId: msg._id, emoji });
+                                    addReaction({ messageId: msg._id, emoji: reaction.emoji });
                                   }
                                 }}
                                 className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                                  users.includes(user?._id!)
+                                  reaction.userIds.includes(user?._id!)
                                     ? "bg-gradient-to-r from-purple-200 to-pink-200 text-slate-900"
                                     : "bg-gray-100 text-slate-600 hover:bg-gray-200"
                                 }`}
@@ -550,9 +550,9 @@ export default function Messages() {
                                   animate={{ rotate: [0, -5, 5, 0] }}
                                   transition={{ duration: 0.4, repeat: Infinity, repeatDelay: 2 }}
                                 >
-                                  {emoji}
+                                  {reaction.emoji}
                                 </motion.span>
-                                <span>{users.length}</span>
+                                <span>{reaction.userIds.length}</span>
                               </motion.button>
                             ))}
                           </motion.div>
