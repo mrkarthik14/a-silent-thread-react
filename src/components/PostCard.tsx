@@ -309,7 +309,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <img 
                 src={post.image} 
                 alt="Post" 
-                className="rounded-xl mb-3 w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+                className="rounded-xl mb-3 w-full object-cover max-h-64 cursor-pointer"
                 onClick={() => {
                   if (post.image) {
                     setSelectedImageUrl(post.image);
@@ -330,7 +330,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                         key={idx}
                         src={url} 
                         alt={`Post image ${idx + 1}`} 
-                        className="rounded-xl w-full object-cover max-h-64 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="rounded-xl w-full object-cover max-h-64 cursor-pointer"
                         onClick={() => setSelectedImageUrl(url)}
                       />
                     ))}
