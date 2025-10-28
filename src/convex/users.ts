@@ -64,3 +64,36 @@ export const getSuggestedUsers = query({
     return suggested.slice(0, 10);
   },
 });
+
+export const getActiveUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
+
+    // Get all users
+    const allUsers = await ctx.db.query("users").collect();
+    
+    // Get users that current user is already following
+    const following = await ctx.db
+      .query("follows")
+      .withIndex("by_follower", (q) => q.eq("followerId", user._id))
+      .collect();
+    
+    const followingIds = new Set(following.map(f => f.followingId));
+
+    // Filter for only active/online users not already following
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+    const active = allUsers.filter(u => 
+      u._id !== user._id && 
+      !followingIds.has(u._id) &&
+      u.lastSeen && 
+      u.lastSeen > fiveMinutesAgo
+    );
+
+    // Sort by last seen (most recently active first)
+    active.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+
+    return active.slice(0, 15);
+  },
+});

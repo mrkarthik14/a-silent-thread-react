@@ -9,7 +9,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export function SuggestedFollowers() {
-  const suggestedUsers = useQuery(api.users.getSuggestedUsers, {});
+  const activeUsers = useQuery(api.users.getActiveUsers, {});
   const followUser = useMutation(api.follows.follow);
   const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
 
@@ -30,14 +30,7 @@ export function SuggestedFollowers() {
     }
   };
 
-  // Get presence for all suggested users
-  const userIds = suggestedUsers?.map(u => u._id) || [];
-  const presenceMap = useQuery(
-    api.presence.getBulkPresence,
-    userIds.length > 0 ? { userIds } : "skip"
-  );
-
-  if (!suggestedUsers || suggestedUsers.length === 0) {
+  if (!activeUsers || activeUsers.length === 0) {
     return null;
   }
 
@@ -49,8 +42,7 @@ export function SuggestedFollowers() {
       </h3>
       
       <div className="space-y-3">
-        {suggestedUsers.map((user, index) => {
-          const isOnline = presenceMap?.[user._id] || false;
+        {activeUsers.map((user, index) => {
           const isFollowing = followingIds.has(user._id);
 
           return (
@@ -69,9 +61,7 @@ export function SuggestedFollowers() {
                       {user.name?.[0] || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  {isOnline && (
-                    <div className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border border-white rounded-full" />
-                  )}
+                  <div className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border border-white rounded-full" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-slate-900 truncate">{user.name || "Anonymous"}</p>
