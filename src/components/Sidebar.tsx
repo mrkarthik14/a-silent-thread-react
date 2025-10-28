@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
-import { UserSearch } from "@/components/UserSearch";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -44,7 +43,6 @@ export function Sidebar() {
   // STATE: Dialogs
   // ========================================================================
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
 
   // ========================================================================
   // STATE: Post Creation Form
@@ -246,7 +244,7 @@ export function Sidebar() {
             <motion.div
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: (MENU_ITEMS.length + 1) * 0.05 }}
+              transition={{ delay: (MENU_ITEMS.length) * 0.05 }}
             >
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -438,11 +436,6 @@ export function Sidebar() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* ==================================================================
-          DIALOG: User Search
-          ================================================================== */}
-      <UserSearch open={searchDialogOpen} onOpenChange={setSearchDialogOpen} />
     </>
   );
 }
