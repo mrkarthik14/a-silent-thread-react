@@ -45,7 +45,7 @@ export function SuggestedFollowers() {
     <Card className="bg-white/50 backdrop-blur-sm border-slate-200 rounded-2xl p-4 sticky top-24">
       <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
         <Users className="h-4 w-4" strokeWidth={1.5} />
-        Active Followers
+        Online Now
       </h3>
       
       <div className="space-y-3">

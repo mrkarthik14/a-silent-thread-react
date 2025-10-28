@@ -49,18 +49,17 @@ export const getSuggestedUsers = query({
     
     const followingIds = new Set(following.map(f => f.followingId));
 
-    // Filter out current user and already following users
+    // Filter for only active/online users not already following
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
     const suggested = allUsers.filter(u => 
-      u._id !== user._id && !followingIds.has(u._id)
+      u._id !== user._id && 
+      !followingIds.has(u._id) &&
+      u.lastSeen && 
+      u.lastSeen > fiveMinutesAgo
     );
 
-    // Sort by last seen (active users first)
-    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-    suggested.sort((a, b) => {
-      const aIsOnline = a.lastSeen && a.lastSeen > fiveMinutesAgo ? 1 : 0;
-      const bIsOnline = b.lastSeen && b.lastSeen > fiveMinutesAgo ? 1 : 0;
-      return bIsOnline - aIsOnline;
-    });
+    // Sort by last seen (most recently active first)
+    suggested.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
 
     return suggested.slice(0, 10);
   },
