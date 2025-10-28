@@ -70,7 +70,7 @@ export default function Feed() {
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
       
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
         <div className="max-w-2xl mx-auto p-6">
           <motion.div
             initial={{ y: -20, opacity: 0 }}
