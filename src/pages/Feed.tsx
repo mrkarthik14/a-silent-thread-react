@@ -75,7 +75,7 @@ export default function Feed() {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-6 sticky top-0 z-10 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm"
+            className="mb-6 sticky top-0 z-10 bg-white/50 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-200"
           >
             <div className="relative mb-3">
               <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900" strokeWidth={1.5} />
@@ -83,7 +83,7 @@ export default function Feed() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search threads, listings, users..."
-                className="pl-10 rounded-xl border-slate-200 bg-white"
+                className="pl-10 rounded-xl border-slate-200 bg-white/80"
               />
             </div>
 
@@ -98,7 +98,7 @@ export default function Feed() {
                     variant={searchType === "all" ? "default" : "outline"}
                     onClick={() => setSearchType("all")}
                     size="sm"
-                    className="rounded-xl"
+                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
                   >
                     All
                   </Button>
@@ -106,7 +106,7 @@ export default function Feed() {
                     variant={searchType === "users" ? "default" : "outline"}
                     onClick={() => setSearchType("users")}
                     size="sm"
-                    className="rounded-xl"
+                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
                   >
                     Users
                   </Button>
@@ -114,7 +114,7 @@ export default function Feed() {
                     variant={searchType === "posts" ? "default" : "outline"}
                     onClick={() => setSearchType("posts")}
                     size="sm"
-                    className="rounded-xl"
+                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
                   >
                     Posts
                   </Button>
@@ -122,7 +122,7 @@ export default function Feed() {
                     variant={searchType === "listings" ? "default" : "outline"}
                     onClick={() => setSearchType("listings")}
                     size="sm"
-                    className="rounded-xl"
+                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
                   >
                     Listings
                   </Button>
@@ -135,14 +135,14 @@ export default function Feed() {
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       placeholder="Min price"
-                      className="rounded-xl text-sm"
+                      className="rounded-xl text-sm border-slate-200"
                     />
                     <Input
                       type="number"
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       placeholder="Max price"
-                      className="rounded-xl text-sm"
+                      className="rounded-xl text-sm border-slate-200"
                     />
                   </div>
                 )}
