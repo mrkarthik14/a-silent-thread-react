@@ -168,7 +168,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     try {
       await deletePostMutation({ postId: post._id });
       toast.success("Post deleted successfully");
+      // Reload page to refresh posts list
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
+      console.error("Delete error:", error);
       toast.error("Failed to delete post");
     } finally {
       setLoadingAction(null);
