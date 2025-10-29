@@ -54,7 +54,14 @@ export default function Feed() {
     "bg-gradient-to-br from-yellow-100 to-yellow-200", 
     "bg-gradient-to-br from-emerald-100 to-emerald-200", 
     "bg-gradient-to-br from-purple-100 to-purple-200", 
-    "bg-gradient-to-br from-blue-100 to-blue-200"
+    "bg-gradient-to-br from-blue-100 to-blue-200",
+    "bg-gradient-to-br from-rose-100 to-rose-200",
+    "bg-gradient-to-br from-orange-100 to-orange-200",
+    "bg-gradient-to-br from-cyan-100 to-cyan-200",
+    "bg-gradient-to-br from-indigo-100 to-indigo-200",
+    "bg-gradient-to-br from-teal-100 to-teal-200",
+    "bg-gradient-to-br from-fuchsia-100 to-fuchsia-200",
+    "bg-gradient-to-br from-lime-100 to-lime-200"
   ];
 
   const getColorForIndex = (index: number) => {
