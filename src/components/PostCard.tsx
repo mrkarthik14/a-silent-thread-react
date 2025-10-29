@@ -80,14 +80,14 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   }, [checkIsFollowing]);
 
   // Get URLs for images
-  const imageUrls = (post.images?.map(storageId => 
+  const imageUrls = post.images?.length ? post.images.map(storageId => 
     useQuery(api.files.getImageUrl, { storageId })
-  ).filter((url): url is string => !!url) || []) as string[];
+  ).filter((url): url is string => !!url) : [];
 
   // Get URLs for videos
-  const videoUrls = (post.videos?.map(storageId => 
+  const videoUrls = post.videos?.length ? post.videos.map(storageId => 
     useQuery(api.files.getImageUrl, { storageId })
-  ).filter((url): url is string => !!url) || []) as string[];
+  ).filter((url): url is string => !!url) : [];
 
   const likePostMutation = useMutation(api.posts.like);
   const followMutation = useMutation(api.follows.follow);
