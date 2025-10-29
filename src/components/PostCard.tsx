@@ -324,39 +324,38 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               />
             )}
 
-            {/* Display multiple images */}
-            {imageUrls.length > 0 && (
+            {/* Display multiple images and videos in Pinterest style */}
+            {(imageUrls.length > 0 || videoUrls.length > 0) && (
               <>
                 {post.imageLayout === "slider" ? (
                   <ImageSlider images={imageUrls} onImageClick={setSelectedImageUrl} />
                 ) : (
-                  <div className="grid grid-cols-2 gap-2 mb-3">
-                    {imageUrls.map((url, idx) => (
-                      <img 
-                        key={idx}
-                        src={url} 
-                        alt={`Post image ${idx + 1}`} 
-                        className="rounded-xl w-full object-cover max-h-64 cursor-pointer"
-                        onClick={() => setSelectedImageUrl(url)}
-                      />
+                  <div className="grid grid-cols-2 gap-1 mb-3">
+                    {/* Combine images and videos */}
+                    {[
+                      ...imageUrls.map((url, idx) => ({ type: 'image', url, idx })),
+                      ...videoUrls.map((url, idx) => ({ type: 'video', url, idx }))
+                    ].map((media, idx) => (
+                      <div key={`${media.type}-${media.idx}`} className="overflow-hidden rounded-lg">
+                        {media.type === 'image' ? (
+                          <img 
+                            src={media.url} 
+                            alt={`Post image ${media.idx + 1}`} 
+                            className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => setSelectedImageUrl(media.url)}
+                          />
+                        ) : (
+                          <video 
+                            src={media.url} 
+                            controls
+                            className="w-full h-48 object-cover"
+                          />
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
               </>
-            )}
-
-            {/* Display videos */}
-            {videoUrls.length > 0 && (
-              <div className="space-y-2 mb-3">
-                {videoUrls.map((url, idx) => (
-                  <video 
-                    key={idx}
-                    src={url} 
-                    controls
-                    className="rounded-xl w-full max-h-64"
-                  />
-                ))}
-              </div>
             )}
             
             {post.serviceDetails && (
