@@ -9,6 +9,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { CommentSection } from "@/components/CommentSection";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -40,6 +41,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [editLocation, setEditLocation] = useState("");
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | undefined>(undefined);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -162,8 +164,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   };
 
   const handleDeletePost = async () => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-    
     setLoadingAction("delete");
     try {
       await deletePostMutation({ postId: post._id });
@@ -177,6 +177,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
       toast.error("Failed to delete post");
     } finally {
       setLoadingAction(null);
+      setDeleteConfirmOpen(false);
     }
   };
 
@@ -292,7 +293,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                         <Edit2 className="h-4 w-4 mr-2" strokeWidth={1.5} />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleDeletePost} className="cursor-pointer text-red-600">
+                      <DropdownMenuItem onClick={() => setDeleteConfirmOpen(true)} className="cursor-pointer text-red-600">
                         <Trash2 className="h-4 w-4 mr-2" strokeWidth={1.5} />
                         Delete
                       </DropdownMenuItem>
@@ -513,6 +514,28 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
         onOpenChange={setBookingDialogOpen}
         serviceId={post._id}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-2 justify-end">
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeletePost}
+              disabled={loadingAction === "delete"}
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
+            >
+              {loadingAction === "delete" ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Image Modal */}
   <Dialog open={selectedImageUrl !== undefined && selectedImageUrl !== null} onOpenChange={(open) => !open && setSelectedImageUrl(undefined)}>
