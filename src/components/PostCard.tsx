@@ -516,26 +516,28 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="flex gap-2 justify-end">
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeletePost}
-              disabled={loadingAction === "delete"}
-              className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
-            >
-              {loadingAction === "delete" ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
+      {deleteConfirmOpen && (
+        <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+          <AlertDialogContent className="rounded-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Post</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this post? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="flex gap-2 justify-end">
+              <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeletePost}
+                disabled={loadingAction === "delete"}
+                className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
+              >
+                {loadingAction === "delete" ? "Deleting..." : "Delete"}
+              </AlertDialogAction>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
 
       {/* Image Modal */}
   <Dialog open={selectedImageUrl !== undefined && selectedImageUrl !== null} onOpenChange={(open) => !open && setSelectedImageUrl(undefined)}>
