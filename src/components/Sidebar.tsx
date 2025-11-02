@@ -13,6 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { MentionAutocomplete } from "@/components/MentionAutocomplete";
 
 // ============================================================================
 // STATE AND CONFIGURATION
@@ -345,13 +346,20 @@ export function Sidebar() {
             {/* Content Input */}
             <div>
               <Label>Content</Label>
-              <Textarea
-                value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
-                placeholder="What's on your mind?"
-                className="rounded-xl resize-none"
-                rows={4}
-              />
+              <div className="relative">
+                <Textarea
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                  placeholder="What's on your mind? (Use & to mention users or posts)"
+                  className="rounded-xl resize-none"
+                  rows={4}
+                />
+                <MentionAutocomplete
+                  content={postContent}
+                  onMentionSelect={setPostContent}
+                  isOpen={createDialogOpen}
+                />
+              </div>
             </div>
 
             {/* Service-Specific Fields */}
