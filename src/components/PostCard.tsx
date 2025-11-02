@@ -390,19 +390,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             
             {post.serviceDetails && (
               <div className="bg-white/50 rounded-xl p-3 mb-3 border border-white">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="font-black text-base text-black">{post.serviceDetails.title}</div>
-                  {bookingCount && bookingCount.pending > 0 && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900 text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1"
-                    >
-                      <span className="text-lg">📋</span>
-                      {bookingCount.pending} pending
-                    </motion.div>
-                  )}
-                </div>
+                <div className="font-black text-base text-black mb-2">{post.serviceDetails.title}</div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-slate-700 bg-purple-100 px-2.5 py-1 rounded-lg">
