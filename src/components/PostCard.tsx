@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ImageSlider } from "@/components/ImageSlider";
+import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -392,6 +393,9 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   )}
                   <div className="pt-1">
                     <span className="font-extrabold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
+                  </div>
+                  <div className="pt-2">
+                    <BookingStatusBadge serviceId={post._id} />
                   </div>
                 </div>
               </div>
