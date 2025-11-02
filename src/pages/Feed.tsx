@@ -72,8 +72,6 @@ export default function Feed() {
     return colors[colorIndex];
   };
 
-  const isSearching = searchQuery.trim().length > 0;
-
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
@@ -87,7 +85,7 @@ export default function Feed() {
             animate={{ y: 0, opacity: 1 }}
             className="mb-6 sticky top-0 z-10 bg-white/50 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-200"
           >
-            <div className="relative mb-3">
+            <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900" strokeWidth={1.5} />
               <Input
                 value={searchQuery}
@@ -96,71 +94,9 @@ export default function Feed() {
                 className="pl-10 rounded-xl border-slate-200 bg-white/80"
               />
             </div>
-
-            {isSearching && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-3"
-              >
-                <div className="flex gap-2 flex-wrap">
-                  <Button
-                    variant={searchType === "all" ? "default" : "outline"}
-                    onClick={() => setSearchType("all")}
-                    size="sm"
-                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
-                  >
-                    All
-                  </Button>
-                  <Button
-                    variant={searchType === "users" ? "default" : "outline"}
-                    onClick={() => setSearchType("users")}
-                    size="sm"
-                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
-                  >
-                    Users
-                  </Button>
-                  <Button
-                    variant={searchType === "posts" ? "default" : "outline"}
-                    onClick={() => setSearchType("posts")}
-                    size="sm"
-                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
-                  >
-                    Posts
-                  </Button>
-                  <Button
-                    variant={searchType === "listings" ? "default" : "outline"}
-                    onClick={() => setSearchType("listings")}
-                    size="sm"
-                    className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white border-0"
-                  >
-                    Listings
-                  </Button>
-                </div>
-
-                {(searchType === "listings" || searchType === "all") && (
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                      placeholder="Min price"
-                      className="rounded-xl text-sm border-slate-200"
-                    />
-                    <Input
-                      type="number"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                      placeholder="Max price"
-                      className="rounded-xl text-sm border-slate-200"
-                    />
-                  </div>
-                )}
-              </motion.div>
-            )}
           </motion.div>
 
-          {isSearching && searchResults ? (
+          {searchQuery.trim().length > 0 && searchResults ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
