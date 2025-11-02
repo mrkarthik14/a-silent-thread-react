@@ -137,6 +137,21 @@ export default function Settings() {
     messageNotifications: true,
     likeNotifications: true,
     followNotifications: true,
+    bookingNotifications: true,
+  });
+
+  // Accessibility Settings
+  const [accessibilitySettings, setAccessibilitySettings] = useState({
+    reducedMotion: false,
+    largerText: false,
+    highContrast: false,
+  });
+
+  // Data & Storage Settings
+  const [dataSettings, setDataSettings] = useState({
+    autoDeleteMessages: false,
+    autoDeleteDays: 30,
+    cacheMedia: true,
   });
 
   if (isLoading) {
@@ -198,22 +213,30 @@ export default function Settings() {
           </motion.div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-200 p-1">
-              <TabsTrigger value="theme" className="rounded-lg flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-6 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-200 p-1 overflow-x-auto">
+              <TabsTrigger value="theme" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
                 <Palette className="h-4 w-4" />
                 <span className="hidden sm:inline">Theme</span>
               </TabsTrigger>
-              <TabsTrigger value="user" className="rounded-lg flex items-center gap-2">
+              <TabsTrigger value="user" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">User</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="rounded-lg flex items-center gap-2">
+              <TabsTrigger value="privacy" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
                 <Eye className="h-4 w-4" />
                 <span className="hidden sm:inline">Privacy</span>
               </TabsTrigger>
-              <TabsTrigger value="security" className="rounded-lg flex items-center gap-2">
+              <TabsTrigger value="security" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Security</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+                <Bell className="h-4 w-4" />
+                <span className="hidden sm:inline">Alerts</span>
+              </TabsTrigger>
+              <TabsTrigger value="advanced" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">Advanced</span>
               </TabsTrigger>
             </TabsList>
 
@@ -534,6 +557,26 @@ export default function Settings() {
                     />
                     <p className="text-xs text-slate-600">Auto-logout after inactivity</p>
                   </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Device Management</p>
+                      <p className="text-xs text-slate-600">View and manage active sessions</p>
+                    </div>
+                    <Button className="h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">
+                      Manage
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Blocked Users</p>
+                      <p className="text-xs text-slate-600">Manage your blocked users list</p>
+                    </div>
+                    <Button className="h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">
+                      View
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
 
@@ -601,6 +644,98 @@ export default function Settings() {
                     <Switch 
                       checked={notificationSettings.followNotifications}
                       onCheckedChange={(value) => handleNotificationChange("followNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Booking Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified of booking requests</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.bookingNotifications || false}
+                      onCheckedChange={(value) => handleNotificationChange("bookingNotifications", value)}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            </TabsContent>
+
+            {/* Notifications Tab */}
+            <TabsContent value="notifications" className="space-y-6 mt-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4"
+              >
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Alert Preferences
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Email Notifications</p>
+                      <p className="text-xs text-slate-600">Receive email updates</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.emailNotifications}\n                      onCheckedChange={(value) => handleNotificationChange("emailNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Push Notifications</p>
+                      <p className="text-xs text-slate-600">Receive browser notifications</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.pushNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("pushNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Message Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified of new messages</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.messageNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("messageNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Like Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified when posts are liked</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.likeNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("likeNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Follow Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified when followed</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.followNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("followNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Booking Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified of booking requests</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.bookingNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("bookingNotifications", value)}
                     />
                   </div>
                 </div>
