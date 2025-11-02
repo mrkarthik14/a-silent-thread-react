@@ -680,10 +680,6 @@ export default function Settings() {
                       <p className="text-xs text-slate-600">Receive email updates</p>
                     </div>
                     <Switch 
-                      checked={notificationSettings.emailNotifications}\n                      onCheckedChange={(value) => handleNotificationChange("emailNotifications", value)}
-                    />
-                  </div>
-
                   <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div>
                       <p className="font-semibold text-slate-900">Push Notifications</p>
