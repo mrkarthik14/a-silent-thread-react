@@ -102,18 +102,21 @@ export default function Bookings() {
     }
   };
 
-  const getCardColor = (index: number) => {
-    const colors = [
-      "bg-gradient-to-br from-pink-100 to-rose-100 border-2 border-pink-300",
-      "bg-gradient-to-br from-purple-100 to-violet-100 border-2 border-purple-300",
-      "bg-gradient-to-br from-blue-100 to-cyan-100 border-2 border-blue-300",
-      "bg-gradient-to-br from-emerald-100 to-teal-100 border-2 border-emerald-300",
-      "bg-gradient-to-br from-amber-100 to-yellow-100 border-2 border-amber-300",
-      "bg-gradient-to-br from-orange-100 to-red-100 border-2 border-orange-300",
-      "bg-gradient-to-br from-indigo-100 to-purple-100 border-2 border-indigo-300",
-      "bg-gradient-to-br from-lime-100 to-green-100 border-2 border-lime-300",
-    ];
-    return colors[index % colors.length];
+  const getCardColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-gradient-to-br from-orange-100 to-amber-100 border-2 border-orange-300";
+      case "accepted":
+        return "bg-gradient-to-br from-emerald-100 to-teal-100 border-2 border-emerald-300";
+      case "rejected":
+        return "bg-gradient-to-br from-red-100 to-pink-100 border-2 border-red-300";
+      case "completed":
+        return "bg-gradient-to-br from-blue-100 to-cyan-100 border-2 border-blue-300";
+      case "cancelled":
+        return "bg-gradient-to-br from-gray-100 to-slate-100 border-2 border-gray-300";
+      default:
+        return "bg-gradient-to-br from-slate-100 to-purple-100 border-2 border-slate-300";
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -293,7 +296,7 @@ export default function Bookings() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className={`p-6 rounded-2xl backdrop-blur-sm shadow-sm hover:shadow-md transition-shadow ${getCardColor(index)}`}>
+                <Card className={`p-6 rounded-2xl backdrop-blur-sm shadow-sm hover:shadow-md transition-shadow ${getCardColor(booking.status)}`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg mb-1 text-slate-900">
