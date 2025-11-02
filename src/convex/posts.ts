@@ -9,6 +9,22 @@ export const generateUploadUrl = mutation({
   },
 });
 
+const parseMentions = (content: string) => {
+  const mentions: Array<{ type: "user" | "post"; id: string; name: string }> = [];
+  const mentionRegex = /&([a-zA-Z0-9_-]+)/g;
+  let match;
+  
+  while ((match = mentionRegex.exec(content)) !== null) {
+    mentions.push({
+      type: "user",
+      id: match[1],
+      name: match[1],
+    });
+  }
+  
+  return mentions;
+};
+
 export const create = mutation({
   args: {
     content: v.string(),
@@ -27,6 +43,8 @@ export const create = mutation({
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
 
+    const mentions = parseMentions(args.content);
+
     return await ctx.db.insert("posts", {
       userId: user._id,
       content: args.content,
@@ -38,6 +56,7 @@ export const create = mutation({
       serviceDetails: args.serviceDetails,
       likes: 0,
       replies: 0,
+      mentions: mentions.length > 0 ? mentions : undefined,
     });
   },
 });

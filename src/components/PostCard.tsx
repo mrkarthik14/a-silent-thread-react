@@ -338,7 +338,18 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </DropdownMenu>
             </div>
             
-            <p className="text-sm mb-3 leading-relaxed text-slate-800">{post.content}</p>
+            <p className="text-sm mb-3 leading-relaxed text-slate-800">
+              {post.content.split(/(&[a-zA-Z0-9_-]+)/g).map((part, idx) => {
+                if (part.startsWith("&")) {
+                  return (
+                    <span key={idx} className="bg-gradient-to-r from-purple-200 to-pink-200 text-purple-900 font-semibold px-1.5 py-0.5 rounded-md inline-block mx-0.5 cursor-pointer hover:shadow-md transition-shadow">
+                      {part}
+                    </span>
+                  );
+                }
+                return part;
+              })}
+            </p>
             
             {/* Display legacy single image */}
             {post.image && (

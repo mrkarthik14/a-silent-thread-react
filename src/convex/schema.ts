@@ -50,6 +50,11 @@ const schema = defineSchema(
       parentId: v.optional(v.id("posts")),
       likes: v.number(),
       replies: v.number(),
+      mentions: v.optional(v.array(v.object({
+        type: v.union(v.literal("user"), v.literal("post")),
+        id: v.string(),
+        name: v.string(),
+      }))),
     }).index("by_user", ["userId"])
       .index("by_parent", ["parentId"])
       .index("by_type", ["type"]),
