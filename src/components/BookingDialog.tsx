@@ -123,59 +123,84 @@ export function BookingDialog({ open, onOpenChange, serviceId }: BookingDialogPr
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmation} onOpenChange={handleConfirmationClose}>
-        <DialogContent className="rounded-2xl max-w-md bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 border-emerald-200">
+        <DialogContent className="rounded-2xl max-w-md bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border-2 border-emerald-300 shadow-2xl">
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center text-center"
+            transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+            className="flex flex-col items-center text-center py-2"
           >
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: 0.2, duration: 0.5, type: "spring", stiffness: 150 }}
+              className="relative mb-6"
             >
-              <CheckCircle className="h-16 w-16 text-emerald-500 mb-4" />
+              <motion.div
+                animate={{ boxShadow: ["0 0 0 0 rgba(16, 185, 129, 0.7)", "0 0 0 20px rgba(16, 185, 129, 0)"] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 rounded-full"
+              />
+              <CheckCircle className="h-20 w-20 text-emerald-500 relative z-10" strokeWidth={1.5} />
             </motion.div>
 
-            <DialogHeader className="text-center">
-              <DialogTitle className="text-slate-900 text-xl">Booking Confirmed!</DialogTitle>
+            <DialogHeader className="text-center mb-2">
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                Booking Confirmed!
+              </DialogTitle>
             </DialogHeader>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
+              className="w-full space-y-4 my-6"
+            >
+              <p className="text-slate-700 text-sm font-medium leading-relaxed">
+                Your booking request has been successfully sent to the service owner.
+              </p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+                className="bg-gradient-to-br from-white/80 to-emerald-50/50 rounded-xl p-4 space-y-4 text-left border border-emerald-200/50 shadow-sm"
+              >
+                <div className="border-b border-emerald-100/50 pb-3">
+                  <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">📅 Preferred Date</p>
+                  <p className="text-base font-semibold text-slate-900">{bookingDetails?.date}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">💬 Your Message</p>
+                  <p className="text-sm text-slate-800 leading-relaxed">{bookingDetails?.message}</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55 }}
+                className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4 shadow-sm"
+              >
+                <p className="text-xs text-blue-900 font-medium leading-relaxed">
+                  <span className="text-lg mr-2">ℹ️</span>The owner will review your request and respond within 24 hours.
+                </p>
+              </motion.div>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="w-full space-y-4 my-4"
+              transition={{ delay: 0.65 }}
+              className="w-full"
             >
-              <p className="text-slate-700 text-sm">
-                Your booking request has been successfully sent to the service owner.
-              </p>
-
-              <div className="bg-white/60 rounded-xl p-4 space-y-3 text-left">
-                <div>
-                  <p className="text-xs font-semibold text-slate-600 uppercase">Preferred Date</p>
-                  <p className="text-sm font-semibold text-slate-900">{bookingDetails?.date}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-600 uppercase">Your Message</p>
-                  <p className="text-sm text-slate-800 line-clamp-2">{bookingDetails?.message}</p>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                <p className="text-xs text-blue-900">
-                  ℹ️ The owner will review your request and respond within 24 hours.
-                </p>
-              </div>
+              <Button
+                onClick={handleConfirmationClose}
+                className="w-full rounded-xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:from-emerald-500 hover:via-teal-500 hover:to-cyan-500 text-white font-bold text-base active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl py-6"
+              >
+                Done
+              </Button>
             </motion.div>
-
-            <Button
-              onClick={handleConfirmationClose}
-              className="w-full rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white font-semibold active:scale-95 transition-all duration-150"
-            >
-              Done
-            </Button>
           </motion.div>
         </DialogContent>
       </Dialog>
