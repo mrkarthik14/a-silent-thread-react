@@ -3,10 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { Loader2, Moon, Sun, Palette } from "lucide-react";
+import { Loader2, Moon, Sun, Palette, Lock, Shield, User, Bell, Eye, EyeOff, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const THEMES = {
   app: [
@@ -104,6 +109,35 @@ export default function Settings() {
   const [selectedChatTheme, setSelectedChatTheme] = useState("chat-warm");
   const [selectedFeedTheme, setSelectedFeedTheme] = useState("feed-colorful");
   const [darkMode, setDarkMode] = useState(false);
+  const [activeTab, setActiveTab] = useState("theme");
+  
+  // User Settings
+  const [showPassword, setShowPassword] = useState(false);
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
+  
+  // Privacy Settings
+  const [privacySettings, setPrivacySettings] = useState({
+    profilePublic: true,
+    allowMessages: true,
+    showOnlineStatus: true,
+    allowFollowing: true,
+  });
+  
+  // Security Settings
+  const [securitySettings, setSecuritySettings] = useState({
+    twoFactorEnabled: false,
+    loginAlerts: true,
+    sessionTimeout: 30,
+  });
+  
+  // Notification Settings
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    pushNotifications: true,
+    messageNotifications: true,
+    likeNotifications: true,
+    followNotifications: true,
+  });
 
   if (isLoading) {
     return (
@@ -133,6 +167,21 @@ export default function Settings() {
     toast.success("Theme preferences saved!");
   };
 
+  const handlePrivacyChange = (key: string, value: boolean) => {
+    setPrivacySettings(prev => ({ ...prev, [key]: value }));
+    toast.success("Privacy setting updated");
+  };
+
+  const handleSecurityChange = (key: string, value: any) => {
+    setSecuritySettings(prev => ({ ...prev, [key]: value }));
+    toast.success("Security setting updated");
+  };
+
+  const handleNotificationChange = (key: string, value: boolean) => {
+    setNotificationSettings(prev => ({ ...prev, [key]: value }));
+    toast.success("Notification preference updated");
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
       <Sidebar />
@@ -148,179 +197,436 @@ export default function Settings() {
             <p className="text-slate-600">Customize your A Silent Thread experience</p>
           </motion.div>
 
-          {/* Theme Mode Toggle */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-8 bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <Sun className="h-5 w-5" />
-                  Theme Mode
-                </h2>
-                <p className="text-sm text-slate-600 mt-1">Choose between light and dark mode</p>
-              </div>
-              <Button
-                onClick={() => setDarkMode(!darkMode)}
-                className={`rounded-xl px-6 transition-all duration-300 ${
-                  darkMode
-                    ? "bg-gray-800 text-white hover:bg-gray-900"
-                    : "bg-amber-100 text-amber-900 hover:bg-amber-200"
-                }`}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-200 p-1">
+              <TabsTrigger value="theme" className="rounded-lg flex items-center gap-2">
+                <Palette className="h-4 w-4" />
+                <span className="hidden sm:inline">Theme</span>
+              </TabsTrigger>
+              <TabsTrigger value="user" className="rounded-lg flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">User</span>
+              </TabsTrigger>
+              <TabsTrigger value="privacy" className="rounded-lg flex items-center gap-2">
+                <Eye className="h-4 w-4" />
+                <span className="hidden sm:inline">Privacy</span>
+              </TabsTrigger>
+              <TabsTrigger value="security" className="rounded-lg flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">Security</span>
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Theme Tab */}
+            <TabsContent value="theme" className="space-y-6 mt-6">
+              {/* Theme Mode Toggle */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200"
               >
-                {darkMode ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
-                {darkMode ? "Dark" : "Light"}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                      <Sun className="h-5 w-5" />
+                      Theme Mode
+                    </h2>
+                    <p className="text-sm text-slate-600 mt-1">Choose between light and dark mode</p>
+                  </div>
+                  <Button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className={`rounded-xl px-6 transition-all duration-300 ${
+                      darkMode
+                        ? "bg-gray-800 text-white hover:bg-gray-900"
+                        : "bg-amber-100 text-amber-900 hover:bg-amber-200"
+                    }`}
+                  >
+                    {darkMode ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
+                    {darkMode ? "Dark" : "Light"}
+                  </Button>
+                </div>
+              </motion.div>
+
+              {/* App Theme */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Palette className="h-6 w-6" />
+                  App Theme
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {THEMES.app.map((theme, idx) => (
+                    <motion.div
+                      key={theme.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 + idx * 0.05 }}
+                      onClick={() => handleThemeSelect("app", theme.id)}
+                      className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border-2 ${
+                        selectedAppTheme === theme.id
+                          ? "border-purple-500 shadow-lg scale-105"
+                          : "border-slate-200 hover:border-purple-300"
+                      }`}
+                    >
+                      <div className={`bg-gradient-to-br ${theme.bgGradient} rounded-lg h-24 mb-3 shadow-md`} />
+                      <p className="font-semibold text-slate-900">{theme.name}</p>
+                      <div className="flex gap-2 mt-2">
+                        {theme.colors.map((color) => (
+                          <div
+                            key={color}
+                            className="w-6 h-6 rounded-full border border-slate-300 shadow-sm"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Chat Theme */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Palette className="h-6 w-6" />
+                  Chat Theme
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {THEMES.chat.map((theme, idx) => (
+                    <motion.div
+                      key={theme.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.2 + idx * 0.05 }}
+                      onClick={() => handleThemeSelect("chat", theme.id)}
+                      className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border-2 ${
+                        selectedChatTheme === theme.id
+                          ? "border-purple-500 shadow-lg scale-105"
+                          : "border-slate-200 hover:border-purple-300"
+                      }`}
+                    >
+                      <p className="font-semibold text-slate-900 mb-3">{theme.name}</p>
+                      <div className="space-y-2">
+                        <div className={`bg-gradient-to-r ${theme.sent} rounded-2xl px-3 py-2 text-sm text-slate-800 w-fit`}>
+                          Your message
+                        </div>
+                        <div className={`bg-gradient-to-r ${theme.received} rounded-2xl px-3 py-2 text-sm text-slate-800`}>
+                          Their message
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Feed Theme */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Palette className="h-6 w-6" />
+                  Feed Theme
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {THEMES.feed.map((theme, idx) => (
+                    <motion.div
+                      key={theme.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 + idx * 0.05 }}
+                      onClick={() => handleThemeSelect("feed", theme.id)}
+                      className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border-2 ${
+                        selectedFeedTheme === theme.id
+                          ? "border-purple-500 shadow-lg scale-105"
+                          : "border-slate-200 hover:border-purple-300"
+                      }`}
+                    >
+                      <p className="font-semibold text-slate-900 mb-3">{theme.name}</p>
+                      <div className={`bg-gradient-to-br ${theme.cardGradient} rounded-lg p-4 shadow-md`}>
+                        <p className={`${theme.textColor} text-sm font-medium`}>Sample Post Card</p>
+                        <p className={`${theme.textColor} text-xs opacity-70 mt-2`}>This is how your feed will look</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <Button onClick={handleSaveThemes} className="w-full rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold">
+                Save Theme Preferences
               </Button>
-            </div>
-          </motion.div>
+            </TabsContent>
 
-          {/* App Theme */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Palette className="h-6 w-6" />
-              App Theme
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {THEMES.app.map((theme, idx) => (
-                <motion.div
-                  key={theme.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 + idx * 0.05 }}
-                  onClick={() => handleThemeSelect("app", theme.id)}
-                  className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border-2 ${
-                    selectedAppTheme === theme.id
-                      ? "border-purple-500 shadow-lg scale-105"
-                      : "border-slate-200 hover:border-purple-300"
-                  }`}
-                >
-                  <div className={`bg-gradient-to-br ${theme.bgGradient} rounded-lg h-24 mb-3 shadow-md`} />
-                  <p className="font-semibold text-slate-900">{theme.name}</p>
-                  <div className="flex gap-2 mt-2">
-                    {theme.colors.map((color) => (
-                      <div
-                        key={color}
-                        className="w-6 h-6 rounded-full border border-slate-300 shadow-sm"
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
+            {/* User Settings Tab */}
+            <TabsContent value="user" className="space-y-6 mt-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4"
+              >
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Account Settings
+                </h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-slate-900 font-semibold">Email Address</Label>
+                    <Input type="email" placeholder="your@email.com" className="rounded-xl mt-2" disabled />
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Chat Theme */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Palette className="h-6 w-6" />
-              Chat Theme
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {THEMES.chat.map((theme, idx) => (
-                <motion.div
-                  key={theme.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + idx * 0.05 }}
-                  onClick={() => handleThemeSelect("chat", theme.id)}
-                  className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border-2 ${
-                    selectedChatTheme === theme.id
-                      ? "border-purple-500 shadow-lg scale-105"
-                      : "border-slate-200 hover:border-purple-300"
-                  }`}
-                >
-                  <p className="font-semibold text-slate-900 mb-3">{theme.name}</p>
-                  <div className="space-y-2">
-                    <div className={`bg-gradient-to-r ${theme.sent} rounded-2xl px-3 py-2 text-sm text-slate-800 w-fit`}>
-                      Your message
-                    </div>
-                    <div className={`bg-gradient-to-r ${theme.received} rounded-2xl px-3 py-2 text-sm text-slate-800`}>
-                      Their message
-                    </div>
+                  
+                  <div>
+                    <Label className="text-slate-900 font-semibold">Password</Label>
                     <div className="flex gap-2 mt-2">
-                      <div className={`bg-gradient-to-r ${theme.header} rounded h-8 flex-1`} />
-                      <div className={`bg-gradient-to-r ${theme.footer} rounded h-8 flex-1`} />
+                      <Input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="••••••••" 
+                        className="rounded-xl"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="rounded-xl"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
 
-          {/* Feed Theme */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Palette className="h-6 w-6" />
-              Feed Theme
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {THEMES.feed.map((theme, idx) => (
-                <motion.div
-                  key={theme.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + idx * 0.05 }}
-                  onClick={() => handleThemeSelect("feed", theme.id)}
-                  className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border-2 ${
-                    selectedFeedTheme === theme.id
-                      ? "border-purple-500 shadow-lg scale-105"
-                      : "border-slate-200 hover:border-purple-300"
-                  }`}
+                  <Button className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold">
+                    Change Password
+                  </Button>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-red-50 border border-red-200 rounded-2xl p-6 space-y-4"
+              >
+                <h2 className="text-xl font-bold text-red-900 flex items-center gap-2">
+                  <Trash2 className="h-5 w-5" />
+                  Danger Zone
+                </h2>
+                <p className="text-sm text-red-800">Permanently delete your account and all associated data</p>
+                <Button 
+                  onClick={() => setDeleteAccountOpen(true)}
+                  className="w-full rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold"
                 >
-                  <p className="font-semibold text-slate-900 mb-3">{theme.name}</p>
-                  <div className={`bg-gradient-to-br ${theme.cardGradient} rounded-lg p-4 shadow-md`}>
-                    <p className={`${theme.textColor} text-sm font-medium`}>Sample Post Card</p>
-                    <p className={`${theme.textColor} text-xs opacity-70 mt-2`}>This is how your feed will look</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+                  Delete Account
+                </Button>
+              </motion.div>
+            </TabsContent>
 
-          {/* Summary */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 border border-purple-200"
-          >
-            <h3 className="font-bold text-slate-900 mb-3">Your Theme Selection</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white/80 rounded-lg p-3">
-                <p className="text-xs text-slate-600">App Theme</p>
-                <p className="font-semibold text-slate-900">{THEMES.app.find(t => t.id === selectedAppTheme)?.name}</p>
-              </div>
-              <div className="bg-white/80 rounded-lg p-3">
-                <p className="text-xs text-slate-600">Chat Theme</p>
-                <p className="font-semibold text-slate-900">{THEMES.chat.find(t => t.id === selectedChatTheme)?.name}</p>
-              </div>
-              <div className="bg-white/80 rounded-lg p-3">
-                <p className="text-xs text-slate-600">Feed Theme</p>
-                <p className="font-semibold text-slate-900">{THEMES.feed.find(t => t.id === selectedFeedTheme)?.name}</p>
-              </div>
-            </div>
-          </motion.div>
+            {/* Privacy Settings Tab */}
+            <TabsContent value="privacy" className="space-y-6 mt-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4"
+              >
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Eye className="h-5 w-5" />
+                  Privacy Controls
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Public Profile</p>
+                      <p className="text-xs text-slate-600">Allow others to view your profile</p>
+                    </div>
+                    <Switch 
+                      checked={privacySettings.profilePublic}
+                      onCheckedChange={(value) => handlePrivacyChange("profilePublic", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Allow Messages</p>
+                      <p className="text-xs text-slate-600">Let anyone message you</p>
+                    </div>
+                    <Switch 
+                      checked={privacySettings.allowMessages}
+                      onCheckedChange={(value) => handlePrivacyChange("allowMessages", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Show Online Status</p>
+                      <p className="text-xs text-slate-600">Let others see when you're online</p>
+                    </div>
+                    <Switch 
+                      checked={privacySettings.showOnlineStatus}
+                      onCheckedChange={(value) => handlePrivacyChange("showOnlineStatus", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Allow Following</p>
+                      <p className="text-xs text-slate-600">Let others follow your account</p>
+                    </div>
+                    <Switch 
+                      checked={privacySettings.allowFollowing}
+                      onCheckedChange={(value) => handlePrivacyChange("allowFollowing", value)}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            </TabsContent>
+
+            {/* Security Settings Tab */}
+            <TabsContent value="security" className="space-y-6 mt-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4"
+              >
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Security Settings
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Two-Factor Authentication</p>
+                      <p className="text-xs text-slate-600">Add an extra layer of security</p>
+                    </div>
+                    <Switch 
+                      checked={securitySettings.twoFactorEnabled}
+                      onCheckedChange={(value) => handleSecurityChange("twoFactorEnabled", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Login Alerts</p>
+                      <p className="text-xs text-slate-600">Get notified of new login attempts</p>
+                    </div>
+                    <Switch 
+                      checked={securitySettings.loginAlerts}
+                      onCheckedChange={(value) => handleSecurityChange("loginAlerts", value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-slate-900 font-semibold">Session Timeout (minutes)</Label>
+                    <Input 
+                      type="number" 
+                      value={securitySettings.sessionTimeout}
+                      onChange={(e) => handleSecurityChange("sessionTimeout", parseInt(e.target.value))}
+                      className="rounded-xl"
+                      min="5"
+                      max="480"
+                    />
+                    <p className="text-xs text-slate-600">Auto-logout after inactivity</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4"
+              >
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Notification Preferences
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Email Notifications</p>
+                      <p className="text-xs text-slate-600">Receive email updates</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.emailNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("emailNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Push Notifications</p>
+                      <p className="text-xs text-slate-600">Receive browser notifications</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.pushNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("pushNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Message Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified of new messages</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.messageNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("messageNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Like Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified when posts are liked</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.likeNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("likeNotifications", value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-slate-900">Follow Notifications</p>
+                      <p className="text-xs text-slate-600">Get notified when followed</p>
+                    </div>
+                    <Switch 
+                      checked={notificationSettings.followNotifications}
+                      onCheckedChange={(value) => handleNotificationChange("followNotifications", value)}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
+
+      {/* Delete Account Confirmation */}
+      <AlertDialog open={deleteAccountOpen} onOpenChange={setDeleteAccountOpen}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. All your data, posts, and messages will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-2 justify-end">
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="rounded-xl bg-red-600 hover:bg-red-700 text-white">
+              Delete Account
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
