@@ -106,5 +106,25 @@ export const cancelBooking = mutation({
     await ctx.db.patch(args.bookingId, {
       status: "cancelled",
     });
+
+    // Send cancellation emails
+    const renter = await ctx.db.get(booking.renterId);
+    const owner = await ctx.db.get(booking.ownerId);
+    const service = await ctx.db.get(booking.serviceId);
+
+    if (renter?.email && owner?.email && service?.serviceDetails) {
+      await ctx.scheduler.runAfter(
+        0,
+        internal.emails.sendBookingCancellationEmail,
+        {
+          bookingId: args.bookingId,
+          renterEmail: renter.email,
+          ownerEmail: owner.email,
+          serviceTitle: service.serviceDetails.title,
+          date: booking.date,
+          renterName: renter.name || "User",
+        }
+      );
+    }
   },
 });

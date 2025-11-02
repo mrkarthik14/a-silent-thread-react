@@ -54,3 +54,43 @@ export const sendBookingConfirmationEmail = internalAction({
     }
   },
 });
+
+export const sendBookingCancellationEmail = internalAction({
+  args: {
+    bookingId: v.id("bookings"),
+    renterEmail: v.string(),
+    ownerEmail: v.string(),
+    serviceTitle: v.string(),
+    date: v.string(),
+    renterName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.log("Resend API key not configured. Skipping email.");
+      return;
+    }
+
+    const resend = new Resend(apiKey);
+
+    try {
+      // Send email to renter
+      await resend.emails.send({
+        from: "noreply@silentthread.com",
+        to: args.renterEmail,
+        subject: `Booking Cancelled: ${args.serviceTitle}`,
+        html: `<p>Your booking for ${args.serviceTitle} on ${args.date} has been cancelled.</p>`,
+      });
+
+      // Send email to owner
+      await resend.emails.send({
+        from: "noreply@silentthread.com",
+        to: args.ownerEmail,
+        subject: `Booking Cancelled: ${args.serviceTitle}`,
+        html: `<p>${args.renterName} has cancelled their booking for ${args.serviceTitle} on ${args.date}.</p>`,
+      });
+    } catch (error) {
+      console.error("Failed to send cancellation email:", error);
+    }
+  },
+});
