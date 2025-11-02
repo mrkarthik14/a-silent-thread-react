@@ -72,6 +72,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     post.type === "service" ? { serviceId: post._id } : "skip"
   );
 
+  // Check if current user has already booked this service
+  const userBooking = useQuery(
+    api.bookings.getUserBookingForService,
+    post.type === "service" && currentUser?._id !== post.user?._id ? { serviceId: post._id } : "skip"
+  );
+
   // Update local state when query result changes
   useEffect(() => {
     if (userHasLiked !== undefined) {
@@ -452,12 +458,24 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </Button>
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (
-                <Button
-                  onClick={() => setBookingDialogOpen(true)}
-                  className="ml-auto h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
-                >
-                  Book Now
-                </Button>
+                userBooking ? (
+                  <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg border border-purple-300">
+                    <span className="text-xs font-semibold text-purple-900">
+                      {userBooking.status === "pending" && "📋 Pending"}
+                      {userBooking.status === "accepted" && "✓ Accepted"}
+                      {userBooking.status === "rejected" && "✕ Rejected"}
+                      {userBooking.status === "completed" && "✓ Completed"}
+                      {userBooking.status === "cancelled" && "✕ Cancelled"}
+                    </span>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => setBookingDialogOpen(true)}
+                    className="ml-auto h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold active:scale-95 transition-all duration-150"
+                  >
+                    Book Now
+                  </Button>
+                )
               )}
             </div>
 

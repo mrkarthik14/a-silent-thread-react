@@ -18,6 +18,17 @@ export const create = mutation({
       throw new Error("Service not found");
     }
 
+    // Check if user already has a booking for this service
+    const existingBooking = await ctx.db
+      .query("bookings")
+      .withIndex("by_renter", (q) => q.eq("renterId", user._id))
+      .filter((q) => q.eq(q.field("serviceId"), args.serviceId))
+      .unique();
+
+    if (existingBooking) {
+      throw new Error("You have already booked this service");
+    }
+
     return await ctx.db.insert("bookings", {
       serviceId: args.serviceId,
       renterId: user._id,
@@ -45,6 +56,24 @@ export const getBookingCountByService = query({
       accepted: bookings.filter((b) => b.status === "accepted").length,
       completed: bookings.filter((b) => b.status === "completed").length,
     };
+  },
+});
+
+export const getUserBookingForService = query({
+  args: {
+    serviceId: v.id("posts"),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return null;
+
+    const booking = await ctx.db
+      .query("bookings")
+      .withIndex("by_renter", (q) => q.eq("renterId", user._id))
+      .filter((q) => q.eq(q.field("serviceId"), args.serviceId))
+      .unique();
+
+    return booking || null;
   },
 });
 
