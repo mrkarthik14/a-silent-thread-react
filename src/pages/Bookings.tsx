@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { Calendar, Loader2, Filter, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Calendar, Loader2, Filter, Clock, CheckCircle, XCircle, ArrowRight } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -94,6 +94,57 @@ export default function Bookings() {
       case "completed": return <CheckCircle className="h-4 w-4" />;
       default: return null;
     }
+  };
+
+  const BookingStatusFlow = ({ status }: { status: string }) => {
+    const statuses = ["pending", "accepted", "completed"];
+    const currentIndex = statuses.indexOf(status);
+    const isRejected = status === "rejected";
+
+    return (
+      <div className="mb-4">
+        <div className="flex items-center justify-between gap-2">
+          {statuses.map((s, idx) => (
+            <motion.div key={s} className="flex items-center flex-1">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm transition-all ${
+                  idx <= currentIndex && !isRejected
+                    ? "bg-gradient-to-br from-emerald-300 to-emerald-400 text-emerald-900 shadow-lg"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {idx < currentIndex && !isRejected ? (
+                  <CheckCircle className="h-5 w-5" />
+                ) : (
+                  idx + 1
+                )}
+              </motion.div>
+              
+              {idx < statuses.length - 1 && (
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: idx < currentIndex && !isRejected ? 1 : 0 }}
+                  transition={{ delay: idx * 0.1 + 0.2, duration: 0.5 }}
+                  className={`flex-1 h-1 mx-2 rounded-full origin-left ${
+                    idx < currentIndex && !isRejected
+                      ? "bg-gradient-to-r from-emerald-300 to-emerald-400"
+                      : "bg-gray-200"
+                  }`}
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
+        <div className="flex justify-between text-xs text-slate-600 mt-2">
+          <span>Requested</span>
+          <span>Accepted</span>
+          <span>Completed</span>
+        </div>
+      </div>
+    );
   };
 
   // Filter bookings based on selected filters
@@ -234,6 +285,21 @@ export default function Bookings() {
                       {booking.status}
                     </Badge>
                   </div>
+
+                  {/* Booking Status Flow */}
+                  {booking.status !== "rejected" && (
+                    <BookingStatusFlow status={booking.status} />
+                  )}
+
+                  {booking.status === "rejected" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl text-red-900 text-sm font-medium"
+                    >
+                      ✕ This booking request was rejected
+                    </motion.div>
+                  )}
 
                   <p className="text-sm mb-4 p-3 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl text-slate-900">
                     {booking.message}
