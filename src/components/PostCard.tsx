@@ -447,15 +447,29 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (
                 userBooking ? (
-                  <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg border border-purple-300">
-                    <span className="text-xs font-semibold text-purple-900">
-                      {userBooking.status === "pending" && "📋 Pending"}
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className={`ml-auto flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm border-2 shadow-md transition-all ${
+                      userBooking.status === "pending" 
+                        ? "bg-gradient-to-br from-orange-100 to-amber-100 border-orange-300 text-orange-900"
+                        : userBooking.status === "accepted"
+                        ? "bg-gradient-to-br from-emerald-100 to-teal-100 border-emerald-300 text-emerald-900"
+                        : userBooking.status === "rejected"
+                        ? "bg-gradient-to-br from-red-100 to-pink-100 border-red-300 text-red-900"
+                        : userBooking.status === "completed"
+                        ? "bg-gradient-to-br from-blue-100 to-cyan-100 border-blue-300 text-blue-900"
+                        : "bg-gradient-to-br from-gray-100 to-slate-100 border-gray-300 text-gray-900"
+                    }`}
+                  >
+                    <span>
+                      {userBooking.status === "pending" && "⏳ Pending"}
                       {userBooking.status === "accepted" && "✓ Accepted"}
                       {userBooking.status === "rejected" && "✕ Rejected"}
                       {userBooking.status === "completed" && "✓ Completed"}
                       {userBooking.status === "cancelled" && "✕ Cancelled"}
                     </span>
-                  </div>
+                  </motion.div>
                 ) : (
                   <Button
                     onClick={() => setBookingDialogOpen(true)}
