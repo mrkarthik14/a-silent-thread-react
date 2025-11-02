@@ -31,6 +31,7 @@ export default function Bookings() {
   
   const bookings = useQuery(api.bookings.list, {});
   const updateStatus = useMutation(api.bookings.updateStatus);
+  const cancelBooking = useMutation(api.bookings.cancelBooking);
 
   if (isLoading) {
     return (
@@ -54,16 +55,30 @@ export default function Bookings() {
     });
   };
 
+  const handleCancelBooking = (bookingId: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      bookingId,
+      action: "cancel",
+      isLoading: false,
+    });
+  };
+
   const confirmStatusUpdate = async () => {
     if (!confirmDialog.bookingId || !confirmDialog.action) return;
     
     setConfirmDialog((prev) => ({ ...prev, isLoading: true }));
     try {
-      await updateStatus({ 
-        bookingId: confirmDialog.bookingId as any, 
-        status: confirmDialog.action as any 
-      });
-      toast.success(`Booking ${confirmDialog.action}`);
+      if (confirmDialog.action === "cancel") {
+        await cancelBooking({ bookingId: confirmDialog.bookingId as any });
+        toast.success("Booking cancelled");
+      } else {
+        await updateStatus({ 
+          bookingId: confirmDialog.bookingId as any, 
+          status: confirmDialog.action as any 
+        });
+        toast.success(`Booking ${confirmDialog.action}`);
+      }
       setConfirmDialog({
         isOpen: false,
         bookingId: null,
@@ -82,6 +97,7 @@ export default function Bookings() {
       case "accepted": return "bg-emerald-200 text-emerald-900";
       case "rejected": return "bg-pink-200 text-pink-900";
       case "completed": return "bg-blue-200 text-blue-900";
+      case "cancelled": return "bg-gray-300 text-gray-900";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -92,6 +108,7 @@ export default function Bookings() {
       case "accepted": return <CheckCircle className="h-4 w-4" />;
       case "rejected": return <XCircle className="h-4 w-4" />;
       case "completed": return <CheckCircle className="h-4 w-4" />;
+      case "cancelled": return <XCircle className="h-4 w-4" />;
       default: return null;
     }
   };
@@ -100,6 +117,7 @@ export default function Bookings() {
     const statuses = ["pending", "accepted", "completed"];
     const currentIndex = statuses.indexOf(status);
     const isRejected = status === "rejected";
+    const isCancelled = status === "cancelled";
 
     return (
       <div className="mb-4">
@@ -111,12 +129,12 @@ export default function Bookings() {
                 animate={{ scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
                 className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm transition-all ${
-                  idx <= currentIndex && !isRejected
+                  idx <= currentIndex && !isRejected && !isCancelled
                     ? "bg-gradient-to-br from-emerald-300 to-emerald-400 text-emerald-900 shadow-lg"
                     : "bg-gray-200 text-gray-600"
                 }`}
               >
-                {idx < currentIndex && !isRejected ? (
+                {idx < currentIndex && !isRejected && !isCancelled ? (
                   <CheckCircle className="h-5 w-5" />
                 ) : (
                   idx + 1
@@ -126,10 +144,10 @@ export default function Bookings() {
               {idx < statuses.length - 1 && (
                 <motion.div
                   initial={{ scaleX: 0 }}
-                  animate={{ scaleX: idx < currentIndex && !isRejected ? 1 : 0 }}
+                  animate={{ scaleX: idx < currentIndex && !isRejected && !isCancelled ? 1 : 0 }}
                   transition={{ delay: idx * 0.1 + 0.2, duration: 0.5 }}
                   className={`flex-1 h-1 mx-2 rounded-full origin-left ${
-                    idx < currentIndex && !isRejected
+                    idx < currentIndex && !isRejected && !isCancelled
                       ? "bg-gradient-to-r from-emerald-300 to-emerald-400"
                       : "bg-gray-200"
                   }`}
@@ -301,6 +319,16 @@ export default function Bookings() {
                     </motion.div>
                   )}
 
+                  {booking.status === "cancelled" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-4 p-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-900 text-sm font-medium"
+                    >
+                      ✕ This booking was cancelled
+                    </motion.div>
+                  )}
+
                   <p className="text-sm mb-4 p-3 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl text-slate-900">
                     {booking.message}
                   </p>
@@ -321,6 +349,16 @@ export default function Bookings() {
                         Reject
                       </Button>
                     </div>
+                  )}
+
+                  {booking.renterId === user?._id && (booking.status === "pending" || booking.status === "accepted") && (
+                    <Button
+                      onClick={() => handleCancelBooking(booking._id)}
+                      variant="outline"
+                      className="w-full rounded-xl border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      Cancel Booking
+                    </Button>
                   )}
                 </Card>
               </motion.div>
@@ -350,7 +388,9 @@ export default function Bookings() {
           <DialogHeader>
             <DialogTitle>Confirm Action</DialogTitle>
             <DialogDescription>
-              Are you sure you want to {confirmDialog.action} this booking request?
+              {confirmDialog.action === "cancel"
+                ? "Are you sure you want to cancel this booking request? This action cannot be undone."
+                : `Are you sure you want to ${confirmDialog.action} this booking request?`}
             </DialogDescription>
           </DialogHeader>
 
@@ -359,7 +399,9 @@ export default function Bookings() {
               onClick={confirmStatusUpdate}
               disabled={confirmDialog.isLoading}
               className={`flex-1 rounded-xl active:scale-95 transition-all duration-150 disabled:opacity-70 ${
-                confirmDialog.action === "accepted"
+                confirmDialog.action === "cancel"
+                  ? "bg-gradient-to-br from-red-200 to-red-300 hover:from-red-300 hover:to-red-400 text-red-900"
+                  : confirmDialog.action === "accepted"
                   ? "bg-gradient-to-br from-emerald-200 to-emerald-300 hover:from-emerald-300 hover:to-emerald-400 text-emerald-900"
                   : "bg-gradient-to-br from-pink-200 to-pink-300 hover:from-pink-300 hover:to-pink-400 text-pink-900"
               }`}

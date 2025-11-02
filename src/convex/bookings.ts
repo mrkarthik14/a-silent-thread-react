@@ -83,3 +83,28 @@ export const updateStatus = mutation({
     });
   },
 });
+
+export const cancelBooking = mutation({
+  args: {
+    bookingId: v.id("bookings"),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const booking = await ctx.db.get(args.bookingId);
+    if (!booking) throw new Error("Booking not found");
+
+    if (booking.renterId !== user._id) {
+      throw new Error("Only the renter can cancel the booking");
+    }
+
+    if (booking.status === "completed" || booking.status === "rejected") {
+      throw new Error("Cannot cancel a completed or rejected booking");
+    }
+
+    await ctx.db.patch(args.bookingId, {
+      status: "cancelled",
+    });
+  },
+});

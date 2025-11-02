@@ -64,7 +64,8 @@ const schema = defineSchema(
         v.literal("pending"),
         v.literal("accepted"),
         v.literal("rejected"),
-        v.literal("completed")
+        v.literal("completed"),
+        v.literal("cancelled")
       ),
     }).index("by_renter", ["renterId"])
       .index("by_owner", ["ownerId"])
