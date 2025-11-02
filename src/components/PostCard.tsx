@@ -20,7 +20,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ImageSlider } from "@/components/ImageSlider";
-import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -65,6 +64,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const checkIsFollowing = useQuery(
     api.follows.isFollowing,
     post.user?._id && currentUser?._id !== post.user._id ? { userId: post.user._id } : "skip"
+  );
+
+  // Get booking count for service listings
+  const bookingCount = useQuery(
+    api.bookings.getBookingCountByService,
+    post.type === "service" ? { serviceId: post._id } : "skip"
   );
 
   // Update local state when query result changes
@@ -379,12 +384,29 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             
             {post.serviceDetails && (
               <div className="bg-white/50 rounded-xl p-3 mb-3 border border-white">
-                <div className="font-black text-base mb-2 text-black">{post.serviceDetails.title}</div>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="font-black text-base text-black">{post.serviceDetails.title}</div>
+                  {bookingCount && bookingCount.pending > 0 && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900 text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1"
+                    >
+                      <span className="text-lg">📋</span>
+                      {bookingCount.pending} pending
+                    </motion.div>
+                  )}
+                </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-slate-700 bg-purple-100 px-2.5 py-1 rounded-lg">
                       {post.serviceDetails.category}
                     </span>
+                    {bookingCount && (
+                      <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+                        {bookingCount.total} bookings
+                      </span>
+                    )}
                   </div>
                   {post.serviceDetails.location && (
                     <div className="text-xs text-slate-600 font-medium">
@@ -393,9 +415,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   )}
                   <div className="pt-1">
                     <span className="font-extrabold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
-                  </div>
-                  <div className="pt-2">
-                    <BookingStatusBadge serviceId={post._id} />
                   </div>
                 </div>
               </div>

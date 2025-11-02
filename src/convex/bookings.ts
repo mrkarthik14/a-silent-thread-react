@@ -29,6 +29,25 @@ export const create = mutation({
   },
 });
 
+export const getBookingCountByService = query({
+  args: {
+    serviceId: v.id("posts"),
+  },
+  handler: async (ctx, args) => {
+    const bookings = await ctx.db
+      .query("bookings")
+      .withIndex("by_service", (q) => q.eq("serviceId", args.serviceId))
+      .collect();
+
+    return {
+      total: bookings.length,
+      pending: bookings.filter((b) => b.status === "pending").length,
+      accepted: bookings.filter((b) => b.status === "accepted").length,
+      completed: bookings.filter((b) => b.status === "completed").length,
+    };
+  },
+});
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
