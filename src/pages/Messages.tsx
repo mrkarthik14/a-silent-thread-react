@@ -341,8 +341,8 @@ export default function Messages() {
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                        <AvatarImage src={conv.user?.image} />
-                        <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
+                        <AvatarImage src={selectedUserImage || conv.user?.image} alt={conv.user?.name} />
+                        <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200">
                           {conv.user?.name?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
@@ -368,13 +368,13 @@ export default function Messages() {
                 <MessageCircle className="h-12 w-12 text-slate-300 mb-4" />
                 <p className="text-slate-600 mb-2">No conversations yet</p>
                 <p className="text-xs text-slate-500 mb-4">Find users to start chatting</p>
-                <Button
-                  onClick={() => setSearchDialogOpen(true)}
-                  className="rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  Find Users
-                </Button>
+              <Button
+                onClick={() => setSearchDialogOpen(true)}
+                className="rounded-xl bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Find Users
+              </Button>
               </div>
             )}
           </ScrollArea>
@@ -418,7 +418,7 @@ export default function Messages() {
                           initiateCall({ recipientId: selectedUserId!, callType: "voice" });
                         }}
                         size="sm"
-                        className="rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
+                        className="rounded-xl bg-gradient-to-r from-blue-300 to-cyan-400 hover:from-blue-400 hover:to-cyan-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
                         title="Start voice call"
                       >
                         <Phone className="h-4 w-4" />
@@ -432,7 +432,7 @@ export default function Messages() {
                           initiateCall({ recipientId: selectedUserId!, callType: "video" });
                         }}
                         size="sm"
-                        className="rounded-xl bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
+                        className="rounded-xl bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
                         title="Start video call"
                       >
                         <Video className="h-4 w-4" />
@@ -753,13 +753,13 @@ export default function Messages() {
               <MessageCircle className="h-16 w-16 text-slate-300 mb-4" />
               <p className="text-lg font-semibold mb-2">Select a conversation</p>
               <p className="text-sm text-slate-500 mb-4">Choose a conversation from the list or find new users</p>
-                    <Button
-                      onClick={() => setSearchDialogOpen(true)}
-                      className="rounded-xl bg-gradient-to-r from-violet-300 to-purple-300 hover:from-violet-400 hover:to-purple-400 text-slate-900 font-semibold"
-                    >
-                <Search className="h-4 w-4 mr-2" />
-                Find Users
-              </Button>
+                  <Button
+                    onClick={() => setSearchDialogOpen(true)}
+                    className="rounded-xl bg-gradient-to-r from-blue-300 to-cyan-300 hover:from-blue-400 hover:to-cyan-400 text-slate-900 font-semibold"
+                  >
+                    <Search className="h-4 w-4 mr-2" />
+                    Find Users
+                  </Button>
             </div>
           )}
         </div>
