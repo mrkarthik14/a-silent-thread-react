@@ -62,12 +62,8 @@ export default function Messages() {
     selectedUserId ? { userId: selectedUserId } : "skip"
   );
   
-  // Get selected user data and image
+  // Get selected user data
   const selectedUserConv = conversations?.find(c => c.user?._id === selectedUserId);
-  const selectedUserImage = useQuery(
-    api.files.getImageUrl,
-    selectedUserConv?.user?.image ? { storageId: selectedUserConv.user.image } : "skip"
-  );
   
   const sendMessage = useMutation(api.messages.send);
   const setTyping = useMutation(api.typingIndicators.setTyping);
@@ -341,7 +337,7 @@ export default function Messages() {
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                        <AvatarImage src={selectedUserImage || conv.user?.image} alt={conv.user?.name} />
+                        <AvatarImage src={conv.user?.image} alt={conv.user?.name} />
                         <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200">
                           {conv.user?.name?.[0] || "U"}
                         </AvatarFallback>
@@ -388,9 +384,9 @@ export default function Messages() {
                   <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
                     <div className="relative">
                       <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                        <AvatarImage src={conversations?.find(c => c.user?._id === selectedUserId)?.user?.image} />
-                        <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200">
-                          {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name?.[0] || "U"}
+                        <AvatarImage src={selectedUserConv?.user?.image} />
+                        <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200">
+                          {selectedUserConv?.user?.name?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
                       {selectedUserPresence?.isOnline && (
