@@ -306,13 +306,13 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
       <Sidebar />
       
       <div className="flex-1 flex ml-0 md:ml-20">
-        <div className="w-80 border-r border-slate-200 bg-white/50 backdrop-blur-sm">
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="font-bold text-lg text-slate-900">Messages</h2>
+        <div className="w-80 border-r border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm transition-colors duration-500">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between transition-colors duration-500">
+            <h2 className="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>
             <Button
               size="sm"
               variant="ghost"
@@ -345,14 +345,14 @@ export default function Messages() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="font-semibold text-sm truncate text-slate-900">{conv.user?.name || "User"}</p>
+                        <p className="font-semibold text-sm truncate text-slate-900 dark:text-white">{conv.user?.name || "User"}</p>
                         {conv.unreadCount > 0 && (
                           <span className="bg-purple-400 text-white text-xs rounded-full px-2 py-0.5">
                             {conv.unreadCount}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-600 truncate">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 truncate">
                         {conv.lastMessage.content}
                       </p>
                     </div>
@@ -361,9 +361,9 @@ export default function Messages() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-                <MessageCircle className="h-12 w-12 text-slate-300 mb-4" />
-                <p className="text-slate-600 mb-2">No conversations yet</p>
-                <p className="text-xs text-slate-500 mb-4">Find users to start chatting</p>
+                <MessageCircle className="h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" />
+                <p className="text-slate-600 dark:text-slate-300 mb-2">No conversations yet</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Find users to start chatting</p>
               <Button
                 onClick={() => setSearchDialogOpen(true)}
                 className="rounded-xl bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
@@ -379,13 +379,13 @@ export default function Messages() {
         <div className="flex-1 flex flex-col">
           {selectedUserId ? (
             <>
-              <div className="sticky top-0 z-10 p-4 border-b border-slate-200 bg-white/50 backdrop-blur-sm">
+              <div className="sticky top-0 z-10 p-4 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm transition-colors duration-500">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
                     <div className="relative">
                       <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
                         <AvatarImage src={selectedUserConv?.user?.image} />
-                        <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200">
+                        <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-700 dark:to-blue-700">
                           {selectedUserConv?.user?.name?.[0] || "U"}
                         </AvatarFallback>
                       </Avatar>
@@ -394,15 +394,15 @@ export default function Messages() {
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-semibold text-slate-900 dark:text-white">
                         {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
                       </p>
                       {isOtherUserTyping ? (
-                        <p className="text-xs text-purple-600">typing...</p>
+                        <p className="text-xs text-purple-600 dark:text-purple-400">typing...</p>
                       ) : selectedUserPresence?.isOnline ? (
-                        <p className="text-xs text-emerald-600">online</p>
+                        <p className="text-xs text-emerald-600 dark:text-emerald-400">online</p>
                       ) : (
-                        <p className="text-xs text-slate-500">offline</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">offline</p>
                       )}
                     </div>
                   </div>
@@ -745,10 +745,10 @@ export default function Messages() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-600 p-6">
-              <MessageCircle className="h-16 w-16 text-slate-300 mb-4" />
-              <p className="text-lg font-semibold mb-2">Select a conversation</p>
-              <p className="text-sm text-slate-500 mb-4">Choose a conversation from the list or find new users</p>
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-600 dark:text-slate-300 p-6">
+              <MessageCircle className="h-16 w-16 text-slate-300 dark:text-slate-600 mb-4" />
+              <p className="text-lg font-semibold mb-2 dark:text-white">Select a conversation</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Choose a conversation from the list or find new users</p>
                   <Button
                     onClick={() => setSearchDialogOpen(true)}
                     className="rounded-xl bg-gradient-to-r from-blue-300 to-cyan-300 hover:from-blue-400 hover:to-cyan-400 text-slate-900 font-semibold"

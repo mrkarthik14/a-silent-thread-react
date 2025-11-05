@@ -238,7 +238,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
       <Sidebar />
 
       <div className="flex-1 overflow-y-auto ml-0 md:ml-20">
@@ -247,7 +247,7 @@ export default function Profile() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="relative h-64 bg-gradient-to-br from-purple-300 to-blue-300 rounded-b-3xl overflow-hidden group cursor-pointer"
+            className="relative h-64 bg-gradient-to-br from-purple-300 to-blue-300 dark:from-purple-700 dark:to-blue-700 rounded-b-3xl overflow-hidden group cursor-pointer transition-colors duration-500"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
           >
@@ -339,8 +339,8 @@ export default function Profile() {
             <div className="mb-6">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900 mb-1">{profileData?.name || "User"}</h1>
-                  <p className="text-slate-600">{profileData?.email}</p>
+                  <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{profileData?.name || "User"}</h1>
+                  <p className="text-slate-600 dark:text-slate-300">{profileData?.email}</p>
                 </div>
 
                 {/* Follower/Following counts */}
@@ -387,7 +387,7 @@ export default function Profile() {
 
               {profileData?.bio && (
                 <motion.p 
-                  className="text-slate-700 mb-4"
+                  className="text-slate-700 dark:text-slate-200 mb-4"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
@@ -457,7 +457,7 @@ export default function Profile() {
                     </motion.div>
                   ))
                 ) : (
-                  <div className="col-span-full text-center py-12 text-slate-600">
+                  <div className="col-span-full text-center py-12 text-slate-600 dark:text-slate-300">
                     No posts yet
                   </div>
                 )}

@@ -193,7 +193,7 @@ export default function Bookings() {
   }) || [];
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto ml-0 md:ml-20">
@@ -203,8 +203,8 @@ export default function Bookings() {
             animate={{ y: 0, opacity: 1 }}
             className="mb-6"
           >
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Bookings</h1>
-            <p className="text-slate-600">Manage your rental requests</p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Bookings</h1>
+            <p className="text-slate-600 dark:text-slate-300">Manage your rental requests</p>
           </motion.div>
 
           {/* Filter and View Options */}

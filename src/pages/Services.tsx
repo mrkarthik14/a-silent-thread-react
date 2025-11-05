@@ -30,7 +30,7 @@ export default function Services() {
   const colors = ["bg-gradient-to-br from-emerald-100 to-emerald-200", "bg-gradient-to-br from-blue-100 to-blue-200", "bg-gradient-to-br from-yellow-100 to-yellow-200", "bg-gradient-to-br from-pink-100 to-pink-200", "bg-gradient-to-br from-purple-100 to-purple-200"];
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto">
@@ -40,8 +40,8 @@ export default function Services() {
             animate={{ y: 0, opacity: 1 }}
             className="mb-6"
           >
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Services</h1>
-            <p className="text-slate-600">Discover and rent amazing things</p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Services</h1>
+            <p className="text-slate-600 dark:text-slate-300">Discover and rent amazing things</p>
           </motion.div>
 
           <div className="grid gap-4">
