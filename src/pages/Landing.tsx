@@ -1,14 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Calendar, Search, Sparkles } from "lucide-react";
+import { ArrowRight, MessageCircle, Calendar, Search, Sparkles, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ThreadLine } from "@/components/ThreadLine";
+import { useState, useEffect } from "react";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem("darkMode");
+    if (savedDarkMode === "true") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  const handleDarkModeToggle = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    
+    localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
+  };
 
   const features = [
     {
@@ -42,7 +65,7 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-300">
       {/* Header */}
       <nav className="px-6 py-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -50,16 +73,31 @@ export default function Landing() {
             <div className="w-12 h-12">
               <LoadingLogo size="sm" />
             </div>
-            <span className="text-2xl font-bold text-slate-900">A Silent Thread</span>
+            <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">A Silent Thread</span>
           </div>
           
-          <Button
-            onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
-            className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-6 shadow-sm"
-          >
-            {isAuthenticated ? "Go to Feed" : "Get Started"}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={handleDarkModeToggle}
+              variant="outline"
+              size="sm"
+              className="rounded-xl border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              {darkMode ? (
+                <Sun className="h-4 w-4 text-amber-500" />
+              ) : (
+                <Moon className="h-4 w-4 text-slate-600" />
+              )}
+            </Button>
+            
+            <Button
+              onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-6 shadow-sm dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+            >
+              {isAuthenticated ? "Go to Feed" : "Get Started"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </nav>
 
@@ -74,23 +112,23 @@ export default function Landing() {
             <LoadingLogo size="lg" />
           </div>
           
-          <h1 className="text-6xl md:text-7xl font-bold text-slate-900 mb-6 tracking-tight">
+          <h1 className="text-6xl md:text-7xl font-bold text-slate-900 dark:text-slate-100 mb-6 tracking-tight">
             A Silent Thread
           </h1>
           
-          <p className="text-xl text-slate-600 mb-4 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-slate-600 dark:text-slate-300 mb-4 max-w-2xl mx-auto leading-relaxed">
             Where connections flow like gentle threads
           </p>
           
-          <p className="text-base text-slate-500 mb-10 max-w-2xl mx-auto">
+          <p className="text-base text-slate-500 dark:text-slate-400 mb-10 max-w-2xl mx-auto">
             A modern renting platform that visualizes your connections, services, and conversations as beautiful, flowing threads. Experience community in a whole new way.
           </p>
           
-          <Button
-            size="lg"
-            onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
-            className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 py-6 text-lg shadow-lg"
-          >
+            <Button
+              size="lg"
+              onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 py-6 text-lg shadow-lg dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+            >
             {isAuthenticated ? "Go to Feed" : "Get Started"}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -115,14 +153,14 @@ export default function Landing() {
                   <div className="absolute -top-6 left-1/2 w-0.5 h-6 bg-gradient-to-b from-purple-300 to-transparent" />
                 )}
                 
-                <div className={`bg-gradient-to-br ${feature.color} rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow h-full`}>
+                <div className={`bg-gradient-to-br ${feature.color} dark:from-slate-700 dark:to-slate-800 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow h-full`}>
                   <div className="mb-4">
-                    <feature.icon className={`h-10 w-10 ${feature.textColor}`} strokeWidth={1.5} />
+                    <feature.icon className={`h-10 w-10 ${feature.textColor} dark:text-slate-200`} strokeWidth={1.5} />
                   </div>
-                  <h3 className={`text-xl font-bold mb-3 ${feature.textColor}`}>
+                  <h3 className={`text-xl font-bold mb-3 ${feature.textColor} dark:text-slate-100`}>
                     {feature.title}
                   </h3>
-                  <p className={`text-sm ${feature.textColor} opacity-80`}>
+                  <p className={`text-sm ${feature.textColor} dark:text-slate-300 opacity-80`}>
                     {feature.description}
                   </p>
                 </div>
@@ -147,25 +185,25 @@ export default function Landing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="bg-gradient-to-br from-blue-200 to-cyan-300 rounded-3xl p-12 shadow-sm hover:shadow-md transition-shadow text-center"
+          className="bg-gradient-to-br from-blue-200 to-cyan-300 dark:from-blue-900 dark:to-cyan-900 rounded-3xl p-12 shadow-sm hover:shadow-md transition-shadow text-center"
         >
           <div className="flex justify-center mb-6">
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <Calendar className="h-16 w-16 text-blue-900" strokeWidth={1.5} />
+              <Calendar className="h-16 w-16 text-blue-900 dark:text-blue-200" strokeWidth={1.5} />
             </motion.div>
           </div>
-          <h2 className="text-3xl font-bold text-blue-900 mb-3">
+          <h2 className="text-3xl font-bold text-blue-900 dark:text-blue-100 mb-3">
             Plan Your Rentals
           </h2>
-          <p className="text-blue-800 max-w-2xl mx-auto mb-6">
+          <p className="text-blue-800 dark:text-blue-200 max-w-2xl mx-auto mb-6">
             Schedule your bookings with ease. Our intuitive calendar makes it simple to find available dates and manage your rental timeline.
           </p>
           <Button
             onClick={() => navigate(isAuthenticated ? "/bookings" : "/auth")}
-            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-150"
+            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-150 dark:bg-blue-700 dark:hover:bg-blue-600"
           >
             View Calendar
             <ArrowRight className="ml-2 h-4 w-4" />
