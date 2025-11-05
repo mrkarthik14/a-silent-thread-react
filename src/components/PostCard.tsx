@@ -42,6 +42,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | undefined>(undefined);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -442,7 +443,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 variant="ghost"
                 size="sm"
                 className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
-                onClick={onReply}
+                onClick={() => setShowComments(!showComments)}
               >
                 <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
                 <span className="text-xs text-slate-900">{post.replies}</span>
@@ -491,6 +492,18 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 )
               )}
             </div>
+
+            {/* Comment Section */}
+            {showComments && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 pt-4 border-t border-white/30"
+              >
+                <CommentSection postId={post._id} />
+              </motion.div>
+            )}
 
           </div>
         </div>
