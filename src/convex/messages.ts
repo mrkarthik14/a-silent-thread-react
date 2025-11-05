@@ -12,7 +12,8 @@ export const send = mutation({
       v.literal("video"),
       v.literal("file"),
       v.literal("gif"),
-      v.literal("voice")
+      v.literal("voice"),
+      v.literal("sharedPost")
     )),
     mediaUrl: v.optional(v.string()),
     fileName: v.optional(v.string()),
@@ -81,7 +82,16 @@ export const getConversation = query({
       (a, b) => b._creationTime - a._creationTime
     );
 
-    return allMessages;
+    // Enrich messages with parent message data for replies
+    return await Promise.all(
+      allMessages.map(async (msg) => {
+        if (msg.parentMessageId) {
+          const parentMsg = await ctx.db.get(msg.parentMessageId);
+          return { ...msg, parentMessage: parentMsg };
+        }
+        return msg;
+      })
+    );
   },
 });
 

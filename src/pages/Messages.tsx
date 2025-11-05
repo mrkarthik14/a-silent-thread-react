@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate, useLocation } from "react-router";
 import { UserSearch } from "@/components/UserSearch";
+import { MessageBubble } from "@/components/MessageBubble";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -29,6 +30,7 @@ export default function Messages() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [replyingTo, setReplyingTo] = useState<any>(null);
+  const [replyMessage, setReplyMessage] = useState<any>(null);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   const [messageMenuOpen, setMessageMenuOpen] = useState<string | null>(null);
@@ -192,8 +194,10 @@ export default function Messages() {
       await sendMessage({
         recipientId: selectedUserId,
         content: message,
+        parentMessageId: replyMessage?._id,
       });
       setMessage("");
+      setReplyMessage(null);
       
       // Clear timeout
       if (typingTimeoutRef.current) {
@@ -442,141 +446,17 @@ export default function Messages() {
               <ScrollArea className="flex-1 p-4 messages-scroll scroll-snap-type-y overflow-hidden">
                 <div className="space-y-3">
                   {currentConversation?.slice().reverse().map((msg, idx) => (
-                    <motion.div
+                    <MessageBubble
                       key={msg._id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.02 }}
-                      className={`flex ${msg.senderId === user?._id ? "justify-end" : "justify-start"} scroll-snap-align-start`}
-                      whileHover={{ scale: 1.02, y: -2 }}
-                    >
-                      <div className="flex flex-col gap-1.5 max-w-xs">
-                        <div
-                          className={`px-4 py-2.5 rounded-3xl shadow-md hover:shadow-lg transition-shadow relative group ${
-                            msg.senderId === user?._id
-                              ? "bg-gradient-to-br from-rose-200 to-pink-300 text-slate-900 rounded-br-sm"
-                              : "bg-gradient-to-br from-amber-100 to-yellow-200 text-slate-900 rounded-bl-sm"
-                          }`}
-                          onMouseEnter={() => setHoveredMessageId(msg._id as any)}
-                          onMouseLeave={() => setHoveredMessageId(null)}
-                        >
-                          {/* Display shared post */}
-                          {msg.messageType === "sharedPost" && (
-                            <div className="bg-white/40 rounded-lg p-3 mb-2 border border-white/50">
-                              <p className="text-xs font-semibold text-slate-700 mb-2">Shared Post</p>
-                              <p className="text-sm text-slate-800 mb-2">{msg.content}</p>
-                            </div>
-                          )}
-                          
-                          {/* Display uploaded image */}
-                          {msg.mediaUrl && msg.messageType === "image" && (
-                            <img 
-                              src={msg.mediaUrl} 
-                              alt="Uploaded" 
-                              className="rounded-lg mb-2 max-w-xs w-full object-cover max-h-64"
-                            />
-                          )}
-                          
-                          {/* Display other file types */}
-                          {msg.mediaUrl && msg.messageType === "file" && (
-                            <div className="bg-white/30 rounded-lg p-2 mb-2 flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-slate-600" />
-                              <a 
-                                href={msg.mediaUrl} 
-                                download={msg.fileName}
-                                className="text-xs text-blue-600 hover:underline truncate"
-                              >
-                                {msg.fileName || "Download file"}
-                              </a>
-                            </div>
-                          )}
-                          
-                          <p className="text-sm leading-relaxed break-words">{msg.content}</p>
-                          
-                          {/* Reaction Picker on Hover */}
-                          {hoveredMessageId === msg._id && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                              animate={{ opacity: 1, scale: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                              transition={{ duration: 0.2, ease: "easeOut" }}
-                              className="absolute -top-12 left-0 bg-white rounded-2xl shadow-lg border border-slate-200 p-2 flex gap-1 z-20"
-                            >
-                              {["😂", "❤️", "😮", "😢", "🔥", "👍"].map((emoji) => (
-                                <motion.button
-                                  key={emoji}
-                                  whileHover={{ scale: 1.3, y: -2 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  onClick={() => {
-                                    addReaction({ messageId: msg._id, emoji });
-                                    toast.success(`Added ${emoji} reaction`);
-                                  }}
-                                  className="text-lg hover:bg-purple-100 rounded-lg p-1.5 transition-colors cursor-pointer"
-                                  title={`React with ${emoji}`}
-                                >
-                                  {emoji}
-                                </motion.button>
-                              ))}
-                            </motion.div>
-                          )}
-                        </div>
-                        
-                        {/* Reactions Display */}
-                        {msg.reactions && msg.reactions.length > 0 && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="flex gap-1.5 flex-wrap px-2"
-                          >
-                            {msg.reactions.map((reaction, idx) => (
-                              <motion.button
-                                key={reaction.emoji}
-                                initial={{ opacity: 0, scale: 0.6 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: idx * 0.05, duration: 0.2 }}
-                                whileHover={{ scale: 1.15 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => {
-                                  if (reaction.userIds.includes(user?._id!)) {
-                                    removeReaction({ messageId: msg._id, emoji: reaction.emoji });
-                                  } else {
-                                    addReaction({ messageId: msg._id, emoji: reaction.emoji });
-                                  }
-                                }}
-                                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                                  reaction.userIds.includes(user?._id!)
-                                    ? "bg-gradient-to-r from-purple-200 to-pink-200 text-slate-900"
-                                    : "bg-gray-100 text-slate-600 hover:bg-gray-200"
-                                }`}
-                              >
-                                <motion.span
-                                  animate={{ rotate: [0, -5, 5, 0] }}
-                                  transition={{ duration: 0.4, repeat: Infinity, repeatDelay: 2 }}
-                                >
-                                  {reaction.emoji}
-                                </motion.span>
-                                <span>{reaction.userIds.length}</span>
-                              </motion.button>
-                            ))}
-                          </motion.div>
-                        )}
-                        
-                        {msg.senderId === user?._id && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex items-center justify-end gap-1 px-2"
-                          >
-                            <span className={`text-xs font-medium ${
-                              msg.read ? "text-blue-500" : "text-slate-400"
-                            }`}>
-                              {msg.read ? "✓✓ Read" : "✓ Sent"}
-                            </span>
-                          </motion.div>
-                        )}
-                      </div>
-                    </motion.div>
+                      msg={msg}
+                      currentUserId={user?._id || null}
+                      onReply={(message) => setReplyMessage(message)}
+                      onDelete={(messageId) => deleteMessage({ messageId })}
+                      onAddReaction={(messageId, emoji) => addReaction({ messageId, emoji })}
+                      onRemoveReaction={(messageId, emoji) => removeReaction({ messageId, emoji })}
+                      onLike={(messageId) => likeMessage({ messageId })}
+                      onUnlike={(messageId) => unlikeMessage({ messageId })}
+                    />
                   ))}
                   
                   {isOtherUserTyping && (
@@ -612,6 +492,29 @@ export default function Messages() {
               </ScrollArea>
 
               <div className="sticky bottom-0 z-10 p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm flex-shrink-0 overflow-hidden">
+                {replyMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-3 shadow-sm border border-blue-100"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-slate-600 mb-1">Replying to message</p>
+                        <p className="text-sm text-slate-700 truncate">{replyMessage.content}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setReplyMessage(null)}
+                        className="h-6 w-6 p-0 rounded-lg hover:bg-red-100"
+                      >
+                        <X className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
                 {imagePreview && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
