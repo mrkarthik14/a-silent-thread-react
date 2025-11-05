@@ -274,3 +274,60 @@ export const hidePost = mutation({
     return { success: true };
   },
 });
+
+export const notifyLike = mutation({
+  args: { postId: v.id("posts"), likerId: v.id("users") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) return;
+
+    const liker = await ctx.db.get(args.likerId);
+    if (!liker) return;
+
+    await ctx.db.insert("notifications", {
+      userId: post.userId,
+      type: "like",
+      content: `${liker.name || "Someone"} liked your post`,
+      read: false,
+      relatedId: args.postId.toString(),
+    });
+  },
+});
+
+export const notifyComment = mutation({
+  args: { postId: v.id("posts"), commenterId: v.id("users") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) return;
+
+    const commenter = await ctx.db.get(args.commenterId);
+    if (!commenter) return;
+
+    await ctx.db.insert("notifications", {
+      userId: post.userId,
+      type: "comment",
+      content: `${commenter.name || "Someone"} commented on your post`,
+      read: false,
+      relatedId: args.postId.toString(),
+    });
+  },
+});
+
+export const notifyShare = mutation({
+  args: { postId: v.id("posts"), sharerId: v.id("users") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) return;
+
+    const sharer = await ctx.db.get(args.sharerId);
+    if (!sharer) return;
+
+    await ctx.db.insert("notifications", {
+      userId: post.userId,
+      type: "share",
+      content: `${sharer.name || "Someone"} shared your post`,
+      read: false,
+      relatedId: args.postId.toString(),
+    });
+  },
+});

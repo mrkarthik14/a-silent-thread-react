@@ -65,3 +65,52 @@ export const deleteComment = mutation({
     await ctx.db.delete(args.commentId);
   },
 });
+
+export const getNotifications = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
+
+    const notifications = await ctx.db
+      .query("notifications")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .take(50);
+
+    return notifications;
+  },
+});
+
+export const markNotificationAsRead = mutation({
+  args: { notificationId: v.id("notifications") },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const notification = await ctx.db.get(args.notificationId);
+    if (!notification) throw new Error("Notification not found");
+    if (notification.userId !== user._id) throw new Error("Not authorized");
+
+    await ctx.db.patch(args.notificationId, { read: true });
+  },
+});
+
+export const clearAllNotifications = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const notifications = await ctx.db
+      .query("notifications")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+
+    await Promise.all(
+      notifications.map((notif) =>
+        ctx.db.patch(notif._id, { read: true })
+      )
+    );
+  },
+});

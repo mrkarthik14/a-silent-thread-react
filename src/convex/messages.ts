@@ -362,3 +362,19 @@ export const deleteConversation = mutation({
     await Promise.all(messages.map(msg => ctx.db.delete(msg._id)));
   },
 });
+
+export const notifyNewMessage = mutation({
+  args: { recipientId: v.id("users"), senderId: v.id("users") },
+  handler: async (ctx, args) => {
+    const sender = await ctx.db.get(args.senderId);
+    if (!sender) return;
+
+    await ctx.db.insert("notifications", {
+      userId: args.recipientId,
+      type: "message",
+      content: `New message from ${sender.name || "Someone"}`,
+      read: false,
+      relatedId: args.senderId.toString(),
+    });
+  },
+});
