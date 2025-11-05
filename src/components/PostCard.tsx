@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ImageSlider } from "@/components/ImageSlider";
+import { ShareDialog } from "@/components/ShareDialog";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -43,6 +44,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | undefined>(undefined);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -453,6 +455,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 variant="ghost"
                 size="sm"
                 className="h-8 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
+                onClick={() => setShareDialogOpen(true)}
               >
                 <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
               </Button>
@@ -622,6 +625,13 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
           </AlertDialogContent>
         </AlertDialog>
       )}
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        postId={post._id}
+      />
 
       {/* Image Modal */}
   <Dialog open={selectedImageUrl !== undefined && selectedImageUrl !== null} onOpenChange={(open) => !open && setSelectedImageUrl(undefined)}>
