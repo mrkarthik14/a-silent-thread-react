@@ -450,6 +450,8 @@ export default function Messages() {
                       key={msg._id}
                       msg={msg}
                       currentUserId={user?._id || null}
+                      senderImage={msg.senderId === user?._id ? user?.image : selectedUserConv?.user?.image}
+                      senderName={msg.senderId === user?._id ? user?.name : selectedUserConv?.user?.name}
                       onReply={(message) => setReplyMessage(message)}
                       onDelete={(messageId) => deleteMessage({ messageId })}
                       onAddReaction={(messageId, emoji) => addReaction({ messageId, emoji })}

@@ -2,10 +2,13 @@ import { motion } from "framer-motion";
 import { Heart, Trash2, Eye, FileText } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface MessageBubbleProps {
   msg: any;
   currentUserId: string | null;
+  senderImage?: string;
+  senderName?: string;
   onReply: (message: any) => void;
   onDelete: (messageId: any) => Promise<any>;
   onAddReaction: (messageId: any, emoji: string) => Promise<any>;
@@ -17,6 +20,8 @@ interface MessageBubbleProps {
 export function MessageBubble({
   msg,
   currentUserId,
+  senderImage,
+  senderName,
   onReply,
   onDelete,
   onAddReaction,
@@ -31,9 +36,17 @@ export function MessageBubble({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex ${msg.senderId === currentUserId ? "justify-end" : "justify-start"} scroll-snap-align-start`}
+      className={`flex ${msg.senderId === currentUserId ? "justify-end" : "justify-start"} scroll-snap-align-start gap-2`}
       whileHover={{ scale: 1.02, y: -2 }}
     >
+      {msg.senderId !== currentUserId && (
+        <Avatar className="h-8 w-8 border-2 border-white shadow-sm flex-shrink-0 mt-1">
+          <AvatarImage src={senderImage} alt={senderName} />
+          <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200 text-xs">
+            {senderName?.[0] || "U"}
+          </AvatarFallback>
+        </Avatar>
+      )}
       <div className="flex flex-col gap-1.5 max-w-xs">
         {/* Parent message reference for replies */}
         {msg.parentMessage && (
