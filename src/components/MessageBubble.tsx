@@ -41,8 +41,8 @@ export function MessageBubble({
     >
       {msg.senderId !== currentUserId && (
         <Avatar className="h-8 w-8 border-2 border-white shadow-sm flex-shrink-0 mt-1">
-          <AvatarImage src={senderImage} alt={senderName} />
-          <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200 text-xs">
+          {senderImage && <AvatarImage src={senderImage} alt={senderName} />}
+          <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200 text-xs font-semibold">
             {senderName?.[0] || "U"}
           </AvatarFallback>
         </Avatar>

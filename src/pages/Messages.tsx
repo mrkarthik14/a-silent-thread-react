@@ -445,13 +445,18 @@ export default function Messages() {
 
               <ScrollArea className="flex-1 p-4 messages-scroll scroll-snap-type-y overflow-hidden">
                 <div className="space-y-3">
-                  {currentConversation?.slice().reverse().map((msg, idx) => (
+                  {currentConversation?.slice().reverse().map((msg, idx) => {
+                    const isCurrentUserMessage = msg.senderId === user?._id;
+                    const senderImage = isCurrentUserMessage ? user?.image : selectedUserConv?.user?.image;
+                    const senderName = isCurrentUserMessage ? user?.name : selectedUserConv?.user?.name;
+                    
+                    return (
                     <MessageBubble
                       key={msg._id}
                       msg={msg}
                       currentUserId={user?._id || null}
-                      senderImage={msg.senderId === user?._id ? user?.image : selectedUserConv?.user?.image}
-                      senderName={msg.senderId === user?._id ? user?.name : selectedUserConv?.user?.name}
+                      senderImage={senderImage}
+                      senderName={senderName}
                       onReply={(message) => setReplyMessage(message)}
                       onDelete={(messageId) => deleteMessage({ messageId })}
                       onAddReaction={(messageId, emoji) => addReaction({ messageId, emoji })}
@@ -459,7 +464,8 @@ export default function Messages() {
                       onLike={(messageId) => likeMessage({ messageId })}
                       onUnlike={(messageId) => unlikeMessage({ messageId })}
                     />
-                  ))}
+                    );
+                  })}
                   
                   {isOtherUserTyping && (
                     <motion.div
