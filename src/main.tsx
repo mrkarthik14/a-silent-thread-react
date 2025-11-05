@@ -17,11 +17,14 @@ import Bookings from "./pages/Bookings.tsx";
 import Profile from "./pages/Profile.tsx";
 import Settings from "./pages/Settings.tsx";
 import "./types/global.d.ts";
+import { useTheme } from "./hooks/use-theme.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 function RouteSyncer() {
   const location = useLocation();
+  useTheme();
+  
   useEffect(() => {
     window.parent.postMessage(
       { type: "iframe-route-change", path: location.pathname },

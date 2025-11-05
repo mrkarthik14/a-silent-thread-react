@@ -72,7 +72,30 @@ export default function Settings() {
     localStorage.setItem("chatTheme", selectedChatTheme);
     localStorage.setItem("feedTheme", selectedFeedTheme);
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
+    
+    // Apply dark mode to document
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    
     toast.success("Theme preferences saved!");
+  };
+
+  const handleDarkModeToggleWithApply = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    
+    // Apply immediately
+    if (newDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    
+    localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
+    toast.success(newDarkMode ? "Dark mode enabled" : "Light mode enabled");
   };
 
   const handlePrivacyChange = (key: string, value: boolean) => {
@@ -141,7 +164,7 @@ export default function Settings() {
                 darkMode={darkMode}
                 onThemeSelect={handleThemeSelect}
                 onSaveThemes={handleSaveThemes}
-                onDarkModeToggle={() => setDarkMode(!darkMode)}
+                onDarkModeToggle={handleDarkModeToggleWithApply}
               />
             </TabsContent>
 

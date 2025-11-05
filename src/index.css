@@ -115,6 +115,11 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  
+  html.dark {
+    color-scheme: dark;
   }
   * {
     @apply border-border outline-ring/50;
