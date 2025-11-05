@@ -87,7 +87,8 @@ const schema = defineSchema(
         v.literal("video"),
         v.literal("file"),
         v.literal("gif"),
-        v.literal("voice")
+        v.literal("voice"),
+        v.literal("sharedPost")
       )),
       mediaUrl: v.optional(v.string()),
       fileName: v.optional(v.string()),

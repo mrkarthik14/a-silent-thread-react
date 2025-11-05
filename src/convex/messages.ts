@@ -65,22 +65,23 @@ export const getConversation = query({
 
     const messages = await ctx.db
       .query("messages")
-      .filter((q) =>
-        q.or(
-          q.and(
-            q.eq(q.field("senderId"), user._id),
-            q.eq(q.field("recipientId"), args.userId)
-          ),
-          q.and(
-            q.eq(q.field("senderId"), args.userId),
-            q.eq(q.field("recipientId"), user._id)
-          )
-        )
-      )
+      .withIndex("by_sender", (q) => q.eq("senderId", user._id))
+      .filter((q) => q.eq(q.field("recipientId"), args.userId))
       .order("desc")
       .collect();
 
-    return messages;
+    const messagesWithOtherUser = await ctx.db
+      .query("messages")
+      .withIndex("by_recipient", (q) => q.eq("recipientId", user._id))
+      .filter((q) => q.eq(q.field("senderId"), args.userId))
+      .order("desc")
+      .collect();
+
+    const allMessages = [...messages, ...messagesWithOtherUser].sort(
+      (a, b) => b._creationTime - a._creationTime
+    );
+
+    return allMessages;
   },
 });
 
@@ -360,6 +361,27 @@ export const deleteConversation = mutation({
       .collect();
 
     await Promise.all(messages.map(msg => ctx.db.delete(msg._id)));
+  },
+});
+
+export const getSharedPostDetails = query({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const message = await ctx.db.get(args.messageId);
+    if (!message || message.messageType !== "sharedPost") return null;
+
+    const sharedPost = await ctx.db
+      .query("sharedPosts")
+      .withIndex("by_post", (q) => q.eq("postId", message._id as any))
+      .first();
+    
+    if (!sharedPost) return null;
+
+    const post = await ctx.db.get(sharedPost.postId);
+    if (!post) return null;
+
+    const postUser = await ctx.db.get(post.userId);
+    return { ...post, user: postUser };
   },
 });
 

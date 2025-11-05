@@ -460,6 +460,14 @@ export default function Messages() {
                           onMouseEnter={() => setHoveredMessageId(msg._id as any)}
                           onMouseLeave={() => setHoveredMessageId(null)}
                         >
+                          {/* Display shared post */}
+                          {msg.messageType === "sharedPost" && (
+                            <div className="bg-white/40 rounded-lg p-3 mb-2 border border-white/50">
+                              <p className="text-xs font-semibold text-slate-700 mb-2">Shared Post</p>
+                              <p className="text-sm text-slate-800 mb-2">{msg.content}</p>
+                            </div>
+                          )}
+                          
                           {/* Display uploaded image */}
                           {msg.mediaUrl && msg.messageType === "image" && (
                             <img 

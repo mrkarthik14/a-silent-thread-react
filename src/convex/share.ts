@@ -15,11 +15,13 @@ export const sharePost = mutation({
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
 
-    await ctx.db.insert("messages", {
+    const messageId = await ctx.db.insert("messages", {
       senderId: user._id,
       recipientId: args.recipientId,
-      content: args.message || `Shared a post: ${post.content.substring(0, 50)}...`,
+      content: args.message || `Shared a post`,
       read: false,
+      messageType: "sharedPost",
+      mediaUrl: post.images?.[0] || post.image,
     });
 
     await ctx.db.insert("sharedPosts", {
