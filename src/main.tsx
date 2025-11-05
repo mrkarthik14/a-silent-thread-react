@@ -59,6 +59,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
