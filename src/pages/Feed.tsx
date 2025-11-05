@@ -73,10 +73,10 @@ export default function Feed() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
       <Sidebar />
       
-      <div className="flex-1 overflow-y-auto feed-scroll bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+      <div className="flex-1 overflow-y-auto feed-scroll bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
         <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="hidden lg:block"></div>
           <div className="lg:col-span-2">
