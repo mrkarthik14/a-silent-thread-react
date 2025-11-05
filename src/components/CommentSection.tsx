@@ -36,6 +36,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
       setReplyTo(null);
       toast.success("Comment added");
     } catch (error) {
+      console.error("Comment error:", error);
       toast.error("Failed to add comment");
     }
   };

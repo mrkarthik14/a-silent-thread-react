@@ -37,6 +37,7 @@ export const list = query({
         const replies = await ctx.db
           .query("comments")
           .withIndex("by_parent", (q) => q.eq("parentCommentId", comment._id))
+          .order("desc")
           .collect();
 
         const repliesWithUsers = await Promise.all(
