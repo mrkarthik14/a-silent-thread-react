@@ -75,21 +75,21 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <Button
               onClick={handleDarkModeToggle}
-              className={`rounded-xl px-4 py-2 font-semibold transition-all duration-300 flex items-center gap-2 ${
+              className={`rounded-full px-5 py-2.5 font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 ${
                 darkMode
-                  ? "bg-gradient-to-r from-slate-700 to-slate-800 text-amber-300 hover:from-slate-600 hover:to-slate-700 border border-slate-600"
-                  : "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-900 hover:from-amber-200 hover:to-yellow-200 border border-amber-300"
+                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 border border-indigo-500"
+                  : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border border-yellow-400"
               }`}
             >
               {darkMode ? (
                 <>
-                  <Moon className="h-4 w-4" />
-                  <span className="hidden sm:inline text-sm">Dark</span>
+                  <Moon className="h-5 w-5" />
+                  <span className="hidden sm:inline text-sm font-medium">Dark</span>
                 </>
               ) : (
                 <>
-                  <Sun className="h-4 w-4" />
-                  <span className="hidden sm:inline text-sm">Light</span>
+                  <Sun className="h-5 w-5" />
+                  <span className="hidden sm:inline text-sm font-medium">Light</span>
                 </>
               )}
             </Button>
