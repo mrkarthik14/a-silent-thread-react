@@ -68,13 +68,16 @@ export const getUserBookingForService = query({
     const user = await getCurrentUser(ctx);
     if (!user) return null;
 
-    const booking = await ctx.db
+    const bookings = await ctx.db
       .query("bookings")
       .withIndex("by_renter", (q) => q.eq("renterId", user._id))
       .filter((q) => q.eq(q.field("serviceId"), args.serviceId))
-      .unique();
+      .order("desc")
+      .collect();
 
-    return booking || null;
+    // Return the most recent non-cancelled booking, or null if none exists
+    const activeBooking = bookings.find((b) => b.status !== "cancelled");
+    return activeBooking || null;
   },
 });
 
