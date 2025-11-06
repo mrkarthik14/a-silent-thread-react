@@ -211,23 +211,25 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
 
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, type: "spring", stiffness: 100, damping: 15 }}
     >
-      <Card className={`${color} border-none shadow-sm hover:shadow-md transition-shadow p-4 rounded-2xl`}>
+      <Card className={`${color} border-none shadow-sm hover:shadow-md transition-shadow p-4 rounded-2xl cursor-pointer`}>
         <div className="flex gap-3">
-          <motion.div 
-            className="relative cursor-pointer" 
-            onClick={handleProfileClick}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.15, boxShadow: "0 0 20px rgba(168, 85, 247, 0.6)" }}
-              whileTap={{ scale: 0.9 }}
+            <motion.div 
+              className="relative cursor-pointer" 
+              onClick={handleProfileClick}
+              layout
             >
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, type: "spring", stiffness: 120, damping: 12 }}
+                className="hover:scale-110 active:scale-95 transition-transform"
+              >
               <Avatar className="h-10 w-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow rounded-full">
                 <AvatarImage src={userImageUrl || undefined} className="rounded-full" />
                 <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 rounded-full">
@@ -237,10 +239,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             </motion.div>
             {userPresence?.isOnline && (
               <motion.div 
+                layout
                 className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
+                transition={{ delay: 0.2, duration: 0.3, type: "spring" }}
               />
             )}
           </motion.div>
@@ -437,7 +440,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
                 onClick={handleLike}
               >
-                <motion.div animate={isLiked ? { scale: [1, 1.2, 1] } : {}}>
+                <motion.div layout animate={isLiked ? { scale: [1, 1.2, 1] } : {}} transition={{ type: "spring", stiffness: 200 }}>
                   <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
                 </motion.div>
                 <span className="text-xs text-slate-900">{post.likes}</span>
@@ -501,9 +504,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {/* Comment Section */}
             {showComments && (
               <motion.div
+                layout
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
                 className="mt-4 pt-4 border-t border-white/30"
               >
                 <CommentSection postId={post._id} />
