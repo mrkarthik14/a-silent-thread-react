@@ -44,22 +44,13 @@ export default function Feed() {
   useEffect(() => {
     if (paginatedPosts?.page) {
       setAllPosts((prev) => [...prev, ...paginatedPosts.page]);
+      setIsLoadingMore(false);
     }
   }, [paginatedPosts?.page]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
-        if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
-          setIsLoadingMore(true);
-          setPaginationOpts({
-            numItems: 10,
-            cursor: paginatedPosts.continueCursor,
-          });
-        }
-=======
-        }
-=======
       (entries) => {
         if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
           setIsLoadingMore(true);
@@ -67,16 +58,6 @@ export default function Feed() {
             numItems: 10,
             cursor: paginatedPosts.continueCursor,
           });
-        }
-=======
-        if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
-          setIsLoadingMore(true);
-          setPaginationOpts({
-            numItems: 10,
-            cursor: paginatedPosts.continueCursor,
-          });
-        }
-=======
         }
       },
       { threshold: 0.1 }
@@ -150,11 +131,7 @@ export default function Feed() {
                 placeholder="Search threads, listings, users..."
                 className="pl-10 rounded-xl border-slate-200 bg-white/80"
               />
-            ) : (
-            <div className="space-y-4">
-=======
-          ) : (
-            <div className="space-y-4">
+            </div>
           </motion.div>
 
           {searchQuery.trim().length > 0 && searchResults ? (
@@ -250,8 +227,6 @@ export default function Feed() {
                 <p className="text-center text-slate-600 py-8">No results found</p>
               )}
             </motion.div>
-          </div>
-=======
           ) : (
             <div className="space-y-4">
               {allPosts?.map((post, index) => (
@@ -287,7 +262,6 @@ export default function Feed() {
               </div>
             </div>
           )}
-=======
           </div>
 
           {/* Suggested Followers Sidebar */}
