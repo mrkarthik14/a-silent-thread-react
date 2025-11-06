@@ -31,7 +31,7 @@ export const create = mutation({
     image: v.optional(v.string()),
     images: v.optional(v.array(v.string())),
     videos: v.optional(v.array(v.string())),
-    imageLayout: v.optional(v.union(v.literal("slider"), v.literal("grid"))),
+    imageLayout: v.optional(v.union(v.literal("slider"), v.literal("grid"), v.literal("bounce"))),
     imageDimensions: v.optional(v.array(v.object({
       width: v.number(),
       height: v.number(),

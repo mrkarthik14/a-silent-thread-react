@@ -57,7 +57,7 @@ export function Sidebar() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [imageLayout, setImageLayout] = useState<"slider" | "grid" | null>(null);
+  const [imageLayout, setImageLayout] = useState<"slider" | "grid" | "bounce" | null>(null);
   const [cropperOpen, setCropperOpen] = useState(false);
   const [cropperImage, setCropperImage] = useState<string>("");
   const [cropperIndex, setCropperIndex] = useState<number>(-1);
@@ -171,7 +171,7 @@ export function Sidebar() {
         type: postType,
         images: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
         videos: uploadedVideoUrls.length > 0 ? uploadedVideoUrls : undefined,
-        imageLayout: imageLayout || undefined,
+        imageLayout: (imageLayout && ["slider", "grid", "bounce"].includes(imageLayout)) ? imageLayout : undefined,
         imageDimensions: imageDimensions.length > 0 ? imageDimensions : undefined,
         serviceDetails: postType === "service" ? {
           title: serviceTitle,
@@ -473,6 +473,16 @@ export function Sidebar() {
                           }`}
                         >
                           🎨 Pinterest Style
+                        </button>
+                        <button
+                          onClick={() => setImageLayout("bounce")}
+                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                            imageLayout === "bounce"
+                              ? "bg-slate-900 text-white shadow-md"
+                              : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                          }`}
+                        >
+                          ✨ Bounce Style
                         </button>
                       </div>
                     </div>
