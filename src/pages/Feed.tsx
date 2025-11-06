@@ -22,7 +22,7 @@ export default function Feed() {
   const [searchType, setSearchType] = useState<"all" | "users" | "posts" | "listings">("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [paginationOpts, setPaginationOpts] = useState<{ numItems: number; cursor: string | null } | null>(null);
+  const [paginationOpts, setPaginationOpts] = useState({ numItems: 10, cursor: null as string | null });
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -30,7 +30,7 @@ export default function Feed() {
   // Track presence
   usePresence();
   
-  const paginatedPosts = useQuery(api.posts.listPaginated, paginationOpts === null ? "skip" : { paginationOpts });
+  const paginatedPosts = useQuery(api.posts.listPaginated, { paginationOpts });
   const likePost = useMutation(api.posts.like);
   
   const searchResults = useQuery(api.search.globalSearch, {
@@ -39,11 +39,6 @@ export default function Feed() {
     minPrice: minPrice ? parseFloat(minPrice) : undefined,
     maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
   });
-
-  // Initialize pagination on mount
-  useEffect(() => {
-    setPaginationOpts({ numItems: 10, cursor: null });
-  }, []);
 
   // Update allPosts when paginatedPosts changes
   useEffect(() => {
@@ -55,6 +50,16 @@ export default function Feed() {
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
+        if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
+          setIsLoadingMore(true);
+          setPaginationOpts({
+            numItems: 10,
+            cursor: paginatedPosts.continueCursor,
+          });
+        }
+=======
+        }
+=======
       (entries) => {
         if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
           setIsLoadingMore(true);
@@ -62,7 +67,15 @@ export default function Feed() {
             numItems: 10,
             cursor: paginatedPosts.continueCursor,
           });
-          setIsLoadingMore(false);
+        }
+=======
+        if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
+          setIsLoadingMore(true);
+          setPaginationOpts({
+            numItems: 10,
+            cursor: paginatedPosts.continueCursor,
+          });
+        }
 =======
         }
       },
@@ -137,7 +150,11 @@ export default function Feed() {
                 placeholder="Search threads, listings, users..."
                 className="pl-10 rounded-xl border-slate-200 bg-white/80"
               />
-            </div>
+            ) : (
+            <div className="space-y-4">
+=======
+          ) : (
+            <div className="space-y-4">
           </motion.div>
 
           {searchQuery.trim().length > 0 && searchResults ? (
@@ -233,6 +250,8 @@ export default function Feed() {
                 <p className="text-center text-slate-600 py-8">No results found</p>
               )}
             </motion.div>
+          </div>
+=======
           ) : (
             <div className="space-y-4">
               {allPosts?.map((post, index) => (
