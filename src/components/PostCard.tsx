@@ -360,16 +360,23 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             
             {/* Display legacy single image */}
             {post.image && (
-              <img 
-                src={post.image} 
-                alt="Post" 
-                className="rounded-xl mb-3 w-full object-contain max-h-96 cursor-pointer"
-                onClick={() => {
-                  if (post.image) {
-                    setSelectedImageUrl(post.image);
-                  }
-                }}
-              />
+              <motion.div
+                layout
+                className="rounded-xl mb-3 overflow-hidden"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <img 
+                  src={post.image} 
+                  alt="Post" 
+                  className="rounded-xl w-full object-contain max-h-96 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => {
+                    if (post.image) {
+                      setSelectedImageUrl(post.image);
+                    }
+                  }}
+                />
+              </motion.div>
             )}
 
             {/* Display multiple images and videos in Pinterest style */}
