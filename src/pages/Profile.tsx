@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { Id, Doc } from "@/convex/_generated/dataModel";
+import { ScrollTriggeredCard } from "@/components/ScrollTriggeredCard";
 
 export default function Profile() {
   const { isLoading, isAuthenticated, user: currentUser } = useAuth();
