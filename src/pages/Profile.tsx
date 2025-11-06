@@ -41,6 +41,21 @@ export default function Profile() {
   const [followingList, setFollowingList] = useState<any[]>([]);
   const [followerPage, setFollowerPage] = useState(0);
   const [followingPage, setFollowingPage] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Track scroll position for parallax effect
+  useEffect(() => {
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement;
+      setScrollY(target.scrollTop);
+    };
+
+    const scrollContainer = document.querySelector(".flex-1.overflow-y-auto");
+    if (scrollContainer) {
+      scrollContainer.addEventListener("scroll", handleScroll);
+      return () => scrollContainer.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
 
   // Track presence
   usePresence();
@@ -244,11 +259,12 @@ export default function Profile() {
 
       <div className="flex-1 overflow-y-auto ml-0 md:ml-20">
         <div className="max-w-4xl mx-auto">
-          {/* Cover Image */}
+          {/* Cover Image with Parallax Effect */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="relative h-64 bg-gradient-to-br from-purple-300 to-blue-300 dark:from-purple-700 dark:to-blue-700 rounded-b-3xl overflow-hidden group cursor-pointer transition-colors duration-500"
+            style={{ y: scrollY * 0.5 }}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
           >
@@ -257,6 +273,7 @@ export default function Profile() {
                 src={coverImageUrl} 
                 alt="Cover" 
                 className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
+                style={{ y: scrollY * 0.3 }}
                 whileHover={{ scale: 1.05 }}
               />
             ) : (
@@ -422,11 +439,14 @@ export default function Profile() {
             </div>
           </motion.div>
 
-          {/* Posts and Services Grid */}
+          {/* Posts and Services Feed */}
           <div className="px-6 pb-6">
             <div className="relative">
-              {/* Combined grid of all posts and services */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max">
+              {/* Feed-like layout for posts */}
+              <motion.div 
+                className="max-w-2xl mx-auto space-y-6"
+                style={{ y: scrollY * 0.1 }}
+              >
                 {profileData?.posts && profileData.posts.length > 0 ? (
                   profileData.posts.map((post, idx) => (
                 <motion.div
@@ -458,11 +478,11 @@ export default function Profile() {
                     </motion.div>
                   ))
                 ) : (
-                  <div className="col-span-full text-center py-12 text-slate-600 dark:text-slate-300">
+                  <div className="text-center py-12 text-slate-600 dark:text-slate-300">
                     No posts yet
                   </div>
                 )}
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
