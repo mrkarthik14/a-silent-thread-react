@@ -85,6 +85,34 @@ export const list = query({
   },
 });
 
+export const listPaginated = query({
+  args: {
+    paginationOpts: v.object({
+      numItems: v.number(),
+      cursor: v.union(v.string(), v.null()),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const result = await ctx.db
+      .query("posts")
+      .order("desc")
+      .paginate(args.paginationOpts);
+
+    const postsWithUsers = await Promise.all(
+      result.page.map(async (post) => {
+        const user = await ctx.db.get(post.userId);
+        return { ...post, user };
+      })
+    );
+
+    return {
+      page: postsWithUsers,
+      isDone: result.isDone,
+      continueCursor: result.continueCursor,
+    };
+  },
+});
+
 export const getById = query({
   args: { id: v.id("posts") },
   handler: async (ctx, args) => {

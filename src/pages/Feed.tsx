@@ -13,7 +13,7 @@ import { useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export default function Feed() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -22,11 +22,15 @@ export default function Feed() {
   const [searchType, setSearchType] = useState<"all" | "users" | "posts" | "listings">("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [paginationOpts, setPaginationOpts] = useState<{ numItems: number; cursor: string | null } | null>(null);
+  const [allPosts, setAllPosts] = useState<any[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observerTarget = useRef<HTMLDivElement>(null);
   
   // Track presence
   usePresence();
   
-  const posts = useQuery(api.posts.list, {});
+  const paginatedPosts = useQuery(api.posts.listPaginated, paginationOpts === null ? "skip" : { paginationOpts });
   const likePost = useMutation(api.posts.like);
   
   const searchResults = useQuery(api.search.globalSearch, {
@@ -35,6 +39,46 @@ export default function Feed() {
     minPrice: minPrice ? parseFloat(minPrice) : undefined,
     maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
   });
+
+  // Initialize pagination on mount
+  useEffect(() => {
+    setPaginationOpts({ numItems: 10, cursor: null });
+  }, []);
+
+  // Update allPosts when paginatedPosts changes
+  useEffect(() => {
+    if (paginatedPosts?.page) {
+      setAllPosts((prev) => [...prev, ...paginatedPosts.page]);
+    }
+  }, [paginatedPosts?.page]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && paginatedPosts?.continueCursor && !isLoadingMore && !searchQuery.trim()) {
+          setIsLoadingMore(true);
+          setPaginationOpts({
+            numItems: 10,
+            cursor: paginatedPosts.continueCursor,
+          });
+          setIsLoadingMore(false);
+=======
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [paginatedPosts?.continueCursor, isLoadingMore, searchQuery]);
 
   if (isLoading) {
     return (
@@ -191,7 +235,7 @@ export default function Feed() {
             </motion.div>
           ) : (
             <div className="space-y-4">
-              {posts?.map((post, index) => (
+              {allPosts?.map((post, index) => (
                 <div key={post._id} className="relative">
                   {index > 0 && (
                     <div className="absolute -top-2 left-8 w-0.5 h-4">
@@ -205,8 +249,26 @@ export default function Feed() {
                   />
                 </div>
               ))}
+              
+              {/* Infinite scroll trigger */}
+              <div ref={observerTarget} className="py-8 flex justify-center">
+                {paginatedPosts?.isDone === false && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 text-slate-600"
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
+                    <span className="text-sm">Loading more posts...</span>
+                  </motion.div>
+                )}
+                {paginatedPosts?.isDone && allPosts.length > 0 && (
+                  <p className="text-sm text-slate-500">No more posts</p>
+                )}
+              </div>
             </div>
           )}
+=======
           </div>
 
           {/* Suggested Followers Sidebar */}
