@@ -43,7 +43,11 @@ export default function Feed() {
   // Update allPosts when paginatedPosts changes
   useEffect(() => {
     if (paginatedPosts?.page) {
-      setAllPosts((prev) => [...prev, ...paginatedPosts.page]);
+      setAllPosts((prev) => {
+        const existingIds = new Set(prev.map((p) => p._id));
+        const newPosts = paginatedPosts.page.filter((p) => !existingIds.has(p._id));
+        return [...prev, ...newPosts];
+      });
       setIsLoadingMore(false);
     }
   }, [paginatedPosts?.page]);
