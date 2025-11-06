@@ -21,6 +21,7 @@ import { BookingDialog } from "@/components/BookingDialog";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ImageSlider } from "@/components/ImageSlider";
 import { ShareDialog } from "@/components/ShareDialog";
+import BounceCards from "@/components/BounceCards";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -373,7 +374,20 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <>
                 {post.imageLayout === "slider" ? (
                   <ImageSlider images={imageUrls} onImageClick={setSelectedImageUrl} />
+                ) : imageUrls.length > 2 || videoUrls.length > 2 ? (
+                  // Use BounceCards for 3+ images/videos
+                  <BounceCards
+                    images={[...imageUrls, ...videoUrls]}
+                    containerWidth={500}
+                    containerHeight={300}
+                    animationDelay={0.3}
+                    animationStagger={0.08}
+                    easeType="elastic.out(1, 0.5)"
+                    enableHover={true}
+                    className="mb-3"
+                  />
                 ) : (
+                  // Use grid for 1-2 images/videos
                   <div className="grid grid-cols-2 gap-1 mb-3">
                     {/* Combine images and videos */}
                     {[
