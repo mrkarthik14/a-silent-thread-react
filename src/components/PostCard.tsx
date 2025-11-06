@@ -360,7 +360,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <img 
                 src={post.image} 
                 alt="Post" 
-                className="rounded-xl mb-3 w-full object-cover max-h-64 cursor-pointer"
+                className="rounded-xl mb-3 w-full object-contain max-h-96 cursor-pointer"
                 onClick={() => {
                   if (post.image) {
                     setSelectedImageUrl(post.image);
