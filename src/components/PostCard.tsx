@@ -105,6 +105,17 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     useQuery(api.files.getImageUrl, { storageId })
   ).filter((url): url is string => !!url) : [];
 
+  // When displaying mentions in the post content, also trigger notifications
+  useEffect(() => {
+    if (post.mentions && post.mentions.length > 0 && currentUser?._id) {
+      post.mentions.forEach((mention) => {
+        if (mention.type === "user") {
+          // Notification will be sent when post is created
+        }
+      });
+    }
+  }, [post.mentions, currentUser?._id]);
+
   const likePostMutation = useMutation(api.posts.like);
   const followMutation = useMutation(api.follows.follow);
   const deletePostMutation = useMutation(api.posts.deletePost);

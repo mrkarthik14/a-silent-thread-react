@@ -336,3 +336,22 @@ export const notifyShare = mutation({
     });
   },
 });
+
+export const notifyMention = mutation({
+  args: { postId: v.id("posts"), mentionedUserId: v.id("users"), mentionerId: v.id("users") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) return;
+
+    const mentioner = await ctx.db.get(args.mentionerId);
+    if (!mentioner) return;
+
+    await ctx.db.insert("notifications", {
+      userId: args.mentionedUserId,
+      type: "mention",
+      content: `${mentioner.name || "Someone"} mentioned you in a post`,
+      read: false,
+      relatedId: args.postId.toString(),
+    });
+  },
+});
