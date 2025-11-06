@@ -23,7 +23,8 @@ export const create = mutation({
       .query("bookings")
       .withIndex("by_renter", (q) => q.eq("renterId", user._id))
       .filter((q) => q.eq(q.field("serviceId"), args.serviceId))
-      .unique();
+      .filter((q) => q.neq(q.field("status"), "cancelled"))
+      .first();
 
     if (existingBooking) {
       throw new Error("You have already booked this service");
