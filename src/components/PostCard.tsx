@@ -225,6 +225,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.3, type: "spring", stiffness: 100, damping: 15 }}
     >
       <Card className={`${color} border-none shadow-sm hover:shadow-md transition-shadow p-4 rounded-2xl cursor-pointer`}>
