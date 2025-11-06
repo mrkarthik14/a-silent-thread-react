@@ -381,14 +381,22 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                       <img 
                         src={imageUrls[0]} 
                         alt="Post image" 
-                        className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-xl"
+                        className="w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-xl"
+                        style={{
+                          maxHeight: post.imageDimensions?.[0] 
+                            ? `${Math.min(post.imageDimensions[0].height, 500)}px`
+                            : "max-h-96"
+                        }}
                         onClick={() => setSelectedImageUrl(imageUrls[0])}
                       />
                     ) : (
                       <video 
                         src={videoUrls[0]} 
                         controls
-                        className="w-full h-48 object-cover rounded-xl"
+                        className="w-full object-contain rounded-xl"
+                        style={{
+                          maxHeight: "500px"
+                        }}
                       />
                     )}
                   </div>

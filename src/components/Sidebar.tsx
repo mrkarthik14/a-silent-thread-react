@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { MentionAutocomplete } from "@/components/MentionAutocomplete";
+import { ImageCropper } from "@/components/ImageCropper";
 
 // ============================================================================
 // STATE AND CONFIGURATION
@@ -57,6 +58,10 @@ export function Sidebar() {
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [imageLayout, setImageLayout] = useState<"slider" | "grid" | null>(null);
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperImage, setCropperImage] = useState<string>("");
+  const [cropperIndex, setCropperIndex] = useState<number>(-1);
+  const [imageDimensions, setImageDimensions] = useState<Array<{ width: number; height: number }>>([]);
 
   // ========================================================================
   // MUTATIONS
@@ -73,7 +78,37 @@ export function Sidebar() {
       toast.error("Maximum 20 images allowed");
       return;
     }
-    setSelectedImages([...selectedImages, ...files]);
+    
+    files.forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          setCropperImage(event.target?.result as string);
+          setCropperIndex(selectedImages.length + idx);
+          setCropperOpen(true);
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleCropComplete = (croppedImage: string) => {
+    const img = new Image();
+    img.onload = () => {
+      const newDimensions = [...imageDimensions];
+      newDimensions[cropperIndex] = { width: img.width, height: img.height };
+      setImageDimensions(newDimensions);
+
+      fetch(croppedImage)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], `cropped-${Date.now()}.jpg`, { type: "image/jpeg" });
+          setSelectedImages([...selectedImages, file]);
+        });
+    };
+    img.src = croppedImage;
   };
 
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,6 +172,7 @@ export function Sidebar() {
         images: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
         videos: uploadedVideoUrls.length > 0 ? uploadedVideoUrls : undefined,
         imageLayout: imageLayout || undefined,
+        imageDimensions: imageDimensions.length > 0 ? imageDimensions : undefined,
         serviceDetails: postType === "service" ? {
           title: serviceTitle,
           price: parseFloat(servicePrice),
@@ -163,6 +199,7 @@ export function Sidebar() {
     setSelectedVideos([]);
     setPostType("post");
     setImageLayout(null);
+    setImageDimensions([]);
   };
 
   // ========================================================================
@@ -476,6 +513,14 @@ export function Sidebar() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Image Cropper Dialog */}
+      <ImageCropper
+        open={cropperOpen}
+        onOpenChange={setCropperOpen}
+        imageSrc={cropperImage}
+        onCropComplete={handleCropComplete}
+      />
     </>
   );
 }
