@@ -503,7 +503,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </Button>
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (
-                userBooking ? (
+                userBooking && userBooking.status !== "cancelled" ? (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -524,7 +524,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                       {userBooking.status === "accepted" && "✓ Accepted"}
                       {userBooking.status === "rejected" && "✕ Rejected"}
                       {userBooking.status === "completed" && "✓ Completed"}
-                      {userBooking.status === "cancelled" && "✕ Cancelled"}
                     </span>
                   </motion.div>
                 ) : (
