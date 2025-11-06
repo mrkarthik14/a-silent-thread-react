@@ -459,7 +459,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
                 onClick={handleLike}
               >
-                <motion.div layout animate={isLiked ? { scale: [1, 1.2, 1] } : {}} transition={{ type: "spring", stiffness: 200 }}>
+                <motion.div 
+                  layout 
+                  animate={isLiked ? { scale: 1.2 } : { scale: 1 }} 
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                >
                   <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
                 </motion.div>
                 <span className="text-xs text-slate-900">{post.likes}</span>
