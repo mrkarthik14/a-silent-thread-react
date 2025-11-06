@@ -231,7 +231,7 @@ export const deletePost = mutation({
 
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
-    if (post.userId.toString() !== user._id.toString()) throw new Error("Unauthorized");
+    if (post.userId !== user._id) throw new Error("Unauthorized");
 
     // Delete associated likes
     const likes = await ctx.db
