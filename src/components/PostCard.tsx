@@ -372,45 +372,25 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {/* Display multiple images and videos in Pinterest style */}
             {(imageUrls.length > 0 || videoUrls.length > 0) && (
               <>
-                {post.imageLayout === "slider" ? (
-                  <ImageSlider images={imageUrls} onImageClick={setSelectedImageUrl} />
-                ) : imageUrls.length > 2 || videoUrls.length > 2 ? (
-                  // Use BounceCards for 3+ images/videos
-                  <BounceCards
-                    images={[...imageUrls, ...videoUrls]}
-                    containerWidth={500}
-                    containerHeight={300}
-                    animationDelay={0.3}
-                    animationStagger={0.08}
-                    easeType="elastic.out(1, 0.5)"
-                    enableHover={true}
-                    className="mb-3"
-                  />
+                {imageUrls.length > 1 || videoUrls.length > 1 ? (
+                  <ImageSlider images={[...imageUrls, ...videoUrls]} onImageClick={setSelectedImageUrl} />
                 ) : (
-                  // Use grid for 1-2 images/videos
-                  <div className="grid grid-cols-2 gap-1 mb-3">
-                    {/* Combine images and videos */}
-                    {[
-                      ...imageUrls.map((url, idx) => ({ type: 'image', url, idx })),
-                      ...videoUrls.map((url, idx) => ({ type: 'video', url, idx }))
-                    ].map((media, idx) => (
-                      <div key={`${media.type}-${media.idx}`} className="overflow-hidden rounded-lg">
-                        {media.type === 'image' ? (
-                          <img 
-                            src={media.url} 
-                            alt={`Post image ${media.idx + 1}`} 
-                            className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={() => setSelectedImageUrl(media.url)}
-                          />
-                        ) : (
-                          <video 
-                            src={media.url} 
-                            controls
-                            className="w-full h-48 object-cover"
-                          />
-                        )}
-                      </div>
-                    ))}
+                  // Single image/video
+                  <div className="overflow-hidden rounded-lg mb-3">
+                    {imageUrls.length > 0 ? (
+                      <img 
+                        src={imageUrls[0]} 
+                        alt="Post image" 
+                        className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-xl"
+                        onClick={() => setSelectedImageUrl(imageUrls[0])}
+                      />
+                    ) : (
+                      <video 
+                        src={videoUrls[0]} 
+                        controls
+                        className="w-full h-48 object-cover rounded-xl"
+                      />
+                    )}
                   </div>
                 )}
               </>
