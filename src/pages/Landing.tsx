@@ -182,9 +182,10 @@ export default function Landing() {
               onClick={handleDarkModeToggle}
               className={`rounded-full p-2.5 font-semibold transition-all duration-500 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
                 darkMode
-                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 border border-indigo-500"
-                  : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border border-yellow-400"
+                  ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 hover:from-yellow-500 hover:to-yellow-600 border-2 border-yellow-300"
+                  : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border-2 border-yellow-400"
               }`}
+              title={darkMode ? "Light mode" : "Dark mode"}
             >
               {darkMode ? (
                 <Moon className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
