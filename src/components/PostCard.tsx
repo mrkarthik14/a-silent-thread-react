@@ -399,7 +399,25 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {/* Display multiple images and videos */}
             {(imageUrls.length > 0 || videoUrls.length > 0) && (
               <>
-                {imageUrls.length > 1 || videoUrls.length > 1 ? (
+                {imageUrls.length > 6 || videoUrls.length > 6 ? (
+                  // Grid layout for many images
+                  <div className="mb-3 grid grid-cols-3 gap-2 rounded-xl overflow-hidden">
+                    {[...imageUrls, ...videoUrls].slice(0, 9).map((url, idx) => (
+                      <div key={idx} className="aspect-square overflow-hidden rounded-lg cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setSelectedImageUrl(url)}>
+                        {url.includes('video') || url.endsWith('.mp4') || url.endsWith('.webm') ? (
+                          <video src={url} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={url} alt={`Post image ${idx + 1}`} className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                    ))}
+                    {[...imageUrls, ...videoUrls].length > 9 && (
+                      <div className="aspect-square bg-black/50 rounded-lg flex items-center justify-center text-white font-semibold cursor-pointer hover:bg-black/70 transition-colors" onClick={() => setSelectedImageUrl(imageUrls[0])}>
+                        +{[...imageUrls, ...videoUrls].length - 9}
+                      </div>
+                    )}
+                  </div>
+                ) : imageUrls.length > 1 || videoUrls.length > 1 ? (
                   post.imageLayout === "bounce" ? (
                     <div className="mb-3 flex justify-center">
                       <BounceCards
