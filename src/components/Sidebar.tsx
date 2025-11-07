@@ -62,6 +62,7 @@ export function Sidebar() {
   const [cropperImage, setCropperImage] = useState<string>("");
   const [cropperIndex, setCropperIndex] = useState<number>(-1);
   const [imageDimensions, setImageDimensions] = useState<Array<{ width: number; height: number }>>([]);
+  const [imageCaptions, setImageCaptions] = useState<string[]>([]);
 
   // ========================================================================
   // MUTATIONS
@@ -170,6 +171,7 @@ export function Sidebar() {
         content: postContent,
         type: postType,
         images: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
+        imageCaptions: imageCaptions.length > 0 ? imageCaptions : undefined,
         videos: uploadedVideoUrls.length > 0 ? uploadedVideoUrls : undefined,
         imageLayout: (imageLayout && ["slider", "grid", "bounce"].includes(imageLayout)) ? imageLayout : undefined,
         imageDimensions: imageDimensions.length > 0 ? imageDimensions : undefined,
@@ -200,6 +202,7 @@ export function Sidebar() {
     setPostType("post");
     setImageLayout(null);
     setImageDimensions([]);
+    setImageCaptions([]);
   };
 
   // ========================================================================
@@ -450,6 +453,24 @@ export function Sidebar() {
                   <p className="text-sm text-muted-foreground mt-1">
                     {selectedImages.length} image(s) selected
                   </p>
+                  {/* Image Captions */}
+                  <div className="mt-3 space-y-2">
+                    <Label className="text-xs font-semibold">Image Captions (Optional)</Label>
+                    {selectedImages.map((_, idx) => (
+                      <Input
+                        key={idx}
+                        type="text"
+                        placeholder={`Caption for image ${idx + 1}`}
+                        value={imageCaptions[idx] || ""}
+                        onChange={(e) => {
+                          const newCaptions = [...imageCaptions];
+                          newCaptions[idx] = e.target.value;
+                          setImageCaptions(newCaptions);
+                        }}
+                        className="rounded-lg text-sm"
+                      />
+                    ))}
+                  </div>
                   {selectedImages.length > 1 && (
                     <div className="mt-4 space-y-3">
                       <Label className="text-xs font-semibold">Layout Style Preview</Label>

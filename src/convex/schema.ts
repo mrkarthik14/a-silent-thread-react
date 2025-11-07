@@ -38,6 +38,7 @@ const schema = defineSchema(
       content: v.string(),
       image: v.optional(v.string()),
       images: v.optional(v.array(v.string())),
+      imageCaptions: v.optional(v.array(v.string())),
       videos: v.optional(v.array(v.string())),
       imageLayout: v.optional(v.union(v.literal("slider"), v.literal("grid"), v.literal("bounce"))),
       imageDimensions: v.optional(v.array(v.object({
