@@ -125,15 +125,19 @@ export function Sidebar() {
   // HANDLERS: Post Creation
   // ========================================================================
   const handleCreatePost = async () => {
-    // Validate content
     if (!postContent.trim()) {
       toast.error("Please add content");
       return;
     }
 
-    // Validate service details if applicable
     if (postType === "service" && (!serviceTitle || !servicePrice || !serviceCategory)) {
       toast.error("Please fill all service details");
+      return;
+    }
+
+    // Validate image layout selection if multiple images
+    if (selectedImages.length > 1 && !imageLayout) {
+      toast.error("Please select a layout style for multiple images");
       return;
     }
 
@@ -171,9 +175,9 @@ export function Sidebar() {
         content: postContent,
         type: postType,
         images: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
-        imageCaptions: imageCaptions.length > 0 ? imageCaptions : undefined,
+        imageCaptions: imageCaptions.filter(c => c.trim()).length > 0 ? imageCaptions : undefined,
         videos: uploadedVideoUrls.length > 0 ? uploadedVideoUrls : undefined,
-        imageLayout: (imageLayout && ["slider", "grid", "bounce"].includes(imageLayout)) ? imageLayout : undefined,
+        imageLayout: imageLayout && ["slider", "grid", "bounce"].includes(imageLayout) ? imageLayout : undefined,
         imageDimensions: imageDimensions.length > 0 ? imageDimensions : undefined,
         serviceDetails: postType === "service" ? {
           title: serviceTitle,
@@ -186,6 +190,7 @@ export function Sidebar() {
       resetPostForm();
       setCreateDialogOpen(false);
     } catch (error) {
+      console.error("Post creation error:", error);
       toast.error("Failed to create post");
     } finally {
       setIsUploading(false);
