@@ -165,7 +165,7 @@ export default function Landing() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-yellow-100 dark:via-yellow-100 dark:to-yellow-100 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-700 dark:via-slate-700 dark:to-slate-700 transition-colors duration-300">
 
       {/* Header */}
       <nav className="px-6 py-6 relative z-50">
