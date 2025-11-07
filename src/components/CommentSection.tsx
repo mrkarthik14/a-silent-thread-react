@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, Send, Trash2 } from "lucide-react";
+import { MessageCircle, Send, Trash2, Edit2, Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
@@ -20,8 +20,12 @@ export function CommentSection({ postId }: CommentSectionProps) {
   const { user } = useAuth();
 
   const comments = useQuery(api.comments.list, { postId });
+  const commentCount = useQuery(api.comments.getCommentCount, { postId });
   const createComment = useMutation(api.comments.create);
   const deleteComment = useMutation(api.comments.deleteComment);
+  const updateComment = useMutation(api.comments.updateComment);
+  const [editingId, setEditingId] = useState<Id<"comments"> | null>(null);
+  const [editContent, setEditContent] = useState("");
 
   const handleSubmit = async () => {
     if (!commentContent.trim()) return;
@@ -50,8 +54,38 @@ export function CommentSection({ postId }: CommentSectionProps) {
     }
   };
 
+  const handleEditStart = (comment: any) => {
+    setEditingId(comment._id);
+    setEditContent(comment.content);
+  };
+
+  const handleEditSave = async (commentId: Id<"comments">) => {
+    if (!editContent.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    try {
+      await updateComment({ commentId, content: editContent });
+      setEditingId(null);
+      setEditContent("");
+      toast.success("Comment updated");
+    } catch (error) {
+      toast.error("Failed to update comment");
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null);
+    setEditContent("");
+  };
+
   return (
     <div className="space-y-4 mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs font-semibold text-slate-600">
+          {commentCount} {commentCount === 1 ? "comment" : "comments"}
+        </p>
+      </div>
       <div className="flex gap-2">
         <Textarea
           value={commentContent}
@@ -92,8 +126,8 @@ export function CommentSection({ postId }: CommentSectionProps) {
             className="bg-white/50 rounded-xl p-3"
           >
             <div className="flex items-start gap-3">
-              <Avatar className="h-8 w-8 border-2 border-white">
-                <AvatarImage src={comment.user?.image} />
+              <Avatar className="h-8 w-8 border-2 border-white flex-shrink-0">
+                <AvatarImage src={comment.user?.image} alt={comment.user?.name} />
                 <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
                   {comment.user?.name?.[0] || "U"}
                 </AvatarFallback>
@@ -114,25 +148,63 @@ export function CommentSection({ postId }: CommentSectionProps) {
                       <MessageCircle className="h-3 w-3" strokeWidth={1.5} />
                     </Button>
                     {comment.userId === user?._id && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDelete(comment._id)}
-                        className="h-6 px-2 text-red-500"
-                      >
-                        <Trash2 className="h-3 w-3" strokeWidth={1.5} />
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEditStart(comment)}
+                          className="h-6 px-2 text-blue-500"
+                        >
+                          <Edit2 className="h-3 w-3" strokeWidth={1.5} />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(comment._id)}
+                          className="h-6 px-2 text-red-500"
+                        >
+                          <Trash2 className="h-3 w-3" strokeWidth={1.5} />
+                        </Button>
+                      </>
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-slate-800 mt-1">{comment.content}</p>
+                {editingId === comment._id ? (
+                  <div className="mt-2 space-y-2">
+                    <Textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      className="rounded-lg resize-none text-sm"
+                      rows={2}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleEditSave(comment._id)}
+                        className="h-6 px-2 bg-blue-500 hover:bg-blue-600"
+                      >
+                        <Check className="h-3 w-3" strokeWidth={1.5} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleEditCancel}
+                        className="h-6 px-2"
+                      >
+                        <X className="h-3 w-3" strokeWidth={1.5} />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-800 mt-1">{comment.content}</p>
+                )}
 
                 {comment.replies && comment.replies.length > 0 && (
                   <div className="mt-2 ml-4 space-y-2 border-l-2 border-purple-200 pl-3">
                     {comment.replies.map((reply) => (
                       <div key={reply._id} className="flex items-start gap-2">
-                        <Avatar className="h-6 w-6 border border-white">
-                          <AvatarImage src={reply.user?.image} />
+                        <Avatar className="h-6 w-6 border border-white flex-shrink-0">
+                          <AvatarImage src={reply.user?.image} alt={reply.user?.name} />
                           <AvatarFallback className="bg-gradient-to-br from-blue-300 to-purple-300 text-xs">
                             {reply.user?.name?.[0] || "U"}
                           </AvatarFallback>

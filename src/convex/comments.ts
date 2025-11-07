@@ -67,6 +67,35 @@ export const deleteComment = mutation({
   },
 });
 
+export const updateComment = mutation({
+  args: {
+    commentId: v.id("comments"),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const comment = await ctx.db.get(args.commentId);
+    if (!comment) throw new Error("Comment not found");
+    if (comment.userId !== user._id) throw new Error("Not authorized");
+
+    await ctx.db.patch(args.commentId, { content: args.content });
+  },
+});
+
+export const getCommentCount = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const comments = await ctx.db
+      .query("comments")
+      .withIndex("by_post", (q) => q.eq("postId", args.postId))
+      .collect();
+
+    return comments.length;
+  },
+});
+
 export const getNotifications = query({
   args: {},
   handler: async (ctx) => {
