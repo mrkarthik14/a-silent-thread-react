@@ -395,39 +395,22 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {(imageUrls.length > 0 || videoUrls.length > 0) && (
               <>
                 {imageUrls.length > 1 || videoUrls.length > 1 ? (
-                  (() => {
-                    // Separate portrait and landscape images
-                    const portraitImages = imageUrls.filter((_, idx) => {
-                      const dims = post.imageDimensions?.[idx];
-                      return dims && dims.height > dims.width;
-                    });
-                    const landscapeImages = imageUrls.filter((_, idx) => {
-                      const dims = post.imageDimensions?.[idx];
-                      return !dims || dims.height <= dims.width;
-                    });
-                    const hasPortrait = portraitImages.length > 0;
-                    const hasLandscape = landscapeImages.length > 0;
-
-                    // If only portrait images, use bounce cards
-                    if (hasPortrait && !hasLandscape) {
-                      return (
-                        <div className="mb-3 flex justify-center">
-                          <BounceCards
-                            images={portraitImages}
-                            containerWidth={400}
-                            containerHeight={300}
-                            animationDelay={0.3}
-                            animationStagger={0.06}
-                            easeType="elastic.out(1, 0.8)"
-                            enableHover={true}
-                            onImageClick={setSelectedImageUrl}
-                          />
-                        </div>
-                      );
-                    }
-                    // Otherwise use slider for all images
-                    return <ImageSlider images={[...imageUrls, ...videoUrls]} onImageClick={setSelectedImageUrl} />;
-                  })()
+                  post.imageLayout === "bounce" ? (
+                    <div className="mb-3 flex justify-center">
+                      <BounceCards
+                        images={imageUrls}
+                        containerWidth={400}
+                        containerHeight={300}
+                        animationDelay={0.3}
+                        animationStagger={0.06}
+                        easeType="elastic.out(1, 0.8)"
+                        enableHover={true}
+                        onImageClick={setSelectedImageUrl}
+                      />
+                    </div>
+                  ) : (
+                    <ImageSlider images={[...imageUrls, ...videoUrls]} onImageClick={setSelectedImageUrl} />
+                  )
                 ) : (
                   // Single image/video
                   <div className="overflow-hidden rounded-lg mb-3">
