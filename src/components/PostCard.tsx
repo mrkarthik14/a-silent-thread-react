@@ -49,40 +49,28 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
-  // Check if current user has liked this post
   const userHasLiked = useQuery(api.posts.hasUserLiked, { postId: post._id });
-
-  // Get presence status for post author
   const userPresence = useQuery(
     api.presence.getUserPresence,
     post.user?._id ? { userId: post.user._id } : "skip"
   );
-
-  // Get user profile image URL
   const userImageUrl = useQuery(
     api.files.getImageUrl,
     post.user?.image ? { storageId: post.user.image } : "skip"
   );
-
-  // Check if current user is following the post author
   const checkIsFollowing = useQuery(
     api.follows.isFollowing,
     post.user?._id && currentUser?._id !== post.user._id ? { userId: post.user._id } : "skip"
   );
-
-  // Get booking count for service listings
   const bookingCount = useQuery(
     api.bookings.getBookingCountByService,
     post.type === "service" ? { serviceId: post._id } : "skip"
   );
-
-  // Check if current user has already booked this service
   const userBooking = useQuery(
     api.bookings.getUserBookingForService,
     post.type === "service" && currentUser?._id !== post.user?._id ? { serviceId: post._id } : "skip"
   );
 
-  // Update local state when query result changes
   useEffect(() => {
     if (userHasLiked !== undefined) {
       setIsLiked(userHasLiked);
@@ -95,17 +83,14 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     }
   }, [checkIsFollowing]);
 
-  // Get URLs for images
   const imageUrls = post.images?.length ? post.images.map(storageId => 
     useQuery(api.files.getImageUrl, { storageId })
   ).filter((url): url is string => !!url) : [];
 
-  // Get URLs for videos
   const videoUrls = post.videos?.length ? post.videos.map(storageId => 
     useQuery(api.files.getImageUrl, { storageId })
   ).filter((url): url is string => !!url) : [];
 
-  // When displaying mentions in the post content, also trigger notifications
   useEffect(() => {
     if (post.mentions && post.mentions.length > 0 && currentUser?._id) {
       post.mentions.forEach((mention) => {
@@ -195,7 +180,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     try {
       await deletePostMutation({ postId: post._id });
       toast.success("Post deleted successfully");
-      // Reload page to refresh posts list
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -230,18 +214,18 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     >
       <Card className={`${color} border-none shadow-sm hover:shadow-md transition-shadow p-4 rounded-2xl cursor-pointer`}>
         <div className="flex gap-3">
-            <motion.div 
-              className="relative cursor-pointer" 
-              onClick={handleProfileClick}
+          <motion.div 
+            className="relative cursor-pointer" 
+            onClick={handleProfileClick}
+            layout
+          >
+            <motion.div
               layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 120, damping: 12 }}
+              className="hover:scale-110 active:scale-95 transition-transform"
             >
-              <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, type: "spring", stiffness: 120, damping: 12 }}
-                className="hover:scale-110 active:scale-95 transition-transform"
-              >
               <Avatar className="h-10 w-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow rounded-full">
                 <AvatarImage src={userImageUrl || undefined} className="rounded-full" />
                 <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 rounded-full">
@@ -292,7 +276,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 </span>
               </div>
               
-              {/* Follow/Message Buttons - Right of Username */}
               {currentUser?._id !== post.user?._id && (
                 <div className="flex items-center gap-1.5">
                   <Button
@@ -328,7 +311,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 </div>
               )}
               
-              {/* Post Actions Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -370,7 +352,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               })}
             </p>
             
-            {/* Display legacy single image */}
             {post.image && (
               <motion.div
                 layout
@@ -396,7 +377,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </motion.div>
             )}
 
-            {/* Display multiple images and videos */}
             {(imageUrls.length > 0 || videoUrls.length > 0) && (
               <>
                 {imageUrls.length > 1 || videoUrls.length > 1 ? (
@@ -417,7 +397,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                     <ImageSlider images={[...imageUrls, ...videoUrls]} onImageClick={setSelectedImageUrl} />
                   )
                 ) : (
-                  // Single image/video
                   <div className="overflow-hidden rounded-lg mb-3 flex justify-center">
                     {imageUrls.length > 0 ? (
                       <img 
@@ -544,7 +523,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               )}
             </div>
 
-            {/* Comment Section */}
             {showComments && (
               <motion.div
                 layout
@@ -562,7 +540,6 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
         </div>
       </Card>
 
-      {/* Edit Post Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="rounded-2xl max-w-2xl">
           <DialogHeader>
@@ -645,14 +622,12 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
         </DialogContent>
       </Dialog>
 
-      {/* Booking Dialog */}
       <BookingDialog
         open={bookingDialogOpen}
         onOpenChange={setBookingDialogOpen}
         serviceId={post._id}
       />
 
-      {/* Delete Confirmation Dialog */}
       {deleteConfirmOpen && (
         <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
           <AlertDialogContent className="rounded-2xl">
@@ -676,15 +651,13 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
         </AlertDialog>
       )}
 
-      {/* Share Dialog */}
       <ShareDialog
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
         postId={post._id}
       />
 
-      {/* Image Modal */}
-  <Dialog open={selectedImageUrl !== undefined && selectedImageUrl !== null} onOpenChange={(open) => !open && setSelectedImageUrl(undefined)}>
+      <Dialog open={selectedImageUrl !== undefined && selectedImageUrl !== null} onOpenChange={(open) => !open && setSelectedImageUrl(undefined)}>
         <DialogContent className="rounded-2xl max-w-3xl p-0 border-0 bg-black/90">
           <div className="relative w-full h-full flex items-center justify-center">
             <Button
@@ -714,7 +687,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    toast.success("Image downloaded");
+                    toast.success("Image downloaded to your device");
                   }
                 }}
                 className="rounded-xl bg-white hover:bg-white/90 text-black font-semibold gap-2"
@@ -723,28 +696,92 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 Save
               </Button>
 
-              <Button
-                onClick={() => {
-                  if (selectedImageUrl) {
-                    if (navigator.share) {
-                      navigator.share({
-                        title: "Check out this image",
-                        text: "I found this interesting image on A Silent Thread",
-                        url: selectedImageUrl,
-                      }).catch(() => {
-                        toast.error("Share failed");
-                      });
-                    } else {
-                      navigator.clipboard.writeText(selectedImageUrl);
-                      toast.success("Image URL copied to clipboard");
-                    }
-                  }
-                }}
-                className="rounded-xl bg-white hover:bg-white/90 text-black font-semibold gap-2"
-              >
-                <Share2 className="h-4 w-4" strokeWidth={1.5} />
-                Share
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="rounded-xl bg-white hover:bg-white/90 text-black font-semibold gap-2">
+                    <Share2 className="h-4 w-4" strokeWidth={1.5} />
+                    Share
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="rounded-xl w-48">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (selectedImageUrl) {
+                        const text = `Check out this image on A Silent Thread: ${selectedImageUrl}`;
+                        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                        window.open(whatsappUrl, "_blank");
+                        toast.success("Opening WhatsApp");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <span className="text-green-600 font-semibold">WhatsApp</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (selectedImageUrl) {
+                        const text = `Check out this image on A Silent Thread`;
+                        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selectedImageUrl)}`;
+                        window.open(facebookUrl, "_blank");
+                        toast.success("Opening Facebook");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <span className="text-blue-600 font-semibold">Facebook</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (selectedImageUrl) {
+                        const text = `Check out this image on A Silent Thread: ${selectedImageUrl}`;
+                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+                        window.open(twitterUrl, "_blank");
+                        toast.success("Opening X (Twitter)");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <span className="text-black font-semibold">X (Twitter)</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (selectedImageUrl) {
+                        const text = `Check out this image on A Silent Thread: ${selectedImageUrl}`;
+                        const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(selectedImageUrl)}`;
+                        window.open(linkedinUrl, "_blank");
+                        toast.success("Opening LinkedIn");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <span className="text-blue-700 font-semibold">LinkedIn</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (selectedImageUrl) {
+                        const text = `Check out this image on A Silent Thread: ${selectedImageUrl}`;
+                        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(selectedImageUrl)}&text=${encodeURIComponent(text)}`;
+                        window.open(telegramUrl, "_blank");
+                        toast.success("Opening Telegram");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <span className="text-blue-500 font-semibold">Telegram</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (selectedImageUrl) {
+                        navigator.clipboard.writeText(selectedImageUrl);
+                        toast.success("Image URL copied to clipboard");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <span className="text-slate-600 font-semibold">Copy Link</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </DialogContent>
