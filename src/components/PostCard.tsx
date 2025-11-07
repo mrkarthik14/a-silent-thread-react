@@ -399,7 +399,34 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {/* Display multiple images and videos */}
             {(imageUrls.length > 0 || videoUrls.length > 0) && (
               <>
-                {imageUrls.length > 1 || videoUrls.length > 1 ? (
+                {imageUrls.length > 6 ? (
+                  // Pinterest-style grid for 6+ images
+                  <motion.div 
+                    layout
+                    className="mb-3 grid grid-cols-3 gap-2 rounded-xl overflow-hidden"
+                  >
+                    {imageUrls.slice(0, 9).map((url, idx) => (
+                      <motion.div
+                        key={url}
+                        layout
+                        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                        className="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
+                        onClick={() => setSelectedImageUrl(url)}
+                      >
+                        <img 
+                          src={url} 
+                          alt={`Post image ${idx + 1}`}
+                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                        />
+                        {idx === 8 && imageUrls.length > 9 && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <span className="text-white font-bold text-lg">+{imageUrls.length - 9}</span>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                ) : imageUrls.length > 1 || videoUrls.length > 1 ? (
                   post.imageLayout === "bounce" ? (
                     <div className="mb-3 flex justify-center">
                       <BounceCards
