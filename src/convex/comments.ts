@@ -12,12 +12,24 @@ export const create = mutation({
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
 
-    return await ctx.db.insert("comments", {
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+
+    const commentId = await ctx.db.insert("comments", {
       postId: args.postId,
       userId: user._id,
       content: args.content,
       parentCommentId: args.parentCommentId,
     });
+
+    // Increment reply count only for top-level comments
+    if (!args.parentCommentId) {
+      await ctx.db.patch(args.postId, {
+        replies: post.replies + 1,
+      });
+    }
+
+    return commentId;
   },
 });
 
