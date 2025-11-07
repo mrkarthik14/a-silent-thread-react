@@ -187,9 +187,9 @@ export default function Landing() {
               }`}
             >
               {darkMode ? (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-6 w-6" strokeWidth={1.5} />
               ) : (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-6 w-6" strokeWidth={1.5} />
               )}
             </Button>
             
