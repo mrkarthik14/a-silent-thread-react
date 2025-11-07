@@ -453,11 +453,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </div>
             )}
             
-            <div className="flex items-center gap-4 mb-3 flex-wrap">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
+                className="h-8 px-3 gap-2 hover:bg-red-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold"
                 onClick={handleLike}
               >
                 <motion.div 
@@ -465,14 +465,14 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   animate={isLiked ? { scale: 1.2 } : { scale: 1 }} 
                   transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 >
-                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
+                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-700'}`} strokeWidth={1.5} />
                 </motion.div>
                 <motion.span 
                   key={`likes-${post.likes}`}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  className="text-xs text-slate-900 font-semibold"
+                  initial={{ scale: 0.8, opacity: 0, y: -5 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="text-xs text-slate-700 font-semibold"
                 >
                   {post.likes}
                 </motion.span>
@@ -481,16 +481,16 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:bg-white/50 active:scale-95 transition-all duration-150"
+                className="h-8 px-3 gap-2 hover:bg-blue-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold"
                 onClick={() => setShowComments(!showComments)}
               >
-                <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <MessageCircle className="h-4 w-4 text-slate-700" strokeWidth={1.5} />
                 <motion.span 
                   key={`comments-${post.replies}`}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  className="text-xs text-slate-900 font-semibold"
+                  initial={{ scale: 0.8, opacity: 0, y: -5 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="text-xs text-slate-700 font-semibold"
                 >
                   {post.replies}
                 </motion.span>
@@ -499,16 +499,16 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
+                className="h-8 px-3 gap-2 hover:bg-purple-100/50 hover:shadow-sm active:scale-95 transition-all duration-150 rounded-lg font-semibold"
                 onClick={() => setShareDialogOpen(true)}
               >
-                <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} />
                 <motion.span 
                   key={`shares-${shareCount}`}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  className="text-xs text-slate-900 font-semibold"
+                  initial={{ scale: 0.8, opacity: 0, y: -5 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="text-xs text-slate-700 font-semibold"
                 >
                   {shareCount || 0}
                 </motion.span>
