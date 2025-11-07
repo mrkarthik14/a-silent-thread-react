@@ -479,13 +479,15 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 onClick={handleLike}
                 disabled={loadingAction === "like"}
                 title={isLiked ? "Unlike" : "Like"}
+                aria-label={`${isLiked ? "Unlike" : "Like"} post. ${post.likes ?? 0} likes`}
+                aria-pressed={isLiked}
               >
                 <motion.div 
                   layout 
                   animate={isLiked ? { scale: 1.2 } : { scale: 1 }} 
                   transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 >
-                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-700'}`} strokeWidth={1.5} />
+                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-700'}`} strokeWidth={1.5} aria-hidden="true" />
                 </motion.div>
                 <motion.span 
                   key={`likes-${post.likes}`}
@@ -493,6 +495,8 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="text-xs text-slate-700 font-semibold"
+                  aria-live="polite"
+                  aria-atomic="true"
                 >
                   {post.likes ?? 0}
                 </motion.span>
@@ -504,14 +508,18 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 className="h-8 px-2 sm:px-3 gap-1.5 sm:gap-2 hover:bg-blue-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold text-xs sm:text-sm"
                 onClick={() => setShowComments(!showComments)}
                 title={showComments ? "Hide comments" : "Show comments"}
+                aria-label={`${showComments ? "Hide" : "Show"} comments. ${post.replies ?? 0} comments`}
+                aria-expanded={showComments}
               >
-                <MessageCircle className="h-4 w-4 text-slate-700" strokeWidth={1.5} />
+                <MessageCircle className="h-4 w-4 text-slate-700" strokeWidth={1.5} aria-hidden="true" />
                 <motion.span 
                   key={`comments-${post.replies}`}
                   initial={{ scale: 0.8, opacity: 0, y: -5 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="text-xs text-slate-700 font-semibold"
+                  aria-live="polite"
+                  aria-atomic="true"
                 >
                   {post.replies ?? 0}
                 </motion.span>
@@ -524,14 +532,17 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 onClick={() => setShareDialogOpen(true)}
                 disabled={loadingAction === "share"}
                 title="Share post"
+                aria-label={`Share post. ${shareCount ?? 0} shares`}
               >
-                <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} />
+                <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} aria-hidden="true" />
                 <motion.span 
                   key={`shares-${shareCount}`}
                   initial={{ scale: 0.8, opacity: 0, y: -5 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="text-xs text-slate-700 font-semibold"
+                  aria-live="polite"
+                  aria-atomic="true"
                 >
                   {shareCount ?? 0}
                 </motion.span>
