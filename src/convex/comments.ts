@@ -25,7 +25,7 @@ export const create = mutation({
     // Increment reply count only for top-level comments
     if (!args.parentCommentId) {
       await ctx.db.patch(args.postId, {
-        replies: post.replies + 1,
+        replies: (post.replies ?? 0) + 1,
       });
     }
 
