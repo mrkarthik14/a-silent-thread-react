@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
-import { Loader2, Search, Users, FileText, Package } from "lucide-react";
+import { Loader2, Search, Users, FileText, Package, Moon, Sun } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -25,7 +25,29 @@ export default function Feed() {
   const [paginationOpts, setPaginationOpts] = useState({ numItems: 10, cursor: null as string | null });
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
+  
+  // Initialize dark mode from localStorage
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem("darkMode") === "true";
+    setDarkMode(savedDarkMode);
+  }, []);
+
+  // Apply dark mode to document
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  const handleDarkModeToggle = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem("darkMode", String(newDarkMode));
+  };
   
   // Track presence
   usePresence();
@@ -125,16 +147,31 @@ export default function Feed() {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-6 sticky top-0 z-10 bg-white/50 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-200"
+            className="mb-6 sticky top-0 z-10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-slate-700"
           >
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900" strokeWidth={1.5} />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search threads, listings, users..."
-                className="pl-10 rounded-xl border-slate-200 bg-white/80"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900 dark:text-slate-100" strokeWidth={1.5} />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search threads, listings, users..."
+                  className="pl-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100"
+                />
+              </div>
+              <Button
+                onClick={handleDarkModeToggle}
+                variant="ghost"
+                size="sm"
+                className="h-10 w-10 p-0 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                title={darkMode ? "Light mode" : "Dark mode"}
+              >
+                {darkMode ? (
+                  <Sun className="h-5 w-5 text-yellow-400" strokeWidth={1.5} />
+                ) : (
+                  <Moon className="h-5 w-5 text-slate-600" strokeWidth={1.5} />
+                )}
+              </Button>
             </div>
           </motion.div>
 
