@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect, useRef, useCallback } from "react";
+import Masonry from "@/components/Masonry";
 
 export default function Feed() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -186,7 +187,7 @@ export default function Feed() {
               {/* Users */}
               {searchResults.users && searchResults.users.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     Users
                   </h3>
@@ -198,7 +199,7 @@ export default function Feed() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         onClick={() => navigate(`/profile/${user._id}`)}
-                        className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors"
+                        className="flex items-center gap-3 p-3 bg-purple-50 dark:bg-slate-800 rounded-lg hover:bg-purple-100 dark:hover:bg-slate-700 cursor-pointer transition-colors"
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={user.image} />
@@ -207,8 +208,8 @@ export default function Feed() {
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="text-sm font-medium text-slate-900">{user.name}</p>
-                          <p className="text-xs text-slate-600">{user.email}</p>
+                          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user.name}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">{user.email}</p>
                         </div>
                       </motion.div>
                     ))}
@@ -219,7 +220,7 @@ export default function Feed() {
               {/* Posts */}
               {searchResults.posts && searchResults.posts.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
                     <FileText className="h-4 w-4" />
                     Posts
                   </h3>
@@ -230,44 +231,47 @@ export default function Feed() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05 }}
-                        className="p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 cursor-pointer transition-colors"
+                        className="p-3 bg-yellow-50 dark:bg-slate-800 rounded-lg hover:bg-yellow-100 dark:hover:bg-slate-700 cursor-pointer transition-colors"
                       >
-                        <p className="text-sm text-slate-900 line-clamp-2">{post.content}</p>
-                        <p className="text-xs text-slate-500 mt-1">Likes: {post.likes}</p>
+                        <p className="text-sm text-slate-900 dark:text-slate-100 line-clamp-2">{post.content}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Likes: {post.likes}</p>
                       </motion.div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Listings */}
+              {/* Listings - Masonry Grid */}
               {searchResults.listings && searchResults.listings.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
                     <Package className="h-4 w-4" />
                     Listings
                   </h3>
-                  <div className="space-y-2">
-                    {searchResults.listings.map((listing: any, idx: number) => (
-                      <motion.div
-                        key={listing._id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="p-3 bg-emerald-50 rounded-lg hover:bg-emerald-100 cursor-pointer transition-colors"
-                      >
-                        <p className="text-sm font-semibold text-slate-900">{listing.serviceDetails?.title}</p>
-                        <p className="text-xs text-slate-600">₹{listing.serviceDetails?.price}/day</p>
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{listing.content}</p>
-                      </motion.div>
-                    ))}
+                  <div className="h-96">
+                    <Masonry
+                      items={searchResults.listings.map((listing: any) => ({
+                        id: listing._id,
+                        img: listing.images?.[0] || "https://via.placeholder.com/300x300?text=No+Image",
+                        url: `/services/${listing._id}`,
+                        height: Math.random() * 200 + 200
+                      }))}
+                      ease="power3.out"
+                      duration={0.6}
+                      stagger={0.05}
+                      animateFrom="bottom"
+                      scaleOnHover={true}
+                      hoverScale={0.95}
+                      blurToFocus={true}
+                      colorShiftOnHover={false}
+                    />
                   </div>
                 </div>
               )}
 
               {/* No Results */}
               {searchResults.users?.length === 0 && searchResults.posts?.length === 0 && searchResults.listings?.length === 0 && (
-                <p className="text-center text-slate-600 py-8">No results found</p>
+                <p className="text-center text-slate-600 dark:text-slate-400 py-8">No results found</p>
               )}
             </motion.div>
           ) : (
