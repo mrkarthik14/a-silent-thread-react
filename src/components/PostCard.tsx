@@ -374,14 +374,19 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             {post.image && (
               <motion.div
                 layout
-                className="rounded-xl mb-3 overflow-hidden"
+                className="rounded-xl mb-3 overflow-hidden flex justify-center"
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 <img 
                   src={post.image} 
                   alt="Post" 
-                  className="rounded-xl w-full object-contain max-h-96 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="rounded-xl object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                  style={{
+                    maxHeight: "300px",
+                    maxWidth: "100%",
+                    height: "auto"
+                  }}
                   onClick={() => {
                     if (post.image) {
                       setSelectedImageUrl(post.image);
