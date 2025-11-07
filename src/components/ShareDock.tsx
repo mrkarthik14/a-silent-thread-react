@@ -120,9 +120,14 @@ export function ShareDock({ items, isOpen, onClose }: ShareDockProps) {
               className={item.color}
               label={item.label}
             >
-              <div className="flex items-center justify-center text-slate-700">
+              <motion.div 
+                className="flex items-center justify-center text-slate-700"
+                whileHover={{ rotate: 10, scale: 1.1 }}
+                whileTap={{ scale: 0.9, rotate: -5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
                 {item.icon}
-              </div>
+              </motion.div>
             </ShareDockItem>
           </motion.div>
         ))}
