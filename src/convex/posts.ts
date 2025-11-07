@@ -175,8 +175,9 @@ export const like = mutation({
     if (existingLike) {
       // Unlike: remove the like record and decrement count
       await ctx.db.delete(existingLike._id);
+      const currentPost = await ctx.db.get(args.postId);
       await ctx.db.patch(args.postId, {
-        likes: Math.max(0, (post.likes ?? 0) - 1),
+        likes: Math.max(0, (currentPost?.likes ?? 0) - 1),
       });
       return { liked: false };
     } else {
@@ -185,8 +186,9 @@ export const like = mutation({
         userId: user._id,
         postId: args.postId,
       });
+      const currentPost = await ctx.db.get(args.postId);
       await ctx.db.patch(args.postId, {
-        likes: (post.likes ?? 0) + 1,
+        likes: (currentPost?.likes ?? 0) + 1,
       });
       return { liked: true };
     }
