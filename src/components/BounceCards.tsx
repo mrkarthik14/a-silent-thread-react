@@ -12,6 +12,7 @@ interface BounceCardsProps {
   transformStyles?: string[];
   enableHover?: boolean;
   onReorder?: (newOrder: string[]) => void;
+  instanceId?: string;
 }
 
 export default function BounceCards({
@@ -30,7 +31,8 @@ export default function BounceCards({
     'rotate(2deg) translate(170px)'
   ],
   enableHover = false,
-  onReorder
+  onReorder,
+  instanceId = Math.random().toString(36).substr(2, 9)
 }: BounceCardsProps) {
   const [orderedImages, setOrderedImages] = useState(images);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -41,7 +43,7 @@ export default function BounceCards({
 
   useEffect(() => {
     gsap.fromTo(
-      '.card',
+      `.card-${instanceId}`,
       { scale: 0 },
       {
         scale: 1,
@@ -50,7 +52,7 @@ export default function BounceCards({
         delay: animationDelay
       }
     );
-  }, [animationDelay, animationStagger, easeType, orderedImages]);
+  }, [animationDelay, animationStagger, easeType, orderedImages, instanceId]);
 
   const getNoRotationTransform = (transformStr: string): string => {
     const hasRotate = /rotate\([\s\S]*?\)/.test(transformStr);
@@ -106,7 +108,7 @@ export default function BounceCards({
   const pushSiblings = (hoveredIdx: number) => {
     if (!enableHover) return;
     orderedImages.forEach((_, i) => {
-      const selector = `.card-${i}`;
+      const selector = `.card-${instanceId}-${i}`;
       gsap.killTweensOf(selector);
       const baseTransform = transformStyles[i] || 'none';
       if (i === hoveredIdx) {
@@ -136,7 +138,7 @@ export default function BounceCards({
   const resetSiblings = () => {
     if (!enableHover) return;
     orderedImages.forEach((_, i) => {
-      const selector = `.card-${i}`;
+      const selector = `.card-${instanceId}-${i}`;
       gsap.killTweensOf(selector);
       const baseTransform = transformStyles[i] || 'none';
       gsap.to(selector, {
@@ -160,7 +162,7 @@ export default function BounceCards({
         <div
           key={idx}
           draggable
-          className={`card card-${idx} absolute w-[200px] aspect-square border-8 border-white rounded-[30px] overflow-hidden cursor-move transition-opacity ${
+          className={`card card-${instanceId} card-${instanceId}-${idx} absolute w-[200px] aspect-square border-8 border-white rounded-[30px] overflow-hidden cursor-move transition-opacity ${
             draggedIndex === idx ? 'opacity-50' : 'opacity-100'
           }`}
           style={{
