@@ -288,25 +288,25 @@ export default function Landing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="bg-gradient-to-br from-blue-200 to-cyan-300 dark:from-blue-900 dark:to-cyan-900 rounded-3xl p-12 shadow-sm hover:shadow-md transition-shadow text-center"
+          className="bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 rounded-3xl p-12 shadow-sm hover:shadow-md transition-shadow text-center"
         >
           <div className="flex justify-center mb-6">
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <Calendar className="h-16 w-16 text-blue-900 dark:text-blue-200" strokeWidth={1.5} />
+              <Calendar className="h-16 w-16 text-slate-900 dark:text-slate-100" strokeWidth={1.5} />
             </motion.div>
           </div>
-          <h2 className="text-3xl font-bold text-blue-900 dark:text-blue-100 mb-3">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">
             Plan Your Rentals
           </h2>
-          <p className="text-blue-800 dark:text-blue-200 max-w-2xl mx-auto mb-6">
+          <p className="text-slate-800 dark:text-slate-200 max-w-2xl mx-auto mb-6">
             Schedule your bookings with ease. Our intuitive calendar makes it simple to find available dates and manage your rental timeline.
           </p>
           <Button
             onClick={() => navigate(isAuthenticated ? "/bookings" : "/auth")}
-            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-150 dark:bg-blue-700 dark:hover:bg-blue-600"
+            className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-150 dark:bg-slate-600 dark:hover:bg-slate-500"
           >
             View Calendar
             <ArrowRight className="ml-2 h-4 w-4" />
