@@ -413,16 +413,16 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   )
                 ) : (
                   // Single image/video
-                  <div className="overflow-hidden rounded-lg mb-3">
+                  <div className="overflow-hidden rounded-lg mb-3 flex justify-center">
                     {imageUrls.length > 0 ? (
                       <img 
                         src={imageUrls[0]} 
                         alt="Post image" 
-                        className="w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-xl"
+                        className="object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-xl"
                         style={{
-                          maxHeight: post.imageDimensions?.[0] 
-                            ? `${Math.min(post.imageDimensions[0].height, 500)}px`
-                            : "max-h-96"
+                          maxHeight: "300px",
+                          maxWidth: "100%",
+                          height: "auto"
                         }}
                         onClick={() => setSelectedImageUrl(imageUrls[0])}
                       />
@@ -430,9 +430,10 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                       <video 
                         src={videoUrls[0]} 
                         controls
-                        className="w-full object-contain rounded-xl"
+                        className="object-contain rounded-xl"
                         style={{
-                          maxHeight: "500px"
+                          maxHeight: "300px",
+                          maxWidth: "100%"
                         }}
                       />
                     )}
