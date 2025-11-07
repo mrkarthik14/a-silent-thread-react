@@ -64,11 +64,16 @@ export const getFollowers = query({
 });
 
 export const getFollowing = query({
-  args: { userId: v.id("users") },
+  args: { userId: v.optional(v.id("users")) },
   handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    const targetUserId = args.userId || user?._id;
+    
+    if (!targetUserId) return [];
+
     const follows = await ctx.db
       .query("follows")
-      .withIndex("by_follower", (q) => q.eq("followerId", args.userId))
+      .withIndex("by_follower", (q) => q.eq("followerId", targetUserId))
       .collect();
 
     return await Promise.all(
