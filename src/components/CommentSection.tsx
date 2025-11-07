@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/use-auth";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface CommentSectionProps {
   postId: Id<"posts">;
@@ -17,6 +18,7 @@ interface CommentSectionProps {
 export function CommentSection({ postId }: CommentSectionProps) {
   const [commentContent, setCommentContent] = useState("");
   const [replyTo, setReplyTo] = useState<Id<"comments"> | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<Id<"comments"> | null>(null);
   const { user } = useAuth();
 
   const comments = useQuery(api.comments.list, { postId });
@@ -45,10 +47,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
     }
   };
 
-  const handleDelete = async (commentId: Id<"comments">) => {
+  const handleDeleteConfirm = async (commentId: Id<"comments">) => {
     try {
       await deleteComment({ commentId });
       toast.success("Comment deleted");
+      setDeleteConfirmId(null);
     } catch (error) {
       toast.error("Failed to delete comment");
     }
@@ -160,7 +163,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleDelete(comment._id)}
+                          onClick={() => setDeleteConfirmId(comment._id)}
                           className="h-6 px-2 text-red-500"
                         >
                           <Trash2 className="h-3 w-3" strokeWidth={1.5} />
@@ -224,6 +227,26 @@ export function CommentSection({ postId }: CommentSectionProps) {
           </motion.div>
         ))}
       </div>
+
+      <AlertDialog open={deleteConfirmId !== null} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-2 justify-end">
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteConfirmId && handleDeleteConfirm(deleteConfirmId)}
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
