@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ThreadLine } from "@/components/ThreadLine";
 import { useState, useEffect } from "react";
+import Ribbons from "@/components/Ribbons";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
@@ -61,9 +62,22 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-300 cursor-none">
+      {/* Ribbons Cursor Animation */}
+      <div className="fixed inset-0 pointer-events-none z-40">
+        <Ribbons
+          baseThickness={25}
+          colors={darkMode ? ['#d8b4fe', '#c084fc', '#a78bfa', '#f8a5a5'] : ['#f8a5a5', '#f5b5b5', '#e8b4f1', '#b4d7f1']}
+          speedMultiplier={0.5}
+          maxAge={500}
+          enableFade={false}
+          enableShaderEffect={true}
+          effectAmplitude={1.5}
+        />
+      </div>
+
       {/* Header */}
-      <nav className="px-6 py-6">
+      <nav className="px-6 py-6 relative z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12">
@@ -100,7 +114,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <div className="max-w-4xl mx-auto px-6 py-20 text-center">
+      <div className="max-w-4xl mx-auto px-6 py-20 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,11 +136,11 @@ export default function Landing() {
             A modern renting platform that visualizes your connections, services, and conversations as beautiful, flowing threads. Experience community in a whole new way.
           </p>
           
-            <Button
-              size="lg"
-              onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
-              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 py-6 text-lg shadow-lg dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
-            >
+          <Button
+            size="lg"
+            onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
+            className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 py-6 text-lg shadow-lg dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+          >
             {isAuthenticated ? "Go to Feed" : "Get Started"}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -134,7 +148,7 @@ export default function Landing() {
       </div>
 
       {/* Feature Cards with Thread Connections */}
-      <div className="max-w-6xl mx-auto px-6 pb-20">
+      <div className="max-w-6xl mx-auto px-6 pb-20 relative z-10">
         <div className="relative">
           {/* Grid with connecting threads */}
           <div className="grid md:grid-cols-4 gap-6">
@@ -178,7 +192,7 @@ export default function Landing() {
       </div>
 
       {/* Calendar Section */}
-      <div className="max-w-6xl mx-auto px-6 pb-20">
+      <div className="max-w-6xl mx-auto px-6 pb-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
