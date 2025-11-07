@@ -161,7 +161,7 @@ export default function Feed() {
               </div>
               <Button
                 onClick={handleDarkModeToggle}
-                className={`rounded-full p-2.5 font-semibold transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
+                className={`rounded-full p-2.5 font-semibold transition-all duration-500 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
                   darkMode
                     ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 border border-indigo-500"
                     : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border border-yellow-400"
@@ -169,9 +169,9 @@ export default function Feed() {
                 title={darkMode ? "Light mode" : "Dark mode"}
               >
                 {darkMode ? (
-                  <Moon className="h-6 w-6" strokeWidth={1.5} />
+                  <Moon className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
                 ) : (
-                  <Sun className="h-6 w-6" strokeWidth={1.5} />
+                  <Sun className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
                 )}
               </Button>
             </div>
