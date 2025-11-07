@@ -405,6 +405,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                         animationStagger={0.06}
                         easeType="elastic.out(1, 0.8)"
                         enableHover={true}
+                        onImageClick={setSelectedImageUrl}
                       />
                     </div>
                   ) : (

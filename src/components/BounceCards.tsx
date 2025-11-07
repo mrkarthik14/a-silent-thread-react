@@ -13,6 +13,7 @@ interface BounceCardsProps {
   enableHover?: boolean;
   onReorder?: (newOrder: string[]) => void;
   instanceId?: string;
+  onImageClick?: (url: string) => void;
 }
 
 export default function BounceCards({
@@ -32,7 +33,8 @@ export default function BounceCards({
   ],
   enableHover = false,
   onReorder,
-  instanceId = Math.random().toString(36).substr(2, 9)
+  instanceId = Math.random().toString(36).substr(2, 9),
+  onImageClick
 }: BounceCardsProps) {
   const [orderedImages, setOrderedImages] = useState(images);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -176,7 +178,12 @@ export default function BounceCards({
           onDrop={(e) => handleDrop(e, idx)}
           onDragEnd={handleDragEnd}
         >
-          <img className="w-full h-full object-cover" src={src} alt={`card-${idx}`} />
+          <img 
+            className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" 
+            src={src} 
+            alt={`card-${idx}`}
+            onClick={() => onImageClick?.(src)}
+          />
         </div>
       ))}
     </div>
