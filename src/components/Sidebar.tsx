@@ -80,36 +80,17 @@ export function Sidebar() {
       return;
     }
     
-    files.forEach((file, idx) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          setCropperImage(event.target?.result as string);
-          setCropperIndex(selectedImages.length + idx);
-          setCropperOpen(true);
-        };
-        img.src = event.target?.result as string;
-      };
-      reader.readAsDataURL(file);
+    setSelectedImages([...selectedImages, ...files]);
+    // Initialize captions for new images
+    const newCaptions = [...imageCaptions];
+    files.forEach(() => {
+      newCaptions.push("");
     });
+    setImageCaptions(newCaptions);
   };
 
   const handleCropComplete = (croppedImage: string) => {
-    const img = new Image();
-    img.onload = () => {
-      const newDimensions = [...imageDimensions];
-      newDimensions[cropperIndex] = { width: img.width, height: img.height };
-      setImageDimensions(newDimensions);
-
-      fetch(croppedImage)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const file = new File([blob], `cropped-${Date.now()}.jpg`, { type: "image/jpeg" });
-          setSelectedImages([...selectedImages, file]);
-        });
-    };
-    img.src = croppedImage;
+    // Not used in simplified flow
   };
 
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,6 +189,9 @@ export function Sidebar() {
     setImageLayout(null);
     setImageDimensions([]);
     setImageCaptions([]);
+    setCropperOpen(false);
+    setCropperImage("");
+    setCropperIndex(-1);
   };
 
   // ========================================================================
