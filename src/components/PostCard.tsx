@@ -467,7 +467,15 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 >
                   <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-400 text-red-400' : 'text-slate-900'}`} strokeWidth={1.5} />
                 </motion.div>
-                <span className="text-xs text-slate-900">{post.likes}</span>
+                <motion.span 
+                  key={`likes-${post.likes}`}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="text-xs text-slate-900 font-semibold"
+                >
+                  {post.likes}
+                </motion.span>
               </Button>
               
               <Button
@@ -477,7 +485,15 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 onClick={() => setShowComments(!showComments)}
               >
                 <MessageCircle className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
-                <span className="text-xs text-slate-900">{post.replies}</span>
+                <motion.span 
+                  key={`comments-${post.replies}`}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="text-xs text-slate-900 font-semibold"
+                >
+                  {post.replies}
+                </motion.span>
               </Button>
               
               <Button
@@ -487,7 +503,15 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 onClick={() => setShareDialogOpen(true)}
               >
                 <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
-                <span className="text-xs text-slate-900">{shareCount || 0}</span>
+                <motion.span 
+                  key={`shares-${shareCount}`}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="text-xs text-slate-900 font-semibold"
+                >
+                  {shareCount || 0}
+                </motion.span>
               </Button>
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (
