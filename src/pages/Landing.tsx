@@ -100,7 +100,7 @@ export default function Landing() {
     }> = [];
 
     const colors = darkMode
-      ? ["#d8b4fe", "#c084fc", "#a78bfa", "#f8a5a5"]
+      ? ["#ff6b6b", "#ff8787", "#ffa07a", "#ff9999"]
       : ["#f8a5a5", "#f5b5b5", "#e8b4f1", "#b4d7f1"];
 
     let mouseX = 0;
