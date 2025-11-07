@@ -2,6 +2,7 @@ import { motion, MotionValue, useMotionValue, useSpring, useTransform } from "fr
 import React, { Children, cloneElement, useRef, useState, useEffect, useMemo } from "react";
 import { Share2, MessageCircle, Mail, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 export type ShareDockItemData = {
@@ -19,6 +20,7 @@ type ShareDockItemProps = {
   distance: number;
   baseItemSize: number;
   magnification: number;
+  label: string;
 };
 
 function ShareDockItem({
@@ -29,6 +31,7 @@ function ShareDockItem({
   distance,
   magnification,
   baseItemSize,
+  label,
 }: ShareDockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -48,19 +51,28 @@ function ShareDockItem({
   const size = useSpring(targetSize, { mass: 0.1, stiffness: 150, damping: 12 });
 
   return (
-    <motion.div
-      ref={ref}
-      style={{
-        width: size,
-        height: size,
-      }}
-      onClick={onClick}
-      className={`relative inline-flex items-center justify-center rounded-full bg-white border-2 border-slate-200 shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${className}`}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      {children}
-    </motion.div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <motion.div
+            ref={ref}
+            style={{
+              width: size,
+              height: size,
+            }}
+            onClick={onClick}
+            className={`relative inline-flex items-center justify-center rounded-full bg-white border-2 border-slate-200 shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${className}`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {children}
+          </motion.div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="rounded-lg bg-slate-900 text-white text-xs font-medium px-2 py-1">
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -106,6 +118,7 @@ export function ShareDock({ items, isOpen, onClose }: ShareDockProps) {
               magnification={magnification}
               baseItemSize={baseItemSize}
               className={item.color}
+              label={item.label}
             >
               <div className="flex items-center justify-center text-slate-700">
                 {item.icon}
