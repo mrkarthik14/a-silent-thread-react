@@ -6,7 +6,6 @@ import { useNavigate } from "react-router";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ThreadLine } from "@/components/ThreadLine";
 import { useState, useEffect } from "react";
-import Ribbons from "@/components/Ribbons";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
@@ -61,20 +60,92 @@ export default function Landing() {
     }
   ];
 
+  useEffect(() => {
+    const canvas = document.getElementById("cursor-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles: Array<{
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      color: string;
+    }> = [];
+
+    const colors = darkMode
+      ? ["#d8b4fe", "#c084fc", "#a78bfa", "#f8a5a5"]
+      : ["#f8a5a5", "#f5b5b5", "#e8b4f1", "#b4d7f1"];
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          x: mouseX,
+          y: mouseY,
+          vx: (Math.random() - 0.5) * 4,
+          vy: (Math.random() - 0.5) * 4,
+          life: 1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life -= 0.02;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.1;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3 * p.life, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    animate();
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [darkMode]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-300 cursor-none">
-      {/* Ribbons Cursor Animation */}
-      <div className="fixed inset-0 pointer-events-none z-40">
-        <Ribbons
-          baseThickness={25}
-          colors={darkMode ? ['#d8b4fe', '#c084fc', '#a78bfa', '#f8a5a5'] : ['#f8a5a5', '#f5b5b5', '#e8b4f1', '#b4d7f1']}
-          speedMultiplier={0.5}
-          maxAge={500}
-          enableFade={false}
-          enableShaderEffect={true}
-          effectAmplitude={1.5}
-        />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-300">
 
       {/* Header */}
       <nav className="px-6 py-6 relative z-50">
