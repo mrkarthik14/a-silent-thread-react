@@ -124,11 +124,8 @@ export function Sidebar() {
 
     setIsUploading(true);
     try {
-      const uploadedImageUrls: string[] = [];
-      const uploadedVideoUrls: string[] = [];
-
-      // Upload images
-      for (const image of selectedImages) {
+      // Upload images in parallel
+      const imageUploadPromises = selectedImages.map(async (image) => {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
           method: "POST",
@@ -136,11 +133,12 @@ export function Sidebar() {
           body: image,
         });
         const { storageId } = await result.json();
-        uploadedImageUrls.push(storageId);
-      }
+        return storageId;
+      });
+      const uploadedImageUrls = await Promise.all(imageUploadPromises);
 
-      // Upload videos
-      for (const video of selectedVideos) {
+      // Upload videos in parallel
+      const videoUploadPromises = selectedVideos.map(async (video) => {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
           method: "POST",
@@ -148,8 +146,9 @@ export function Sidebar() {
           body: video,
         });
         const { storageId } = await result.json();
-        uploadedVideoUrls.push(storageId);
-      }
+        return storageId;
+      });
+      const uploadedVideoUrls = await Promise.all(videoUploadPromises);
 
       // Create post with all data
       await createPost({
