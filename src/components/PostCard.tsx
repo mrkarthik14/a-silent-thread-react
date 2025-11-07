@@ -34,6 +34,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [likeError, setLikeError] = useState<string | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState("");
@@ -70,7 +71,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     api.bookings.getUserBookingForService,
     post.type === "service" && currentUser?._id !== post.user?._id ? { serviceId: post._id } : "skip"
   );
-  const shareCount = useQuery(api.share.getShareCount, { postId: post._id });
+  const shareCount = useQuery(api.share.getShareCount, { postId: post._id }) ?? 0;
 
   useEffect(() => {
     if (userHasLiked !== undefined) {
@@ -108,9 +109,16 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
   const updatePostMutation = useMutation(api.posts.updatePost);
   const hidePostMutation = useMutation(api.posts.hidePost);
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    onLike?.();
+  const handleLike = async () => {
+    try {
+      setIsLiked(!isLiked);
+      await likePostMutation({ postId: post._id });
+      onLike?.();
+    } catch (error) {
+      setIsLiked(!isLiked);
+      toast.error("Failed to update like");
+      console.error("Like error:", error);
+    }
   };
 
   const handleFollow = async () => {
@@ -122,16 +130,26 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
       toast.success(result.following ? "Following!" : "Unfollowed");
     } catch (error) {
       toast.error("Failed to follow user");
+      console.error("Follow error:", error);
     } finally {
       setLoadingAction(null);
     }
   };
 
   const handleMessage = () => {
-    if (!post.user?._id) return;
+    if (!post.user?._id) {
+      toast.error("Unable to message this user");
+      return;
+    }
     setLoadingAction("message");
-    navigate("/messages", { state: { selectedUserId: post.user._id } });
-    setTimeout(() => setLoadingAction(null), 500);
+    try {
+      navigate("/messages", { state: { selectedUserId: post.user._id } });
+      setTimeout(() => setLoadingAction(null), 500);
+    } catch (error) {
+      toast.error("Failed to open messages");
+      console.error("Message error:", error);
+      setLoadingAction(null);
+    }
   };
 
   const handleProfileClick = () => {
@@ -457,8 +475,10 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-3 gap-2 hover:bg-red-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold"
+                className="h-8 px-3 gap-2 hover:bg-red-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold disabled:opacity-50"
                 onClick={handleLike}
+                disabled={loadingAction === "like"}
+                title={isLiked ? "Unlike" : "Like"}
               >
                 <motion.div 
                   layout 
@@ -474,7 +494,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="text-xs text-slate-700 font-semibold"
                 >
-                  {post.likes}
+                  {post.likes ?? 0}
                 </motion.span>
               </Button>
               
@@ -483,6 +503,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 size="sm"
                 className="h-8 px-3 gap-2 hover:bg-blue-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold"
                 onClick={() => setShowComments(!showComments)}
+                title={showComments ? "Hide comments" : "Show comments"}
               >
                 <MessageCircle className="h-4 w-4 text-slate-700" strokeWidth={1.5} />
                 <motion.span 
@@ -492,15 +513,17 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="text-xs text-slate-700 font-semibold"
                 >
-                  {post.replies}
+                  {post.replies ?? 0}
                 </motion.span>
               </Button>
               
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-3 gap-2 hover:bg-purple-100/50 hover:shadow-sm active:scale-95 transition-all duration-150 rounded-lg font-semibold"
+                className="h-8 px-3 gap-2 hover:bg-purple-100/50 hover:shadow-sm active:scale-95 transition-all duration-150 rounded-lg font-semibold disabled:opacity-50"
                 onClick={() => setShareDialogOpen(true)}
+                disabled={loadingAction === "share"}
+                title="Share post"
               >
                 <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} />
                 <motion.span 
@@ -510,7 +533,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="text-xs text-slate-700 font-semibold"
                 >
-                  {shareCount || 0}
+                  {shareCount ?? 0}
                 </motion.span>
               </Button>
 
