@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Calendar, Search, Sparkles, Sun, Moon } from "lucide-react";
+import { ArrowRight, MessageCircle, Calendar, Search, Sparkles, Sun, Moon, X, ZoomIn } from "lucide-react";
 import { useNavigate } from "react-router";
 import { LoadingLogo } from "@/components/LoadingLogo";
 import { ThreadLine } from "@/components/ThreadLine";
 import { useState, useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
@@ -14,6 +15,8 @@ export default function Landing() {
     const saved = localStorage.getItem("darkMode");
     return saved === "true";
   });
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   useEffect(() => {
     if (darkMode) {
@@ -27,6 +30,23 @@ export default function Landing() {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
     localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
+  };
+
+  const handleImageZoom = (imageSrc: string) => {
+    setZoomedImage(imageSrc);
+    setZoomLevel(1);
+  };
+
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.2, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.2, 1));
+  };
+
+  const handleResetZoom = () => {
+    setZoomLevel(1);
   };
 
   const features = [
@@ -293,6 +313,66 @@ export default function Landing() {
           </Button>
         </motion.div>
       </div>
+
+      {/* Image Zoom Modal */}
+      <Dialog open={zoomedImage !== null} onOpenChange={(open) => !open && setZoomedImage(null)}>
+        <DialogContent className="rounded-2xl max-w-4xl p-0 border-0 bg-black/95">
+          <div className="relative w-full h-full flex flex-col items-center justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 z-50 hover:bg-white/20"
+              onClick={() => setZoomedImage(null)}
+            >
+              <X className="h-6 w-6 text-white" strokeWidth={1.5} />
+            </Button>
+
+            {zoomedImage && (
+              <div className="flex-1 flex items-center justify-center overflow-auto max-h-[80vh] w-full">
+                <motion.img
+                  src={zoomedImage}
+                  alt="Zoomed view"
+                  className="object-contain cursor-zoom-out"
+                  style={{
+                    transform: `scale(${zoomLevel})`,
+                    transition: "transform 0.2s ease-out"
+                  }}
+                  onClick={() => handleZoomIn()}
+                />
+              </div>
+            )}
+
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-3 bg-black/60 px-4 py-3 rounded-xl">
+              <Button
+                onClick={handleZoomOut}
+                disabled={zoomLevel <= 1}
+                className="rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-semibold"
+              >
+                −
+              </Button>
+              <span className="text-white text-sm font-semibold px-3 py-1 bg-white/10 rounded-lg">
+                {Math.round(zoomLevel * 100)}%
+              </span>
+              <Button
+                onClick={handleZoomIn}
+                disabled={zoomLevel >= 3}
+                className="rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-semibold"
+              >
+                +
+              </Button>
+              <Button
+                onClick={handleResetZoom}
+                disabled={zoomLevel === 1}
+                className="rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-semibold"
+              >
+                Reset
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <canvas id="cursor-canvas" className="fixed inset-0 pointer-events-none" />
     </div>
   );
 }
