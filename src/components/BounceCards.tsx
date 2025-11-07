@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 
 interface BounceCardsProps {
@@ -11,6 +11,7 @@ interface BounceCardsProps {
   easeType?: string;
   transformStyles?: string[];
   enableHover?: boolean;
+  onReorder?: (newOrder: string[]) => void;
 }
 
 export default function BounceCards({
@@ -28,8 +29,16 @@ export default function BounceCards({
     'rotate(-10deg) translate(85px)',
     'rotate(2deg) translate(170px)'
   ],
-  enableHover = false
+  enableHover = false,
+  onReorder
 }: BounceCardsProps) {
+  const [orderedImages, setOrderedImages] = useState(images);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setOrderedImages(images);
+  }, [images]);
+
   useEffect(() => {
     gsap.fromTo(
       '.card',
@@ -41,7 +50,7 @@ export default function BounceCards({
         delay: animationDelay
       }
     );
-  }, [animationDelay, animationStagger, easeType]);
+  }, [animationDelay, animationStagger, easeType, orderedImages]);
 
   const getNoRotationTransform = (transformStr: string): string => {
     const hasRotate = /rotate\([\s\S]*?\)/.test(transformStr);
@@ -66,9 +75,37 @@ export default function BounceCards({
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const newOrder = [...orderedImages];
+    const draggedImage = newOrder[draggedIndex];
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(dropIndex, 0, draggedImage);
+
+    setOrderedImages(newOrder);
+    setDraggedIndex(null);
+    onReorder?.(newOrder);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
   const pushSiblings = (hoveredIdx: number) => {
     if (!enableHover) return;
-    images.forEach((_, i) => {
+    orderedImages.forEach((_, i) => {
       const selector = `.card-${i}`;
       gsap.killTweensOf(selector);
       const baseTransform = transformStyles[i] || 'none';
@@ -98,7 +135,7 @@ export default function BounceCards({
 
   const resetSiblings = () => {
     if (!enableHover) return;
-    images.forEach((_, i) => {
+    orderedImages.forEach((_, i) => {
       const selector = `.card-${i}`;
       gsap.killTweensOf(selector);
       const baseTransform = transformStyles[i] || 'none';
@@ -119,16 +156,23 @@ export default function BounceCards({
         height: containerHeight
       }}
     >
-      {images.map((src, idx) => (
+      {orderedImages.map((src, idx) => (
         <div
           key={idx}
-          className={`card card-${idx} absolute w-[200px] aspect-square border-8 border-white rounded-[30px] overflow-hidden`}
+          draggable
+          className={`card card-${idx} absolute w-[200px] aspect-square border-8 border-white rounded-[30px] overflow-hidden cursor-move transition-opacity ${
+            draggedIndex === idx ? 'opacity-50' : 'opacity-100'
+          }`}
           style={{
             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
             transform: transformStyles[idx] || 'none'
           }}
           onMouseEnter={() => pushSiblings(idx)}
           onMouseLeave={resetSiblings}
+          onDragStart={(e) => handleDragStart(e, idx)}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, idx)}
+          onDragEnd={handleDragEnd}
         >
           <img className="w-full h-full object-cover" src={src} alt={`card-${idx}`} />
         </div>
