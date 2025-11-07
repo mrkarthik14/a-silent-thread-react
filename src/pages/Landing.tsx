@@ -54,29 +54,29 @@ export default function Landing() {
       icon: MessageCircle,
       title: "Thread Connections",
       description: "Connect with others through beautiful, flowing conversations",
-      color: "from-slate-200 to-slate-300",
-      textColor: "text-slate-900"
+      color: "from-pink-200 to-pink-300",
+      textColor: "text-pink-900"
     },
     {
       icon: Search,
       title: "Discover Services",
       description: "Find and offer services in your community",
-      color: "from-slate-200 to-slate-300",
-      textColor: "text-slate-900"
+      color: "from-yellow-200 to-yellow-300",
+      textColor: "text-yellow-900"
     },
     {
       icon: Calendar,
       title: "Easy Bookings",
       description: "Seamless booking experience with visual connections",
-      color: "from-slate-200 to-slate-300",
-      textColor: "text-slate-900"
+      color: "from-emerald-200 to-emerald-300",
+      textColor: "text-emerald-900"
     },
     {
       icon: Sparkles,
       title: "Beautiful Design",
       description: "Soft, minimal interface that feels alive",
-      color: "from-slate-200 to-slate-300",
-      textColor: "text-slate-900"
+      color: "from-purple-200 to-purple-300",
+      textColor: "text-purple-900"
     }
   ];
 
@@ -165,7 +165,7 @@ export default function Landing() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-700 dark:via-slate-700 dark:to-slate-700 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-yellow-100 dark:via-yellow-100 dark:to-yellow-100 transition-colors duration-300">
 
       {/* Header */}
       <nav className="px-6 py-6 relative z-50">
