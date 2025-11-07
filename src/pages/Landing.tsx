@@ -54,29 +54,29 @@ export default function Landing() {
       icon: MessageCircle,
       title: "Thread Connections",
       description: "Connect with others through beautiful, flowing conversations",
-      color: "from-pink-200 to-pink-300",
-      textColor: "text-pink-900"
+      color: "from-slate-200 to-slate-300",
+      textColor: "text-slate-900"
     },
     {
       icon: Search,
       title: "Discover Services",
       description: "Find and offer services in your community",
-      color: "from-yellow-200 to-yellow-300",
-      textColor: "text-yellow-900"
+      color: "from-slate-200 to-slate-300",
+      textColor: "text-slate-900"
     },
     {
       icon: Calendar,
       title: "Easy Bookings",
       description: "Seamless booking experience with visual connections",
-      color: "from-emerald-200 to-emerald-300",
-      textColor: "text-emerald-900"
+      color: "from-slate-200 to-slate-300",
+      textColor: "text-slate-900"
     },
     {
       icon: Sparkles,
       title: "Beautiful Design",
       description: "Soft, minimal interface that feels alive",
-      color: "from-purple-200 to-purple-300",
-      textColor: "text-purple-900"
+      color: "from-slate-200 to-slate-300",
+      textColor: "text-slate-900"
     }
   ];
 
