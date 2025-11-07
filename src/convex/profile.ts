@@ -11,6 +11,7 @@ export const getCurrentUserProfile = query({
     const posts = await ctx.db
       .query("posts")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .order("desc")
       .collect();
 
     const enrichedPosts = await Promise.all(
@@ -36,6 +37,7 @@ export const getUserProfile = query({
     const posts = await ctx.db
       .query("posts")
       .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .order("desc")
       .collect();
 
     const enrichedPosts = await Promise.all(
