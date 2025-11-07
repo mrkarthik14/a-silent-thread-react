@@ -451,38 +451,75 @@ export function Sidebar() {
                     {selectedImages.length} image(s) selected
                   </p>
                   {selectedImages.length > 1 && (
-                    <div className="mt-3 space-y-2">
-                      <Label className="text-xs font-semibold">Layout Style</Label>
-                      <div className="flex gap-2">
+                    <div className="mt-4 space-y-3">
+                      <Label className="text-xs font-semibold">Layout Style Preview</Label>
+                      <div className="space-y-2">
+                        {/* Instagram Style */}
                         <button
                           onClick={() => setImageLayout("slider")}
-                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                          className={`w-full p-3 rounded-lg text-left transition-all border-2 ${
                             imageLayout === "slider"
-                              ? "bg-slate-900 text-white shadow-md"
-                              : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                              ? "border-slate-900 bg-slate-50"
+                              : "border-slate-200 bg-white hover:border-slate-300"
                           }`}
                         >
-                          📱 Instagram Style
+                          <div className="text-xs font-semibold mb-2">📱 Instagram Style (Slider)</div>
+                          <div className="flex gap-1 overflow-hidden rounded">
+                            {selectedImages.slice(0, 3).map((_, i) => (
+                              <div key={i} className="w-12 h-12 bg-gradient-to-br from-purple-200 to-pink-200 rounded text-xs flex items-center justify-center font-bold">
+                                {i + 1}
+                              </div>
+                            ))}
+                            {selectedImages.length > 3 && (
+                              <div className="w-12 h-12 bg-slate-200 rounded text-xs flex items-center justify-center font-bold">
+                                +{selectedImages.length - 3}
+                              </div>
+                            )}
+                          </div>
                         </button>
+
+                        {/* Pinterest Style */}
                         <button
                           onClick={() => setImageLayout("grid")}
-                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                          className={`w-full p-3 rounded-lg text-left transition-all border-2 ${
                             imageLayout === "grid"
-                              ? "bg-slate-900 text-white shadow-md"
-                              : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                              ? "border-slate-900 bg-slate-50"
+                              : "border-slate-200 bg-white hover:border-slate-300"
                           }`}
                         >
-                          🎨 Pinterest Style
+                          <div className="text-xs font-semibold mb-2">🎨 Pinterest Style (Grid)</div>
+                          <div className="grid grid-cols-2 gap-1 rounded overflow-hidden">
+                            {selectedImages.slice(0, 4).map((_, i) => (
+                              <div key={i} className="w-10 h-10 bg-gradient-to-br from-blue-200 to-cyan-200 rounded text-xs flex items-center justify-center font-bold">
+                                {i + 1}
+                              </div>
+                            ))}
+                          </div>
                         </button>
+
+                        {/* Bounce Style */}
                         <button
                           onClick={() => setImageLayout("bounce")}
-                          className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                          className={`w-full p-3 rounded-lg text-left transition-all border-2 ${
                             imageLayout === "bounce"
-                              ? "bg-slate-900 text-white shadow-md"
-                              : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                              ? "border-slate-900 bg-slate-50"
+                              : "border-slate-200 bg-white hover:border-slate-300"
                           }`}
                         >
-                          ✨ Bounce Style
+                          <div className="text-xs font-semibold mb-2">✨ Bounce Style (Interactive)</div>
+                          <div className="flex gap-1 justify-center items-center h-12">
+                            {selectedImages.slice(0, 5).map((_, i) => (
+                              <div 
+                                key={i} 
+                                className="w-8 h-8 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-lg border-2 border-white shadow-sm text-xs flex items-center justify-center font-bold"
+                                style={{
+                                  transform: `rotate(${i * 10 - 20}deg) translateY(${Math.sin(i) * 4}px)`
+                                }}
+                              >
+                                {i + 1}
+                              </div>
+                            ))}
+                          </div>
                         </button>
                       </div>
                     </div>
