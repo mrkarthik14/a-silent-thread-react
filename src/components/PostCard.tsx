@@ -70,6 +70,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
     api.bookings.getUserBookingForService,
     post.type === "service" && currentUser?._id !== post.user?._id ? { serviceId: post._id } : "skip"
   );
+  const shareCount = useQuery(api.share.getShareCount, { postId: post._id });
 
   useEffect(() => {
     if (userHasLiked !== undefined) {
@@ -482,10 +483,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
+                className="h-8 gap-2 hover:bg-white/60 hover:shadow-sm active:scale-95 transition-all duration-150"
                 onClick={() => setShareDialogOpen(true)}
               >
                 <Share2 className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <span className="text-xs text-slate-900">{shareCount || 0}</span>
               </Button>
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (

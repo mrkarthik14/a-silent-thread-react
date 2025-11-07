@@ -30,6 +30,10 @@ export const sharePost = mutation({
       message: args.message,
     });
 
+    await ctx.db.patch(args.postId, {
+      shares: post.shares + 1,
+    });
+
     return { success: true };
   },
 });
@@ -53,5 +57,16 @@ export const getSharedPosts = query({
         return { ...share, post: post ? { ...post, user: postUser } : null };
       })
     );
+  },
+});
+
+export const getShareCount = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const shares = await ctx.db
+      .query("sharedPosts")
+      .withIndex("by_post", (q) => q.eq("postId", args.postId))
+      .collect();
+    return shares.length;
   },
 });

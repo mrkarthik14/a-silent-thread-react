@@ -55,6 +55,7 @@ const schema = defineSchema(
       parentId: v.optional(v.id("posts")),
       likes: v.number(),
       replies: v.number(),
+      shares: v.number(),
       mentions: v.optional(v.array(v.object({
         type: v.union(v.literal("user"), v.literal("post")),
         id: v.string(),

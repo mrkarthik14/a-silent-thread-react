@@ -63,6 +63,7 @@ export const create = mutation({
       serviceDetails: args.serviceDetails,
       likes: 0,
       replies: 0,
+      shares: 0,
       mentions: mentions.length > 0 ? mentions : undefined,
     });
   },
@@ -149,6 +150,7 @@ export const reply = mutation({
       parentId: args.postId,
       likes: 0,
       replies: 0,
+      shares: 0,
     });
   },
 });
