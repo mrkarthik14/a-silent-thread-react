@@ -471,11 +471,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               </div>
             )}
             
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 flex-wrap">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-3 gap-2 hover:bg-red-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold disabled:opacity-50"
+                className="h-8 px-2 sm:px-3 gap-1.5 sm:gap-2 hover:bg-red-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold disabled:opacity-50 text-xs sm:text-sm"
                 onClick={handleLike}
                 disabled={loadingAction === "like"}
                 title={isLiked ? "Unlike" : "Like"}
@@ -501,7 +501,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-3 gap-2 hover:bg-blue-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold"
+                className="h-8 px-2 sm:px-3 gap-1.5 sm:gap-2 hover:bg-blue-100/50 active:scale-95 transition-all duration-150 rounded-lg font-semibold text-xs sm:text-sm"
                 onClick={() => setShowComments(!showComments)}
                 title={showComments ? "Hide comments" : "Show comments"}
               >
@@ -520,7 +520,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-3 gap-2 hover:bg-purple-100/50 hover:shadow-sm active:scale-95 transition-all duration-150 rounded-lg font-semibold disabled:opacity-50"
+                className="h-8 px-2 sm:px-3 gap-1.5 sm:gap-2 hover:bg-purple-100/50 hover:shadow-sm active:scale-95 transition-all duration-150 rounded-lg font-semibold disabled:opacity-50 text-xs sm:text-sm"
                 onClick={() => setShareDialogOpen(true)}
                 disabled={loadingAction === "share"}
                 title="Share post"
