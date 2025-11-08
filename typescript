@@ -1,0 +1,11 @@
+const handleLike = async () => {
+  try {
+    setIsLiked(!isLiked);  // Optimistic update
+    await likePostMutation({ postId: post._id });
+    onLike?.();
+  } catch (error) {
+    setIsLiked(!isLiked);  // Revert on error
+    toast.error("Failed to update like");
+    console.error("Like error:", error);
+  }
+};
