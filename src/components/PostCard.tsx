@@ -359,12 +359,25 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
             </div>
             
             <p className="text-sm mb-3 leading-relaxed text-slate-800">
-              {post.content.split(/(&[a-zA-Z0-9_-]+)/g).map((part, idx) => {
-                if (part.startsWith("&")) {
+              {post.content.split(/(@[a-zA-Z0-9_-]+|&[a-zA-Z0-9_-]+)/g).map((part, idx) => {
+                if (part.startsWith("@") || part.startsWith("&")) {
+                  const mentionName = part.slice(1);
                   return (
-                    <span key={idx} className="bg-gradient-to-r from-purple-200 to-pink-200 text-purple-900 font-semibold px-1.5 py-0.5 rounded-md inline-block mx-0.5 cursor-pointer hover:shadow-md transition-shadow">
+                    <motion.span 
+                      key={idx} 
+                      className="bg-gradient-to-r from-purple-200 to-pink-200 text-purple-900 font-semibold px-1.5 py-0.5 rounded-md inline-block mx-0.5 cursor-pointer hover:shadow-md hover:scale-105 transition-all"
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() => {
+                        // Search for user with this mention name
+                        const mentionedUser = post.mentions?.find(m => m.name.toLowerCase() === mentionName.toLowerCase());
+                        if (mentionedUser) {
+                          navigate(`/profile/${mentionedUser.id}`);
+                        }
+                      }}
+                      title={`Mentioned: ${mentionName}`}
+                    >
                       {part}
-                    </span>
+                    </motion.span>
                   );
                 }
                 return part;

@@ -9,17 +9,28 @@ export const generateUploadUrl = mutation({
   },
 });
 
-const parseMentions = (content: string) => {
+const parseMentions = async (ctx: any, content: string) => {
   const mentions: Array<{ type: "user" | "post"; id: string; name: string }> = [];
-  const mentionRegex = /&([a-zA-Z0-9_-]+)/g;
+  const mentionRegex = /@([a-zA-Z0-9_-]+)|&([a-zA-Z0-9_-]+)/g;
   let match;
   
   while ((match = mentionRegex.exec(content)) !== null) {
-    mentions.push({
-      type: "user",
-      id: match[1],
-      name: match[1],
-    });
+    const mentionName = match[1] || match[2];
+    
+    // Search for user by name or email
+    const allUsers = await ctx.db.query("users").collect();
+    const mentionedUser = allUsers.find((u: any) => 
+      u.name?.toLowerCase() === mentionName.toLowerCase() || 
+      u.email?.toLowerCase() === mentionName.toLowerCase()
+    );
+    
+    if (mentionedUser) {
+      mentions.push({
+        type: "user",
+        id: mentionedUser._id,
+        name: mentionedUser.name || mentionName,
+      });
+    }
   }
   
   return mentions;
@@ -48,9 +59,9 @@ export const create = mutation({
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
 
-    const mentions = parseMentions(args.content);
+    const mentions = await parseMentions(ctx, args.content);
 
-    return await ctx.db.insert("posts", {
+    const postId = await ctx.db.insert("posts", {
       userId: user._id,
       content: args.content,
       image: args.image,
@@ -66,6 +77,21 @@ export const create = mutation({
       shares: 0,
       mentions: mentions.length > 0 ? mentions : undefined,
     });
+
+    // Send notifications to mentioned users
+    for (const mention of mentions) {
+      if (mention.type === "user") {
+        await ctx.db.insert("notifications", {
+          userId: mention.id as any,
+          type: "mention",
+          content: `${user.name || "Someone"} mentioned you in a post`,
+          read: false,
+          relatedId: postId.toString(),
+        });
+      }
+    }
+
+    return postId;
   },
 });
 
