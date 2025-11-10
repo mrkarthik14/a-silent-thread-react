@@ -344,7 +344,7 @@ export default function Profile() {
                     </Button>
                     <Button
                       onClick={handleMessage}
-                      className="rounded-xl bg-blue-500 hover:bg-blue-600 active:scale-95 transition-all duration-150"
+                      className="rounded-xl bg-blue-200 hover:bg-blue-300 text-blue-900 active:scale-95 transition-all duration-150"
                     >
                       <MessageCircle className="h-4 w-4 mr-2" strokeWidth={1.5} />
                       Message
