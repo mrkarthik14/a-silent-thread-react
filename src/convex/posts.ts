@@ -116,6 +116,80 @@ export const listPaginated = query({
   },
 });
 
+export const listByFollowing = query({
+  args: {
+    paginationOpts: v.object({
+      numItems: v.number(),
+      cursor: v.union(v.string(), v.null()),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return { page: [], isDone: true, continueCursor: null };
+
+    // Get users that current user is following
+    const follows = await ctx.db
+      .query("follows")
+      .withIndex("by_follower", (q) => q.eq("followerId", user._id))
+      .collect();
+
+    const followingIds = follows.map((f) => f.followingId);
+
+    // Get posts from following users
+    const result = await ctx.db
+      .query("posts")
+      .filter((q) => q.or(...followingIds.map((id) => q.eq(q.field("userId"), id))))
+      .order("desc")
+      .paginate(args.paginationOpts);
+
+    const postsWithUsers = await Promise.all(
+      result.page.map(async (post) => {
+        const postUser = await ctx.db.get(post.userId);
+        return { ...post, user: postUser };
+      })
+    );
+
+    return {
+      page: postsWithUsers,
+      isDone: result.isDone,
+      continueCursor: result.continueCursor,
+    };
+  },
+});
+
+export const listUserListings = query({
+  args: {
+    paginationOpts: v.object({
+      numItems: v.number(),
+      cursor: v.union(v.string(), v.null()),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return { page: [], isDone: true, continueCursor: null };
+
+    const result = await ctx.db
+      .query("posts")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .filter((q) => q.eq(q.field("type"), "service"))
+      .order("desc")
+      .paginate(args.paginationOpts);
+
+    const postsWithUsers = await Promise.all(
+      result.page.map(async (post) => {
+        const postUser = await ctx.db.get(post.userId);
+        return { ...post, user: postUser };
+      })
+    );
+
+    return {
+      page: postsWithUsers,
+      isDone: result.isDone,
+      continueCursor: result.continueCursor,
+    };
+  },
+});
+
 export const getById = query({
   args: { id: v.id("posts") },
   handler: async (ctx, args) => {

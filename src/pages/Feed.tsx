@@ -22,6 +22,7 @@ export default function Feed() {
   const [searchType, setSearchType] = useState<"all" | "users" | "posts" | "listings">("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "following" | "listings">("all");
   const [paginationOpts, setPaginationOpts] = useState({ numItems: 10, cursor: null as string | null });
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -52,7 +53,18 @@ export default function Feed() {
   // Track presence
   usePresence();
   
-  const paginatedPosts = useQuery(api.posts.listPaginated, { paginationOpts });
+  // Reset pagination when filter changes
+  useEffect(() => {
+    setAllPosts([]);
+    setPaginationOpts({ numItems: 10, cursor: null });
+  }, [filterType]);
+  
+  const paginatedPosts = useQuery(
+    filterType === "following" ? api.posts.listByFollowing : 
+    filterType === "listings" ? api.posts.listUserListings :
+    api.posts.listPaginated,
+    { paginationOpts }
+  );
   const likePost = useMutation(api.posts.like);
   
   const searchResults = useQuery(api.search.globalSearch, {
@@ -149,7 +161,7 @@ export default function Feed() {
             animate={{ y: 0, opacity: 1 }}
             className="mb-6 sticky top-0 z-10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-slate-700"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900 dark:text-slate-100" strokeWidth={1.5} />
                 <Input
@@ -173,6 +185,40 @@ export default function Feed() {
                 ) : (
                   <Sun className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
                 )}
+              </Button>
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                onClick={() => setFilterType("all")}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  filterType === "all"
+                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                    : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+                }`}
+              >
+                All Posts
+              </Button>
+              <Button
+                onClick={() => setFilterType("following")}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  filterType === "following"
+                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                    : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+                }`}
+              >
+                Following
+              </Button>
+              <Button
+                onClick={() => setFilterType("listings")}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  filterType === "listings"
+                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                    : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+                }`}
+              >
+                Your Listings
               </Button>
             </div>
           </motion.div>
