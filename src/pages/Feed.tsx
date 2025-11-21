@@ -159,7 +159,13 @@ export default function Feed() {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-6 sticky top-0 z-10 bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl saturate-150 rounded-2xl p-4 shadow-xl border border-white/40 dark:border-white/10 ring-1 ring-white/20 dark:ring-white/5"
+            whileHover={{ 
+              scale: 1.01,
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+              borderColor: "rgba(255, 255, 255, 0.6)"
+            }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="mb-6 sticky top-0 z-10 bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl saturate-150 rounded-2xl p-4 shadow-xl border border-white/40 dark:border-white/10 ring-1 ring-white/20 dark:ring-white/5 transition-colors"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="relative flex-1">
