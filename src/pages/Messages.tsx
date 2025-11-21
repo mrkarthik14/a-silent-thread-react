@@ -310,10 +310,19 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 transition-colors duration-500">
-      <Sidebar />
+    <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-300/30 dark:bg-purple-900/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 dark:bg-blue-900/20 blur-[120px]" />
+        <div className="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full bg-pink-300/30 dark:bg-pink-900/20 blur-[120px]" />
+      </div>
+
+      {/* Glass Overlay & Content */}
+      <div className="relative z-10 flex w-full h-full bg-white/40 dark:bg-slate-950/40 backdrop-blur-3xl saturate-150 transition-colors duration-300">
+        <Sidebar />
       
-      <div className="flex-1 flex ml-0 md:ml-20">
+        <div className="flex-1 flex ml-0 md:ml-20">
         <div className="w-80 border-r border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm transition-colors duration-500">
           <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between transition-colors duration-500">
             <h2 className="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>
@@ -681,6 +690,7 @@ export default function Messages() {
       </div>
 
       <UserSearch open={searchDialogOpen} onOpenChange={setSearchDialogOpen} />
+      </div>
     </div>
   );
 }
