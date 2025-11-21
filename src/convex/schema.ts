@@ -31,6 +31,7 @@ const schema = defineSchema(
       lastSeen: v.optional(v.number()),
       coverImage: v.optional(v.string()),
       interests: v.optional(v.array(v.string())),
+      theme: v.optional(v.string()),
     }).index("email", ["email"]),
 
     posts: defineTable({
@@ -52,6 +53,7 @@ const schema = defineSchema(
         category: v.string(),
         location: v.optional(v.string()),
       })),
+      collaborators: v.optional(v.array(v.id("users"))),
       parentId: v.optional(v.id("posts")),
       likes: v.number(),
       replies: v.number(),
