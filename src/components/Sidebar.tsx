@@ -1,20 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { motion } from "framer-motion";
-import { Bell, Bookmark, Home, LogOut, MessageSquare, Package, User, Plus, Settings, Search } from "lucide-react";
-import { useNavigate } from "react-router";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  LayoutGrid, 
+  MessageSquare, 
+  Calendar, 
+  Settings, 
+  LogOut, 
+  Search, 
+  PlusCircle, 
+  Bell, 
+  User,
+  Briefcase,
+  Home,
+  Bookmark
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { toast } from "sonner";
-import { LoadingLogo } from "@/components/LoadingLogo";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { MentionAutocomplete } from "@/components/MentionAutocomplete";
-import { ImageCropper } from "@/components/ImageCropper";
+import { CreatePostDialog } from "@/components/CreatePostDialog";
+import { UserSearch } from "@/components/UserSearch";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // ============================================================================
 // STATE AND CONFIGURATION
@@ -34,6 +39,7 @@ const MENU_ITEMS = [
 
 export function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signOut, user } = useAuth();
 
   // ========================================================================
@@ -44,153 +50,12 @@ export function Sidebar() {
   // ========================================================================
   // STATE: Dialogs
   // ========================================================================
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createPostOpen, setCreatePostOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
-  // ========================================================================
-  // STATE: Post Creation Form
-  // ========================================================================
-  const [postContent, setPostContent] = useState("");
-  const [postType, setPostType] = useState<"post" | "service">("post");
-  const [serviceTitle, setServiceTitle] = useState("");
-  const [servicePrice, setServicePrice] = useState("");
-  const [serviceCategory, setServiceCategory] = useState("");
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [imageLayout, setImageLayout] = useState<"slider" | "grid" | "bounce" | null>(null);
-  const [cropperOpen, setCropperOpen] = useState(false);
-  const [cropperImage, setCropperImage] = useState<string>("");
-  const [cropperIndex, setCropperIndex] = useState<number>(-1);
-  const [imageDimensions, setImageDimensions] = useState<Array<{ width: number; height: number }>>([]);
-  const [imageCaptions, setImageCaptions] = useState<string[]>([]);
-
-  // ========================================================================
-  // MUTATIONS
-  // ========================================================================
-  const createPost = useMutation(api.posts.create);
-  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
-
-  // ========================================================================
-  // HANDLERS: File Selection
-  // ========================================================================
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (selectedImages.length + files.length > 20) {
-      toast.error("Maximum 20 images allowed");
-      return;
-    }
-    
-    setSelectedImages([...selectedImages, ...files]);
-    // Initialize captions for new images
-    const newCaptions = [...imageCaptions];
-    files.forEach(() => {
-      newCaptions.push("");
-    });
-    setImageCaptions(newCaptions);
-  };
-
-  const handleCropComplete = (croppedImage: string) => {
-    // Not used in simplified flow
-  };
-
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (selectedVideos.length + files.length > 10) {
-      toast.error("Maximum 10 videos allowed");
-      return;
-    }
-    setSelectedVideos([...selectedVideos, ...files]);
-  };
-
-  // ========================================================================
-  // HANDLERS: Post Creation
-  // ========================================================================
-  const handleCreatePost = async () => {
-    if (!postContent.trim()) {
-      toast.error("Please add content");
-      return;
-    }
-
-    if (postType === "service" && (!serviceTitle || !servicePrice || !serviceCategory)) {
-      toast.error("Please fill all service details");
-      return;
-    }
-
-    // Validate image layout selection if multiple images
-    if (selectedImages.length > 1 && !imageLayout) {
-      toast.error("Please select a layout style for multiple images");
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      // Upload images in parallel
-      const imageUploadPromises = selectedImages.map(async (image) => {
-        const uploadUrl = await generateUploadUrl();
-        const result = await fetch(uploadUrl, {
-          method: "POST",
-          headers: { "Content-Type": image.type },
-          body: image,
-        });
-        const { storageId } = await result.json();
-        return storageId;
-      });
-      const uploadedImageUrls = await Promise.all(imageUploadPromises);
-
-      // Upload videos in parallel
-      const videoUploadPromises = selectedVideos.map(async (video) => {
-        const uploadUrl = await generateUploadUrl();
-        const result = await fetch(uploadUrl, {
-          method: "POST",
-          headers: { "Content-Type": video.type },
-          body: video,
-        });
-        const { storageId } = await result.json();
-        return storageId;
-      });
-      const uploadedVideoUrls = await Promise.all(videoUploadPromises);
-
-      // Create post with all data
-      await createPost({
-        content: postContent,
-        type: postType,
-        images: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
-        imageCaptions: imageCaptions.filter(c => c.trim()).length > 0 ? imageCaptions : undefined,
-        videos: uploadedVideoUrls.length > 0 ? uploadedVideoUrls : undefined,
-        imageLayout: imageLayout && ["slider", "grid", "bounce"].includes(imageLayout) ? imageLayout : undefined,
-        imageDimensions: imageDimensions.length > 0 ? imageDimensions : undefined,
-        serviceDetails: postType === "service" ? {
-          title: serviceTitle,
-          price: parseFloat(servicePrice),
-          category: serviceCategory,
-        } : undefined,
-      });
-
-      toast.success(postType === "service" ? "Service created!" : "Post created!");
-      resetPostForm();
-      setCreateDialogOpen(false);
-    } catch (error) {
-      console.error("Post creation error:", error);
-      toast.error("Failed to create post");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const resetPostForm = () => {
-    setPostContent("");
-    setServiceTitle("");
-    setServicePrice("");
-    setServiceCategory("");
-    setSelectedImages([]);
-    setSelectedVideos([]);
-    setPostType("post");
-    setImageLayout(null);
-    setImageDimensions([]);
-    setImageCaptions([]);
-    setCropperOpen(false);
-    setCropperImage("");
-    setCropperIndex(-1);
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
   };
 
   // ========================================================================
@@ -198,385 +63,181 @@ export function Sidebar() {
   // ========================================================================
   return (
     <>
-      <TooltipProvider>
-        <motion.div
-          className="fixed left-0 top-0 z-50 h-screen bg-white/50 backdrop-blur-sm border-r border-slate-200 p-4 flex flex-col hidden md:flex"
-          initial={{ width: 80 }}
-          animate={{ width: isCollapsed ? 80 : 256 }}
-          onMouseEnter={() => setIsCollapsed(false)}
-          onMouseLeave={() => setIsCollapsed(true)}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-        >
-          {/* ================================================================
-              HEADER: Logo
-              ================================================================ */}
-          <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="flex items-center gap-2">
-              <img 
-                src="https://harmless-tapir-303.convex.cloud/api/storage/79ab2a66-3ee1-4b0c-a597-07fc7f8dfb0d"
-                alt="A Silent Thread Logo"
-                className="w-10 h-10 rounded-xl shadow-sm object-cover"
-              />
+      <motion.div
+        initial={{ width: 80 }}
+        animate={{ width: isCollapsed ? 80 : 256 }}
+        onMouseEnter={() => setIsCollapsed(false)}
+        onMouseLeave={() => setIsCollapsed(true)}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="h-screen sticky top-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#0d0d0f]/80 backdrop-blur-xl shadow-lg dark:shadow-[0_0_40px_rgba(0,0,0,0.5)] transition-colors duration-500"
+      >
+        <div className="p-6 flex items-center gap-3 overflow-hidden">
+          <div className="h-8 w-8 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 rounded-xl flex-shrink-0 shadow-lg" />
+          <AnimatePresence>
+            {!isCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "auto" }}
+                exit={{ opacity: 0, width: 0 }}
+                className="flex flex-col overflow-hidden whitespace-nowrap"
+              >
+                <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white/90">
+                  A Silent Thread
+                </span>
+                <span className="text-[10px] font-medium text-slate-500 dark:text-white/50 tracking-widest uppercase">
+                  Connected experiences
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="flex-1 px-3 py-4 space-y-2 overflow-y-auto scrollbar-hide">
+          {/* Actions */}
+          <div className="mb-6 space-y-2">
+            <Button
+              onClick={() => setSearchOpen(true)}
+              variant="ghost"
+              className={`w-full justify-start gap-3 rounded-xl transition-all duration-300 group ${
+                isCollapsed ? "px-2" : "px-4"
+              } hover:bg-slate-100 dark:hover:bg-white/10 dark:text-white/80 dark:hover:text-white`}
+            >
+              <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10 transition-colors shadow-sm dark:shadow-none dark:border dark:border-white/5">
+                <Search className="h-5 w-5 text-slate-700 dark:text-white/80" strokeWidth={1.5} />
+              </div>
+              <AnimatePresence>
                 {!isCollapsed && (
-                  <motion.div
+                  <motion.span
                     initial={{ opacity: 0, width: 0 }}
                     animate={{ opacity: 1, width: "auto" }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="overflow-hidden"
+                    exit={{ opacity: 0, width: 0 }}
+                    className="font-medium overflow-hidden whitespace-nowrap"
                   >
-                    <h1 className="font-bold text-lg tracking-tight text-slate-900 whitespace-nowrap">A Silent Thread</h1>
-                    <p className="text-xs text-slate-600 whitespace-nowrap">Connected experiences</p>
-                  </motion.div>
+                    Search Users
+                  </motion.span>
                 )}
-            </div>
-          </div>
+              </AnimatePresence>
+            </Button>
 
-          {/* ================================================================
-              NAVIGATION: Menu Items
-              ================================================================ */}
-          <nav className="flex-1 space-y-2">
-            {MENU_ITEMS.map((item, index) => (
-              <motion.div
-                key={item.path}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className={`w-full gap-3 hover:bg-purple-100/50 rounded-xl text-black font-bold ${isCollapsed ? "justify-center" : "justify-start"}`}
-                      onClick={() => navigate(item.path)}
-                      title={item.label}
-                    >
-                      <item.icon className="h-5 w-5 text-black flex-shrink-0" strokeWidth={2.5} />
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : "auto" }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden whitespace-nowrap font-bold text-black"
-                      >
-                        {item.label}
-                      </motion.span>
-                    </Button>
-                  </TooltipTrigger>
-                  {isCollapsed && (
-                    <TooltipContent side="right" className="rounded-xl">
-                      {item.label}
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </motion.div>
-            ))}
-
-            {/* ============================================================
-                ACTION: Create Post
-                ============================================================ */}
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: (MENU_ITEMS.length) * 0.05 }}
-            >
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className={`w-full gap-3 rounded-xl text-slate-900 font-semibold hover:bg-emerald-100/50 hover:shadow-sm active:scale-95 transition-all duration-150 ${isCollapsed ? "justify-center" : "justify-start"}`}
-                    onClick={() => setCreateDialogOpen(true)}
-                    title="Create Post"
-                  >
-                    <div className="h-5 w-5 bg-black rounded flex items-center justify-center flex-shrink-0">
-                      <Plus className="h-4 w-4 text-white" strokeWidth={2.5} />
-                    </div>
-                    {!isCollapsed && (
-                      <span className="text-sm font-medium whitespace-nowrap">
-                        Create Post
-                      </span>
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                {isCollapsed && (
-                  <TooltipContent side="right" className="rounded-xl">
-                    Create Post
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </motion.div>
-          </nav>
-
-          {/* ================================================================
-              FOOTER: User Info & Sign Out
-              ================================================================ */}
-          {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="border-t border-slate-200 pt-4 space-y-2"
-            >
-              <motion.div
-                className="px-3 py-2 bg-white/50 rounded-xl"
-                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
-                transition={{ duration: 0.2 }}
-              >
-                <p className="text-sm font-medium truncate text-slate-900">{user?.name || "User"}</p>
-                <p className="text-xs text-slate-600 truncate">{user?.email}</p>
-              </motion.div>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 rounded-xl text-slate-900 hover:bg-transparent transition-all duration-150 active:scale-95"
-                onClick={() => signOut()}
-              >
-                <motion.div 
-                  className="h-10 w-10 rounded-lg flex items-center justify-center bg-transparent hover:bg-gradient-to-br hover:from-red-200 hover:to-pink-200 transition-colors duration-200 flex-shrink-0"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <LogOut className="h-6 w-6 text-slate-900 hover:text-slate-700 transition-colors" strokeWidth={2.5} />
-                </motion.div>
-                <span className="text-sm font-medium whitespace-nowrap">Sign Out</span>
-              </Button>
-            </motion.div>
-          )}
-        </motion.div>
-      </TooltipProvider>
-
-      {/* ==================================================================
-          DIALOG: Create Post
-          ================================================================== */}
-      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-        <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
-          <DialogHeader>
-            <DialogTitle>Posts, Listings & Places</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            {/* Post Type Selection */}
-            <div className="flex gap-2">
-              <Button
-                variant={postType === "post" ? "default" : "outline"}
-                onClick={() => setPostType("post")}
-                className="flex-1 rounded-xl"
-              >
-                Post
-              </Button>
-              <Button
-                variant={postType === "service" ? "default" : "outline"}
-                onClick={() => setPostType("service")}
-                className="flex-1 rounded-xl"
-              >
-                Service/Listing
-              </Button>
-            </div>
-
-            {/* Content Input */}
-            <div>
-              <Label>Content</Label>
-              <div className="relative">
-                <Textarea
-                  value={postContent}
-                  onChange={(e) => setPostContent(e.target.value)}
-                  placeholder="What's on your mind? (Use & to mention users or posts)"
-                  className="rounded-xl resize-none"
-                  rows={4}
-                />
-                <MentionAutocomplete
-                  content={postContent}
-                  onMentionSelect={setPostContent}
-                  isOpen={createDialogOpen}
-                />
-              </div>
-            </div>
-
-            {/* Service-Specific Fields */}
-            {postType === "service" && (
-              <>
-                <div>
-                  <Label>Title</Label>
-                  <Input
-                    value={serviceTitle}
-                    onChange={(e) => setServiceTitle(e.target.value)}
-                    placeholder="Service title"
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Category</Label>
-                    <Input
-                      value={serviceCategory}
-                      onChange={(e) => setServiceCategory(e.target.value)}
-                      placeholder="e.g., Electronics"
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <Label>Price per day (₹)</Label>
-                    <Input
-                      type="number"
-                      value={servicePrice}
-                      onChange={(e) => setServicePrice(e.target.value)}
-                      placeholder="50"
-                      className="rounded-xl"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Image Upload */}
-            <div>
-              <Label>Images (Max 20)</Label>
-              <Input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageSelect}
-                className="rounded-xl"
-              />
-              {selectedImages.length > 0 && (
-                <>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {selectedImages.length} image(s) selected
-                  </p>
-                  {/* Image Captions */}
-                  <div className="mt-3 space-y-2">
-                    <Label className="text-xs font-semibold">Image Captions (Optional)</Label>
-                    {selectedImages.map((_, idx) => (
-                      <Input
-                        key={idx}
-                        type="text"
-                        placeholder={`Caption for image ${idx + 1}`}
-                        value={imageCaptions[idx] || ""}
-                        onChange={(e) => {
-                          const newCaptions = [...imageCaptions];
-                          newCaptions[idx] = e.target.value;
-                          setImageCaptions(newCaptions);
-                        }}
-                        className="rounded-lg text-sm"
-                      />
-                    ))}
-                  </div>
-                  {selectedImages.length > 1 && (
-                    <div className="mt-4 space-y-3">
-                      <Label className="text-xs font-semibold">Layout Style Preview</Label>
-                      <div className="space-y-2">
-                        {/* Instagram Style */}
-                        <button
-                          onClick={() => setImageLayout("slider")}
-                          className={`w-full p-3 rounded-lg text-left transition-all border-2 ${
-                            imageLayout === "slider"
-                              ? "border-slate-900 bg-slate-50"
-                              : "border-slate-200 bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <div className="text-xs font-semibold mb-2">📱 Instagram Style (Slider)</div>
-                          <div className="flex gap-1 overflow-hidden rounded">
-                            {selectedImages.slice(0, 3).map((_, i) => (
-                              <div key={i} className="w-12 h-12 bg-gradient-to-br from-purple-200 to-pink-200 rounded text-xs flex items-center justify-center font-bold">
-                                {i + 1}
-                              </div>
-                            ))}
-                            {selectedImages.length > 3 && (
-                              <div className="w-12 h-12 bg-slate-200 rounded text-xs flex items-center justify-center font-bold">
-                                +{selectedImages.length - 3}
-                              </div>
-                            )}
-                          </div>
-                        </button>
-
-                        {/* Pinterest Style */}
-                        <button
-                          onClick={() => setImageLayout("grid")}
-                          className={`w-full p-3 rounded-lg text-left transition-all border-2 ${
-                            imageLayout === "grid"
-                              ? "border-slate-900 bg-slate-50"
-                              : "border-slate-200 bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <div className="text-xs font-semibold mb-2">🎨 Pinterest Style (Grid)</div>
-                          <div className="grid grid-cols-2 gap-1 rounded overflow-hidden">
-                            {selectedImages.slice(0, 4).map((_, i) => (
-                              <div key={i} className="w-10 h-10 bg-gradient-to-br from-blue-200 to-cyan-200 rounded text-xs flex items-center justify-center font-bold">
-                                {i + 1}
-                              </div>
-                            ))}
-                          </div>
-                        </button>
-
-                        {/* Bounce Style */}
-                        <button
-                          onClick={() => setImageLayout("bounce")}
-                          className={`w-full p-3 rounded-lg text-left transition-all border-2 ${
-                            imageLayout === "bounce"
-                              ? "border-slate-900 bg-slate-50"
-                              : "border-slate-200 bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <div className="text-xs font-semibold mb-2">✨ Bounce Style (Interactive)</div>
-                          <div className="flex gap-1 justify-center items-center h-12">
-                            {selectedImages.slice(0, 5).map((_, i) => (
-                              <div 
-                                key={i} 
-                                className="w-8 h-8 bg-gradient-to-br from-emerald-200 to-teal-200 rounded-lg border-2 border-white shadow-sm text-xs flex items-center justify-center font-bold"
-                                style={{
-                                  transform: `rotate(${i * 10 - 20}deg) translateY(${Math.sin(i) * 4}px)`
-                                }}
-                              >
-                                {i + 1}
-                              </div>
-                            ))}
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Video Upload */}
-            <div>
-              <Label>Videos (Max 10)</Label>
-              <Input
-                type="file"
-                accept="video/*"
-                multiple
-                onChange={handleVideoSelect}
-                className="rounded-xl"
-              />
-              {selectedVideos.length > 0 && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {selectedVideos.length} video(s) selected
-                </p>
-              )}
-            </div>
-
-            {/* Submit Button */}
             <Button
-              onClick={handleCreatePost}
-              disabled={isUploading}
-              className="w-full rounded-xl hover:bg-slate-100 active:scale-95 transition-all duration-150 disabled:opacity-70"
+              onClick={() => setCreatePostOpen(true)}
+              className={`w-full justify-start gap-3 rounded-xl transition-all duration-300 group ${
+                isCollapsed ? "px-2" : "px-4"
+              } bg-slate-900 hover:bg-slate-800 text-white dark:bg-white/10 dark:hover:bg-white/20 dark:border dark:border-white/10 dark:backdrop-blur-md shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.05)]`}
             >
-              {isUploading ? (
-                <LoadingLogo size="sm" variant="handshake" />
-              ) : (
-                "Create"
-              )}
+              <div className="p-2 rounded-lg bg-white/10 transition-colors">
+                <PlusCircle className="h-5 w-5" strokeWidth={1.5} />
+              </div>
+              <AnimatePresence>
+                {!isCollapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="font-medium overflow-hidden whitespace-nowrap"
+                  >
+                    Create Post
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Image Cropper Dialog */}
-      <ImageCropper
-        open={cropperOpen}
-        onOpenChange={setCropperOpen}
-        imageSrc={cropperImage}
-        onCropComplete={handleCropComplete}
-      />
+          <div className="h-px bg-slate-200 dark:bg-white/10 mx-2 my-4" />
+
+          {/* Menu Items */}
+          <nav className="space-y-1">
+            {MENU_ITEMS.map((item, index) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <motion.div
+                  key={item.path}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Button
+                    onClick={() => navigate(item.path)}
+                    variant="ghost"
+                    className={`w-full justify-start gap-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${
+                      isCollapsed ? "px-2" : "px-4"
+                    } ${
+                      isActive
+                        ? "bg-slate-100 text-slate-900 dark:bg-white/10 dark:text-white dark:border dark:border-white/10 shadow-sm"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 bg-slate-100 dark:bg-white/5 border-l-4 border-slate-900 dark:border-white"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <div className={`relative z-10 p-1 ${isActive ? "text-slate-900 dark:text-white" : ""}`}>
+                      <item.icon className={`h-5 w-5 ${isActive ? "stroke-[2px]" : "stroke-[1.5px]"}`} />
+                    </div>
+                    <AnimatePresence>
+                      {!isCollapsed && (
+                        <motion.span
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: "auto" }}
+                          exit={{ opacity: 0, width: 0 }}
+                          className={`font-medium overflow-hidden whitespace-nowrap relative z-10 ${
+                            isActive ? "font-semibold" : ""
+                          }`}
+                        >
+                          {item.label}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </Button>
+                </motion.div>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-transparent">
+          <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
+            <Avatar className="h-9 w-9 border border-slate-200 dark:border-white/10 shadow-sm">
+              <AvatarImage src={user?.image} />
+              <AvatarFallback className="bg-slate-100 dark:bg-white/10 dark:text-white">
+                {user?.name?.[0] || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <AnimatePresence>
+              {!isCollapsed && (
+                <motion.div
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="flex-1 overflow-hidden"
+                >
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white/90 truncate">
+                    {user?.name}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-white/50 truncate">
+                    {user?.email}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <Button
+              onClick={handleSignOut}
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 dark:text-white/40 dark:hover:text-red-400 dark:hover:bg-red-500/10 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      <CreatePostDialog open={createPostOpen} onOpenChange={setCreatePostOpen} />
+      <UserSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
 }

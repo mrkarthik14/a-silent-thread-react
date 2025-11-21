@@ -2,6 +2,7 @@ import { PostCard } from "@/components/PostCard";
 import { Sidebar } from "@/components/Sidebar";
 import { ThreadLine } from "@/components/ThreadLine";
 import { SuggestedFollowers } from "@/components/SuggestedFollowers";
+import { ThemeTransition } from "@/components/ThemeTransition";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
@@ -149,86 +150,89 @@ export default function Feed() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-700 dark:via-slate-700 dark:to-slate-700 transition-colors duration-500">
+    <div className="flex h-screen bg-slate-50 dark:bg-[#0d0d0f] transition-colors duration-500 overflow-hidden">
+      <ThemeTransition />
       <Sidebar />
       
-      <div className="flex-1 overflow-y-auto feed-scroll bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-700 dark:via-slate-700 dark:to-slate-700 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="flex-1 overflow-y-auto feed-scroll bg-slate-50 dark:bg-[#0d0d0f] transition-colors duration-500 relative">
+        {/* Dark mode ambient background effects */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/5 blur-[120px] dark:bg-white/5" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/5 blur-[120px] dark:bg-white/5" />
+        </div>
+
+        <div className="max-w-7xl mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 relative z-10">
           <div className="hidden lg:block"></div>
           <div className="lg:col-span-2">
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            whileHover={{ 
-              scale: 1.01,
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
-              borderColor: "rgba(255, 255, 255, 0.6)"
-            }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="mb-4 lg:mb-6 sticky top-0 z-10 bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl saturate-150 rounded-xl lg:rounded-2xl p-3 lg:p-4 shadow-xl border border-white/40 dark:border-white/10 ring-1 ring-white/20 dark:ring-white/5 transition-colors"
+            className="mb-4 lg:mb-6 sticky top-0 z-20"
           >
-            <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-slate-100" strokeWidth={1.5} />
-                <Input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search threads, listings, users..."
-                  className="pl-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 h-10 lg:h-11 text-sm lg:text-base"
-                />
+            <div className="glass-panel rounded-2xl p-3 lg:p-4 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-white/20">
+              <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                <div className="relative flex-1 group">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 dark:text-white/50 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" strokeWidth={1.5} />
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search threads, listings, users..."
+                    className="pl-10 rounded-xl border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-slate-900 dark:text-white h-10 lg:h-11 text-sm lg:text-base focus:bg-white dark:focus:bg-white/10 transition-all duration-300 placeholder:text-slate-400 dark:placeholder:text-white/30"
+                  />
+                </div>
+                <Button
+                  onClick={handleDarkModeToggle}
+                  className={`rounded-full p-2 lg:p-2.5 font-semibold transition-all duration-500 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
+                    darkMode
+                      ? "glass-button bg-white/10 text-white border-white/20"
+                      : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border border-yellow-400"
+                  }`}
+                  title={darkMode ? "Light mode" : "Dark mode"}
+                >
+                  {darkMode ? (
+                    <Moon className="h-5 w-5 lg:h-6 lg:w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
+                  ) : (
+                    <Sun className="h-5 w-5 lg:h-6 lg:w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
+                  )}
+                </Button>
               </div>
-              <Button
-                onClick={handleDarkModeToggle}
-                className={`rounded-full p-2 lg:p-2.5 font-semibold transition-all duration-500 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
-                  darkMode
-                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 border border-indigo-500"
-                    : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border border-yellow-400"
-                }`}
-                title={darkMode ? "Light mode" : "Dark mode"}
-              >
-                {darkMode ? (
-                  <Moon className="h-5 w-5 lg:h-6 lg:w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
-                ) : (
-                  <Sun className="h-5 w-5 lg:h-6 lg:w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
-                )}
-              </Button>
-            </div>
 
-            {/* Filter Buttons */}
-            <div className="flex gap-2 flex-wrap">
-              <Button
-                onClick={() => setFilterType("all")}
-                size="sm"
-                className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-200 ${
-                  filterType === "all"
-                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                    : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
-                }`}
-              >
-                All Posts
-              </Button>
-              <Button
-                onClick={() => setFilterType("following")}
-                size="sm"
-                className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-200 ${
-                  filterType === "following"
-                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                    : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
-                }`}
-              >
-                Following
-              </Button>
-              <Button
-                onClick={() => setFilterType("listings")}
-                size="sm"
-                className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-200 ${
-                  filterType === "listings"
-                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                    : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
-                }`}
-              >
-                Your Listings
-              </Button>
+              {/* Filter Buttons */}
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  onClick={() => setFilterType("all")}
+                  size="sm"
+                  className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-300 ${
+                    filterType === "all"
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white"
+                  }`}
+                >
+                  All Posts
+                </Button>
+                <Button
+                  onClick={() => setFilterType("following")}
+                  size="sm"
+                  className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-300 ${
+                    filterType === "following"
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white"
+                  }`}
+                >
+                  Following
+                </Button>
+                <Button
+                  onClick={() => setFilterType("listings")}
+                  size="sm"
+                  className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-300 ${
+                    filterType === "listings"
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white"
+                  }`}
+                >
+                  Your Listings
+                </Button>
+              </div>
             </div>
           </motion.div>
 
@@ -241,7 +245,7 @@ export default function Feed() {
               {/* Users */}
               {searchResults.users && searchResults.users.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white/90 mb-3 flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     Users
                   </h3>
@@ -253,17 +257,17 @@ export default function Feed() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         onClick={() => navigate(`/profile/${user._id}`)}
-                        className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors"
+                        className="flex items-center gap-3 p-3 bg-white dark:bg-white/5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 cursor-pointer transition-colors border border-slate-100 dark:border-white/5"
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={user.image} />
-                          <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
+                          <AvatarFallback className="bg-slate-100 dark:bg-white/10 dark:text-white">
                             {user.name?.[0] || "U"}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="text-sm font-medium text-slate-900">{user.name}</p>
-                          <p className="text-xs text-slate-600">{user.email}</p>
+                          <p className="text-sm font-medium text-slate-900 dark:text-white">{user.name}</p>
+                          <p className="text-xs text-slate-600 dark:text-white/50">{user.email}</p>
                         </div>
                       </motion.div>
                     ))}
@@ -274,7 +278,7 @@ export default function Feed() {
               {/* Posts */}
               {searchResults.posts && searchResults.posts.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white/90 mb-3 flex items-center gap-2">
                     <FileText className="h-4 w-4" />
                     Posts
                   </h3>
@@ -298,7 +302,7 @@ export default function Feed() {
               {/* Listings */}
               {searchResults.listings && searchResults.listings.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white/90 mb-3 flex items-center gap-2">
                     <Package className="h-4 w-4" />
                     Listings
                   </h3>
@@ -331,7 +335,7 @@ export default function Feed() {
                 <div key={post._id} className="relative">
                   {index > 0 && (
                     <div className="absolute -top-2 left-8 w-0.5 h-4">
-                      <ThreadLine color="bg-purple-300" vertical />
+                      <ThreadLine color="bg-slate-200 dark:bg-white/10" vertical />
                     </div>
                   )}
                   <PostCard
