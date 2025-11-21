@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Send, Loader2, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ShareDialogProps {
   open: boolean;
@@ -90,218 +90,318 @@ export function ShareDialog({ open, onOpenChange, postId }: ShareDialogProps) {
     toast.success("Link copied to clipboard");
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl max-w-2xl">
+      <DialogContent className="rounded-2xl max-w-2xl overflow-hidden">
         <DialogHeader>
           <DialogTitle>Share Post</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-xl">
-            <TabsTrigger value="following" className="rounded-lg gap-2">
+          <TabsList className="grid w-full grid-cols-2 rounded-xl mb-4">
+            <TabsTrigger value="following" className="rounded-lg gap-2 transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Users className="h-4 w-4" />
               Following
             </TabsTrigger>
-            <TabsTrigger value="social" className="rounded-lg gap-2">
+            <TabsTrigger value="social" className="rounded-lg gap-2 transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Share2 className="h-4 w-4" />
               Social Media
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="following" className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" strokeWidth={1.5} />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search following..."
-                className="pl-10 rounded-xl"
-              />
-            </div>
+          <AnimatePresence mode="wait">
+            {activeTab === "following" ? (
+              <TabsContent value="following" className="space-y-4 mt-0" asChild>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" strokeWidth={1.5} />
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search following..."
+                      className="pl-10 rounded-xl transition-all focus:ring-2 focus:ring-purple-200"
+                    />
+                  </div>
 
-            <ScrollArea className="h-48 border border-slate-200 rounded-xl p-2">
-              <div className="space-y-2">
-                {followingList && followingList.length > 0 ? (
-                  followingList
-                    .filter((user: any) =>
-                      !searchQuery ||
-                      user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .map((user: any) => (
-                      <motion.div
-                        key={user._id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onClick={() => handleSelectUser(user._id)}
-                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                          selectedUsers.includes(user._id)
-                            ? "bg-purple-100 border border-purple-300"
-                            : "hover:bg-slate-100"
-                        }`}
-                      >
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={user.image} />
-                          <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300">
-                            {user.name?.[0] || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-900">{user.name}</p>
-                          <p className="text-xs text-slate-600 truncate">{user.email}</p>
-                        </div>
-                        {selectedUsers.includes(user._id) && (
-                          <div className="w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">✓</span>
-                          </div>
-                        )}
-                      </motion.div>
-                    ))
-                ) : (
-                  <p className="text-center text-slate-500 py-8">No following users</p>
-                )}
-              </div>
-            </ScrollArea>
-
-            {selectedUsers.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedUsers.map((userId) => {
-                  const user = followingList?.find((u: any) => u._id === userId);
-                  return (
-                    <motion.div
-                      key={userId}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="bg-purple-100 text-purple-900 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2"
+                  <ScrollArea className="h-64 border border-slate-200 rounded-xl p-2 bg-slate-50/50">
+                    <motion.div 
+                      className="space-y-2"
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="show"
                     >
-                      {user?.name || "User"}
-                      <button
-                        onClick={() => handleSelectUser(userId)}
-                        className="hover:text-purple-700"
-                      >
-                        ×
-                      </button>
+                      {followingList && followingList.length > 0 ? (
+                        followingList
+                          .filter((user: any) =>
+                            !searchQuery ||
+                            user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+                          )
+                          .map((user: any) => (
+                            <motion.div
+                              key={user._id}
+                              variants={itemVariants}
+                              onClick={() => handleSelectUser(user._id)}
+                              className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                                selectedUsers.includes(user._id)
+                                  ? "bg-purple-100 border border-purple-300 shadow-sm"
+                                  : "hover:bg-white hover:shadow-sm border border-transparent"
+                              }`}
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                                <AvatarImage src={user.image} />
+                                <AvatarFallback className="bg-gradient-to-br from-pink-300 to-purple-300 text-white">
+                                  {user.name?.[0] || "U"}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-slate-900">{user.name}</p>
+                                <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                              </div>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                selectedUsers.includes(user._id) 
+                                  ? "bg-purple-500 scale-100" 
+                                  : "bg-slate-200 scale-90 opacity-50"
+                              }`}>
+                                {selectedUsers.includes(user._id) && (
+                                  <motion.span 
+                                    initial={{ scale: 0 }} 
+                                    animate={{ scale: 1 }} 
+                                    className="text-white text-xs font-bold"
+                                  >
+                                    ✓
+                                  </motion.span>
+                                )}
+                              </div>
+                            </motion.div>
+                          ))
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="flex flex-col items-center justify-center py-12 text-slate-400"
+                        >
+                          <Users className="h-12 w-12 mb-2 opacity-20" />
+                          <p>No following users found</p>
+                        </motion.div>
+                      )}
                     </motion.div>
-                  );
-                })}
-              </div>
+                  </ScrollArea>
+
+                  <AnimatePresence>
+                    {selectedUsers.length > 0 && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex flex-wrap gap-2 py-2">
+                          {selectedUsers.map((userId) => {
+                            const user = followingList?.find((u: any) => u._id === userId);
+                            return (
+                              <motion.div
+                                key={userId}
+                                layout
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0, opacity: 0 }}
+                                className="bg-purple-100 text-purple-900 pl-3 pr-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 border border-purple-200 shadow-sm"
+                              >
+                                {user?.name || "User"}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSelectUser(userId);
+                                  }}
+                                  className="hover:bg-purple-200 rounded-full p-0.5 transition-colors"
+                                >
+                                  <span className="sr-only">Remove</span>
+                                  ×
+                                </button>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div>
+                    <label className="text-sm font-bold text-slate-700 mb-2 block ml-1">Message (optional)</label>
+                    <Textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Add a personal note..."
+                      className="rounded-xl resize-none focus:ring-2 focus:ring-purple-200 transition-all"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={handleShare}
+                      disabled={isSharing || selectedUsers.length === 0}
+                      className="flex-1 rounded-xl gap-2 bg-slate-900 hover:bg-slate-800 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      {isSharing ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Sharing...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4" />
+                          Share Post
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => onOpenChange(false)}
+                      variant="outline"
+                      className="flex-1 rounded-xl hover:bg-slate-100 transition-all"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </motion.div>
+              </TabsContent>
+            ) : (
+              <TabsContent value="social" className="space-y-4 mt-0" asChild>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.div 
+                    className="grid grid-cols-2 gap-3"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                  >
+                    <motion.button
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSocialShare("whatsapp")}
+                      className="flex items-center justify-start gap-3 p-4 rounded-2xl bg-green-50 hover:bg-green-100 border border-green-100 hover:border-green-200 transition-all group"
+                    >
+                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                        <span className="text-white text-lg font-bold">W</span>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-bold text-green-900">WhatsApp</span>
+                        <span className="text-xs text-green-700/70">Share to contacts</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSocialShare("facebook")}
+                      className="flex items-center justify-start gap-3 p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 transition-all group"
+                    >
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                        <span className="text-white text-lg font-bold">f</span>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-bold text-blue-900">Facebook</span>
+                        <span className="text-xs text-blue-700/70">Share to feed</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSocialShare("twitter")}
+                      className="flex items-center justify-start gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all group"
+                    >
+                      <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                        <span className="text-white text-lg font-bold">𝕏</span>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-bold text-slate-900">X</span>
+                        <span className="text-xs text-slate-600">Share to followers</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSocialShare("linkedin")}
+                      className="flex items-center justify-start gap-3 p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 transition-all group"
+                    >
+                      <div className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                        <span className="text-white text-sm font-bold">in</span>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-bold text-blue-900">LinkedIn</span>
+                        <span className="text-xs text-blue-700/70">Share with network</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSocialShare("telegram")}
+                      className="flex items-center justify-start gap-3 p-4 rounded-2xl bg-sky-50 hover:bg-sky-100 border border-sky-100 hover:border-sky-200 transition-all group"
+                    >
+                      <div className="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                        <span className="text-white text-lg font-bold">✈</span>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-bold text-sky-900">Telegram</span>
+                        <span className="text-xs text-sky-700/70">Send message</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={handleCopyLink}
+                      className="flex items-center justify-start gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all group"
+                    >
+                      <div className="w-10 h-10 bg-slate-400 rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                        <span className="text-white text-lg font-bold">🔗</span>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-bold text-slate-900">Copy Link</span>
+                        <span className="text-xs text-slate-600">Copy to clipboard</span>
+                      </div>
+                    </motion.button>
+                  </motion.div>
+                </motion.div>
+              </TabsContent>
             )}
-
-            <div>
-              <label className="text-sm font-medium text-slate-900 mb-2 block">Message (optional)</label>
-              <Textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Add a personal message..."
-                className="rounded-xl resize-none"
-                rows={3}
-              />
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                onClick={handleShare}
-                disabled={isSharing || selectedUsers.length === 0}
-                className="flex-1 rounded-xl gap-2"
-              >
-                {isSharing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Sharing...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4" />
-                    Share
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={() => onOpenChange(false)}
-                variant="outline"
-                className="flex-1 rounded-xl"
-              >
-                Cancel
-              </Button>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="social" className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleSocialShare("whatsapp")}
-                className="flex items-center justify-center gap-2 p-4 rounded-xl bg-green-100 hover:bg-green-200 transition-colors"
-              >
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">W</span>
-                </div>
-                <span className="font-semibold text-green-900">WhatsApp</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleSocialShare("facebook")}
-                className="flex items-center justify-center gap-2 p-4 rounded-xl bg-blue-100 hover:bg-blue-200 transition-colors"
-              >
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">f</span>
-                </div>
-                <span className="font-semibold text-blue-900">Facebook</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleSocialShare("twitter")}
-                className="flex items-center justify-center gap-2 p-4 rounded-xl bg-black/10 hover:bg-black/20 transition-colors"
-              >
-                <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">𝕏</span>
-                </div>
-                <span className="font-semibold text-slate-900">X</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleSocialShare("linkedin")}
-                className="flex items-center justify-center gap-2 p-4 rounded-xl bg-blue-700/10 hover:bg-blue-700/20 transition-colors"
-              >
-                <div className="w-6 h-6 bg-blue-700 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">in</span>
-                </div>
-                <span className="font-semibold text-blue-900">LinkedIn</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleSocialShare("telegram")}
-                className="flex items-center justify-center gap-2 p-4 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-              >
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">✈</span>
-                </div>
-                <span className="font-semibold text-blue-900">Telegram</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleCopyLink}
-                className="flex items-center justify-center gap-2 p-4 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors"
-              >
-                <div className="w-6 h-6 bg-slate-400 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">🔗</span>
-                </div>
-                <span className="font-semibold text-slate-900">Copy Link</span>
-              </motion.button>
-            </div>
-          </TabsContent>
+          </AnimatePresence>
         </Tabs>
       </DialogContent>
     </Dialog>
