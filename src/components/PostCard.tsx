@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Doc, Id } from "@/convex/_generated/dataModel";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Heart, MessageCircle, Share2, UserPlus, UserMinus, MessageCircleMore, Loader2, MoreVertical, Trash2, Edit2, Eye, Users, Mail, Download, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
@@ -547,18 +547,27 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 title="Share post"
                 aria-label={`Share post. ${post.shares ?? 0} shares`}
               >
-                <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} aria-hidden="true" />
-                <motion.span 
-                  key={`shares-${post.shares}`}
-                  initial={{ scale: 0.8, opacity: 0, y: -5 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                  className="text-xs text-slate-700 font-semibold"
-                  aria-live="polite"
-                  aria-atomic="true"
+                <motion.div
+                  key={`share-icon-${post.shares}`}
+                  animate={post.shares ? { rotate: [0, -15, 15, -15, 15, 0], scale: [1, 1.2, 1] } : {}}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
                 >
-                  {post.shares ?? 0}
-                </motion.span>
+                  <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} aria-hidden="true" />
+                </motion.div>
+                <div className="relative h-4 min-w-[1ch] flex items-center justify-center overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span 
+                      key={`shares-${post.shares}`}
+                      initial={{ y: 15, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -15, opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="text-xs text-slate-700 font-semibold absolute"
+                    >
+                      {post.shares ?? 0}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
               </Button>
 
               {post.serviceDetails && currentUser?._id !== post.user?._id && (
