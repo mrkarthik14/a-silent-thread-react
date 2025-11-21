@@ -165,7 +165,16 @@ export default function Landing() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50/80 via-purple-50/80 to-blue-50/80 dark:from-slate-950/80 dark:via-slate-900/80 dark:to-slate-950/80 backdrop-blur-3xl saturate-150 transition-colors duration-300">
+    <div className="min-h-screen relative w-full overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-300/30 dark:bg-purple-900/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 dark:bg-blue-900/20 blur-[120px]" />
+        <div className="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full bg-pink-300/30 dark:bg-pink-900/20 blur-[120px]" />
+      </div>
+
+      {/* Glass Overlay */}
+      <div className="relative z-10 min-h-screen bg-white/40 dark:bg-slate-950/40 backdrop-blur-3xl saturate-150 transition-colors duration-300">
 
       {/* Header */}
       <nav className="px-6 py-6 relative z-50">
@@ -375,7 +384,8 @@ export default function Landing() {
         </DialogContent>
       </Dialog>
 
-      <canvas id="cursor-canvas" className="fixed inset-0 pointer-events-none" />
+      </div>
+      <canvas id="cursor-canvas" className="fixed inset-0 pointer-events-none z-20" />
     </div>
   );
 }
