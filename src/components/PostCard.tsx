@@ -545,11 +545,11 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                 onClick={() => setShareDialogOpen(true)}
                 disabled={loadingAction === "share"}
                 title="Share post"
-                aria-label={`Share post. ${shareCount ?? 0} shares`}
+                aria-label={`Share post. ${post.shares ?? 0} shares`}
               >
                 <Share2 className="h-4 w-4 text-slate-700" strokeWidth={1.5} aria-hidden="true" />
                 <motion.span 
-                  key={`shares-${shareCount}`}
+                  key={`shares-${post.shares}`}
                   initial={{ scale: 0.8, opacity: 0, y: -5 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -557,7 +557,7 @@ export function PostCard({ post, onReply, onLike, color = "bg-yellow-50" }: Post
                   aria-live="polite"
                   aria-atomic="true"
                 >
-                  {shareCount ?? 0}
+                  {post.shares ?? 0}
                 </motion.span>
               </Button>
 

@@ -31,7 +31,7 @@ export const sharePost = mutation({
     });
 
     await ctx.db.patch(args.postId, {
-      shares: post.shares + 1,
+      shares: (post.shares ?? 0) + 1,
     });
 
     return { success: true };
