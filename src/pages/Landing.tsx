@@ -188,18 +188,18 @@ export default function Landing() {
               title={darkMode ? "Light mode" : "Dark mode"}
             >
               {darkMode ? (
-                <Moon className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
+                <Moon className="h-6 w-6 transition-transform duration-500 rotate-0 hover:-rotate-12" strokeWidth={1.5} />
               ) : (
-                <Sun className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
+                <Sun className="h-6 w-6 transition-transform duration-500 rotate-0 hover:rotate-90" strokeWidth={1.5} />
               )}
             </Button>
             
             <Button
               onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
-              className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-6 shadow-sm dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+              className="group bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-6 shadow-sm dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-all duration-300 hover:shadow-md"
             >
               {isAuthenticated ? "Go to Feed" : "Get Started"}
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-block mb-8">
+          <div className="inline-block mb-8 hover:scale-105 transition-transform duration-500">
             <LoadingLogo size="lg" />
           </div>
           
@@ -231,10 +231,10 @@ export default function Landing() {
           <Button
             size="lg"
             onClick={() => navigate(isAuthenticated ? "/feed" : "/auth")}
-            className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 py-6 text-lg shadow-lg dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+            className="group bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 py-6 text-lg shadow-lg dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
           >
             {isAuthenticated ? "Go to Feed" : "Get Started"}
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         </motion.div>
       </div>
@@ -250,16 +250,17 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-                className="relative"
+                className="relative group"
               >
                 {/* Thread connecting to center */}
                 {index > 0 && (
                   <div className="absolute -top-6 left-1/2 w-0.5 h-6 bg-gradient-to-b from-purple-300 to-transparent" />
                 )}
                 
-                <div className={`bg-gradient-to-br ${feature.color} dark:from-slate-700 dark:to-slate-800 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow h-full`}>
-                  <div className="mb-4">
-                    <feature.icon className={`h-10 w-10 ${feature.textColor} dark:text-slate-200`} strokeWidth={1.5} />
+                <div className={`bg-gradient-to-br ${feature.color} dark:from-slate-700 dark:to-slate-800 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 h-full hover:-translate-y-1`}>
+                  <div className="mb-4 relative">
+                    <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-150" />
+                    <feature.icon className={`h-10 w-10 ${feature.textColor} dark:text-slate-200 transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6`} strokeWidth={1.5} />
                   </div>
                   <h3 className={`text-xl font-bold mb-3 ${feature.textColor} dark:text-slate-100`}>
                     {feature.title}
@@ -289,12 +290,13 @@ export default function Landing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="bg-gradient-to-br from-blue-200 to-cyan-300 dark:from-blue-900 dark:to-cyan-900 rounded-3xl p-12 shadow-sm hover:shadow-md transition-shadow text-center"
+          className="group bg-gradient-to-br from-blue-200 to-cyan-300 dark:from-blue-900 dark:to-cyan-900 rounded-3xl p-12 shadow-sm hover:shadow-xl transition-all duration-300 text-center hover:-translate-y-1"
         >
           <div className="flex justify-center mb-6">
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
+              className="group-hover:scale-110 transition-transform duration-500"
             >
               <Calendar className="h-16 w-16 text-blue-900 dark:text-blue-200" strokeWidth={1.5} />
             </motion.div>
@@ -307,10 +309,10 @@ export default function Landing() {
           </p>
           <Button
             onClick={() => navigate(isAuthenticated ? "/bookings" : "/auth")}
-            className="bg-blue-900 hover:bg-blue-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-150 dark:bg-blue-700 dark:hover:bg-blue-600"
+            className="group/btn bg-blue-900 hover:bg-blue-800 text-white rounded-xl px-8 py-3 font-semibold active:scale-95 transition-all duration-300 shadow-md hover:shadow-lg dark:bg-blue-700 dark:hover:bg-blue-600"
           >
             View Calendar
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
           </Button>
         </motion.div>
       </div>
