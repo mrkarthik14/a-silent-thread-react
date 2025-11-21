@@ -159,7 +159,7 @@ export default function Feed() {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-6 sticky top-0 z-10 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl saturate-150 rounded-2xl p-4 shadow-sm border border-white/20 dark:border-slate-700/30"
+            className="mb-6 sticky top-0 z-10 bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl saturate-150 rounded-2xl p-4 shadow-lg border border-white/20 dark:border-slate-700/30"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="relative flex-1">
