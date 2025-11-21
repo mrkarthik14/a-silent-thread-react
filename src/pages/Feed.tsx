@@ -153,7 +153,7 @@ export default function Feed() {
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto feed-scroll bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-700 dark:via-slate-700 dark:to-slate-700 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="max-w-7xl mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
           <div className="hidden lg:block"></div>
           <div className="lg:col-span-2">
           <motion.div
@@ -165,21 +165,21 @@ export default function Feed() {
               borderColor: "rgba(255, 255, 255, 0.6)"
             }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="mb-6 sticky top-0 z-10 bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl saturate-150 rounded-2xl p-4 shadow-xl border border-white/40 dark:border-white/10 ring-1 ring-white/20 dark:ring-white/5 transition-colors"
+            className="mb-4 lg:mb-6 sticky top-0 z-10 bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl saturate-150 rounded-xl lg:rounded-2xl p-3 lg:p-4 shadow-xl border border-white/40 dark:border-white/10 ring-1 ring-white/20 dark:ring-white/5 transition-colors"
           >
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-900 dark:text-slate-100" strokeWidth={1.5} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-slate-100" strokeWidth={1.5} />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search threads, listings, users..."
-                  className="pl-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100"
+                  className="pl-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 h-10 lg:h-11 text-sm lg:text-base"
                 />
               </div>
               <Button
                 onClick={handleDarkModeToggle}
-                className={`rounded-full p-2.5 font-semibold transition-all duration-500 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
+                className={`rounded-full p-2 lg:p-2.5 font-semibold transition-all duration-500 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105 ${
                   darkMode
                     ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 border border-indigo-500"
                     : "bg-gradient-to-r from-yellow-300 to-amber-300 text-amber-950 hover:from-yellow-400 hover:to-amber-400 border border-yellow-400"
@@ -187,9 +187,9 @@ export default function Feed() {
                 title={darkMode ? "Light mode" : "Dark mode"}
               >
                 {darkMode ? (
-                  <Moon className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
+                  <Moon className="h-5 w-5 lg:h-6 lg:w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
                 ) : (
-                  <Sun className="h-6 w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
+                  <Sun className="h-5 w-5 lg:h-6 lg:w-6 transition-transform duration-500 rotate-0" strokeWidth={1.5} />
                 )}
               </Button>
             </div>
@@ -198,7 +198,8 @@ export default function Feed() {
             <div className="flex gap-2 flex-wrap">
               <Button
                 onClick={() => setFilterType("all")}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                size="sm"
+                className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-200 ${
                   filterType === "all"
                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
                     : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
@@ -208,7 +209,8 @@ export default function Feed() {
               </Button>
               <Button
                 onClick={() => setFilterType("following")}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                size="sm"
+                className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-200 ${
                   filterType === "following"
                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
                     : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
@@ -218,7 +220,8 @@ export default function Feed() {
               </Button>
               <Button
                 onClick={() => setFilterType("listings")}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                size="sm"
+                className={`rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold transition-all duration-200 ${
                   filterType === "listings"
                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
                     : "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
