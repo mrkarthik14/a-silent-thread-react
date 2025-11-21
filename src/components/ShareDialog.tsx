@@ -101,8 +101,8 @@ export function ShareDialog({ open, onOpenChange, postId }: ShareDialogProps) {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, x: -20, y: 20 },
+    show: { opacity: 1, x: 0, y: 0 }
   };
 
   return (
@@ -128,10 +128,10 @@ export function ShareDialog({ open, onOpenChange, postId }: ShareDialogProps) {
             {activeTab === "following" ? (
               <TabsContent value="following" className="space-y-4 mt-0" asChild>
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, x: -20, y: 20 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: 20, y: -20 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                 >
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" strokeWidth={1.5} />
@@ -291,10 +291,10 @@ export function ShareDialog({ open, onOpenChange, postId }: ShareDialogProps) {
             ) : (
               <TabsContent value="social" className="space-y-4 mt-0" asChild>
                 <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, x: 20, y: 20 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -20, y: -20 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                 >
                   <motion.div 
                     className="grid grid-cols-2 gap-3"
