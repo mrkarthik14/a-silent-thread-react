@@ -68,7 +68,13 @@ export const getActiveCall = query({
             q.eq(q.field("initiatorId"), args.userId),
             q.eq(q.field("recipientId"), args.userId)
           ),
-          q.eq(q.field("status"), "active")
+          q.or(
+            q.eq(q.field("status"), "active"),
+            q.and(
+              q.eq(q.field("status"), "ringing"),
+              q.eq(q.field("initiatorId"), args.userId)
+            )
+          )
         )
       )
       .first();
