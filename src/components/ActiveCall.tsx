@@ -225,22 +225,20 @@ function CallRoom({
           <PhoneOff className="h-9 w-9" />
         </Button>
 
-        {callType === "video" && (
-          <Button
-            variant="outline"
-            size="icon"
-            className={cn(
-              "h-16 w-16 rounded-full border-0 transition-all duration-300 shadow-lg hover:scale-105",
-              cameraOn 
-                ? "bg-white/10 hover:bg-white/20 text-white ring-1 ring-white/10" 
-                : "bg-red-500/20 text-red-400 hover:bg-red-500/30 ring-1 ring-red-500/20"
-            )}
-            onClick={() => setCameraOn(!cameraOn)}
-            title={cameraOn ? "Turn Off Camera" : "Turn On Camera"}
-          >
-            {cameraOn ? <Video className="h-7 w-7" /> : <VideoOff className="h-7 w-7" />}
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn(
+            "h-16 w-16 rounded-full border-0 transition-all duration-300 shadow-lg hover:scale-105",
+            cameraOn 
+              ? "bg-white/10 hover:bg-white/20 text-white ring-1 ring-white/10" 
+              : "bg-red-500/20 text-red-400 hover:bg-red-500/30 ring-1 ring-red-500/20"
+          )}
+          onClick={() => setCameraOn(!cameraOn)}
+          title={cameraOn ? "Turn Off Camera" : "Turn On Camera"}
+        >
+          {cameraOn ? <Video className="h-7 w-7" /> : <VideoOff className="h-7 w-7" />}
+        </Button>
       </div>
     </div>
   );
