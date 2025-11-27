@@ -7,12 +7,14 @@ import {
   usePublish,
   useRemoteUsers,
   useRTCClient,
+  useLocalScreenTrack,
 } from "agora-rtc-react";
 import AgoraRTC, { IAgoraRTCClient, IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Mic, MicOff, Video, VideoOff, PhoneOff, Volume2, VolumeX } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Volume2, VolumeX, Monitor, MonitorOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ActiveCallProps {
   channelName: string;
@@ -66,6 +68,7 @@ function CallRoom({
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(callType === "video");
   const [speakerOn, setSpeakerOn] = useState(true);
+  const [screenShareOn, setScreenShareOn] = useState(false);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
@@ -98,9 +101,28 @@ function CallRoom({
   // Local tracks
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const { localCameraTrack } = useLocalCameraTrack(cameraOn);
+  const { screenTrack, error: screenShareError } = useLocalScreenTrack(screenShareOn, {}, "auto");
+
+  // Handle screen share error
+  useEffect(() => {
+    if (screenShareError) {
+      console.error("Screen share error:", screenShareError);
+      setScreenShareOn(false);
+      toast.error("Failed to start screen share");
+    }
+  }, [screenShareError]);
+
+  // Handle screen track ended (e.g. user clicks "Stop sharing" in browser)
+  useEffect(() => {
+    if (screenTrack) {
+      screenTrack.on("track-ended", () => {
+        setScreenShareOn(false);
+      });
+    }
+  }, [screenTrack]);
 
   // Publish tracks
-  usePublish([localMicrophoneTrack, localCameraTrack]);
+  usePublish([localMicrophoneTrack, localCameraTrack, screenTrack]);
 
   // Remote users
   const remoteUsers = useRemoteUsers();
@@ -137,13 +159,13 @@ function CallRoom({
           </div>
           <LocalUser
             audioTrack={localMicrophoneTrack}
-            cameraOn={cameraOn}
+            cameraOn={cameraOn || screenShareOn}
             micOn={micOn}
-            videoTrack={localCameraTrack}
+            videoTrack={screenShareOn ? screenTrack : localCameraTrack}
             cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg"
           >
             <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-white text-xs font-medium tracking-wide flex items-center gap-2">
-              You {micOn ? "" : "(Muted)"}
+              You {micOn ? "" : "(Muted)"} {screenShareOn ? "(Sharing Screen)" : ""}
               {!micOn && <MicOff className="h-3 w-3 text-red-400" />}
             </div>
             {!micOn && (
@@ -238,6 +260,21 @@ function CallRoom({
           title={cameraOn ? "Turn Off Camera" : "Turn On Camera"}
         >
           {cameraOn ? <Video className="h-7 w-7" /> : <VideoOff className="h-7 w-7" />}
+        </Button>
+
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn(
+            "h-14 w-14 rounded-full border-0 transition-all duration-300 shadow-lg hover:scale-105",
+            screenShareOn 
+              ? "bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 ring-1 ring-blue-500/20" 
+              : "bg-white/10 hover:bg-white/20 text-white ring-1 ring-white/10"
+          )}
+          onClick={() => setScreenShareOn(!screenShareOn)}
+          title={screenShareOn ? "Stop Screen Share" : "Share Screen"}
+        >
+          {screenShareOn ? <MonitorOff className="h-6 w-6" /> : <Monitor className="h-6 w-6" />}
         </Button>
       </div>
     </div>
