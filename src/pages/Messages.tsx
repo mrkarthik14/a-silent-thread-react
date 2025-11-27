@@ -30,6 +30,15 @@ export default function Messages() {
   const [selectedUserId, setSelectedUserId] = useState<Id<"users"> | null>(
     (location.state as any)?.selectedUserId || null
   );
+
+  // Update selectedUserId when location state changes (e.g. from UserSearch navigation)
+  useEffect(() => {
+    const stateUserId = (location.state as any)?.selectedUserId;
+    if (stateUserId) {
+      setSelectedUserId(stateUserId);
+    }
+  }, [location.state]);
+
   const [message, setMessage] = useState("");
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -68,8 +77,14 @@ export default function Messages() {
     selectedUserId ? { userId: selectedUserId } : "skip"
   );
   
-  // Get selected user data
+  // Get selected user data from conversations
   const selectedUserConv = conversations?.find(c => c.user?._id === selectedUserId);
+
+  // Fetch user details directly if not found in conversations (for new chats)
+  const userDetails = useQuery(
+    api.users.getUser,
+    selectedUserId ? { userId: selectedUserId } : "skip"
+  );
   
   const sendMessage = useMutation(api.messages.send);
   const setTyping = useMutation(api.typingIndicators.setTyping);
@@ -341,8 +356,8 @@ export default function Messages() {
   const chatWindowComponent = selectedUserId ? (
     <ChatWindow
       selectedUserId={selectedUserId}
-      selectedUserName={selectedUserConv?.user?.name || "User"}
-      selectedUserImage={selectedUserConv?.user?.image}
+      selectedUserName={selectedUserConv?.user?.name || userDetails?.name || "User"}
+      selectedUserImage={selectedUserConv?.user?.image || userDetails?.image}
       isOnline={!!selectedUserPresence?.isOnline}
       isTyping={!!isOtherUserTyping}
       messages={currentConversation || []}

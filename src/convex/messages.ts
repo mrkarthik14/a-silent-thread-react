@@ -26,7 +26,7 @@ export const send = mutation({
     const user = await getCurrentUser(ctx);
     if (!user) throw new Error("Not authenticated");
 
-    return await ctx.db.insert("messages", {
+    const messageId = await ctx.db.insert("messages", {
       senderId: user._id,
       recipientId: args.recipientId,
       content: args.content,
@@ -38,6 +38,19 @@ export const send = mutation({
       fileType: args.fileType,
       parentMessageId: args.parentMessageId,
     });
+
+    // Create notification for recipient
+    if (args.recipientId !== user._id) {
+      await ctx.db.insert("notifications", {
+        userId: args.recipientId,
+        type: "message",
+        content: `New message from ${user.name || "Someone"}`,
+        read: false,
+        relatedId: user._id,
+      });
+    }
+
+    return messageId;
   },
 });
 
