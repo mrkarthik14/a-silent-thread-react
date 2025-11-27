@@ -57,6 +57,7 @@ export default function Messages() {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastTypingRef = useRef<number>(0);
   
   // Track presence
   usePresence();
@@ -215,14 +216,21 @@ export default function Messages() {
 
     // Set typing indicator
     if (value.trim()) {
-      setTyping({ recipientId: selectedUserId, isTyping: true });
+      const now = Date.now();
+      // Throttle typing updates to once every 2 seconds to save DB writes
+      if (now - lastTypingRef.current > 2000) {
+        setTyping({ recipientId: selectedUserId, isTyping: true });
+        lastTypingRef.current = now;
+      }
 
       // Clear typing indicator after 3 seconds of no typing
       typingTimeoutRef.current = setTimeout(() => {
         clearTyping({ recipientId: selectedUserId });
+        lastTypingRef.current = 0;
       }, 3000);
     } else {
       clearTyping({ recipientId: selectedUserId });
+      lastTypingRef.current = 0;
     }
   };
 

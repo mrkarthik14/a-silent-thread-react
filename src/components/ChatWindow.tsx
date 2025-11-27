@@ -186,22 +186,22 @@ export function ChatWindow({
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-start"
             >
-              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-2xl shadow-sm">
-                <div className="flex gap-1">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm">
+                <div className="flex gap-1.5 items-center h-2">
                   <motion.span
-                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.1, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-                    className="w-2 h-2 bg-slate-400 rounded-full"
+                    className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full"
                   />
                   <motion.span
-                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.1, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-                    className="w-2 h-2 bg-slate-400 rounded-full"
+                    className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full"
                   />
                   <motion.span
-                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.1, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                    className="w-2 h-2 bg-slate-400 rounded-full"
+                    className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full"
                   />
                 </div>
               </div>
