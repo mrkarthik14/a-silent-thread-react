@@ -11,7 +11,7 @@ import {
 import AgoraRTC, { IAgoraRTCClient, IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ActiveCallProps {
@@ -65,6 +65,7 @@ function CallRoom({
 }: ActiveCallProps & { client: any }) {
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(callType === "video");
+  const [speakerOn, setSpeakerOn] = useState(true);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
@@ -104,6 +105,17 @@ function CallRoom({
   // Remote users
   const remoteUsers = useRemoteUsers();
 
+  // Handle speaker toggle (mute remote users)
+  useEffect(() => {
+    if (remoteUsers) {
+      remoteUsers.forEach((user: any) => {
+        if (user.audioTrack) {
+          user.audioTrack.setVolume(speakerOn ? 100 : 0);
+        }
+      });
+    }
+  }, [speakerOn, remoteUsers]);
+
   return (
     <div className="h-full w-full flex flex-col relative">
       {/* Duration Pill */}
@@ -130,9 +142,15 @@ function CallRoom({
             videoTrack={localCameraTrack}
             cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg"
           >
-            <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-white text-xs font-medium tracking-wide">
-              You
+            <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-white text-xs font-medium tracking-wide flex items-center gap-2">
+              You {micOn ? "" : "(Muted)"}
+              {!micOn && <MicOff className="h-3 w-3 text-red-400" />}
             </div>
+            {!micOn && (
+              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10">
+                <MicOff className="h-5 w-5 text-red-500" />
+              </div>
+            )}
           </LocalUser>
           <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/5 rounded-3xl group-hover:ring-white/10 transition-all duration-500" />
         </div>
@@ -166,7 +184,22 @@ function CallRoom({
       </div>
 
       {/* Controls */}
-      <div className="h-32 bg-[#0a0a0a]/80 backdrop-blur-xl border-t border-white/10 flex items-center justify-center gap-8 pb-6">
+      <div className="h-32 bg-[#0a0a0a]/80 backdrop-blur-xl border-t border-white/10 flex items-center justify-center gap-6 pb-6">
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn(
+            "h-14 w-14 rounded-full border-0 transition-all duration-300 shadow-lg hover:scale-105",
+            speakerOn 
+              ? "bg-white/10 hover:bg-white/20 text-white ring-1 ring-white/10" 
+              : "bg-slate-500/20 text-slate-400 hover:bg-slate-500/30 ring-1 ring-slate-500/20"
+          )}
+          onClick={() => setSpeakerOn(!speakerOn)}
+          title={speakerOn ? "Mute Speaker" : "Unmute Speaker"}
+        >
+          {speakerOn ? <Volume2 className="h-6 w-6" /> : <VolumeX className="h-6 w-6" />}
+        </Button>
+
         <Button
           variant="outline"
           size="icon"
@@ -177,6 +210,7 @@ function CallRoom({
               : "bg-red-500/20 text-red-400 hover:bg-red-500/30 ring-1 ring-red-500/20"
           )}
           onClick={() => setMicOn(!micOn)}
+          title={micOn ? "Mute Microphone" : "Unmute Microphone"}
         >
           {micOn ? <Mic className="h-7 w-7" /> : <MicOff className="h-7 w-7" />}
         </Button>
@@ -186,6 +220,7 @@ function CallRoom({
           size="icon"
           className="h-20 w-20 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-xl shadow-red-500/20 transition-all duration-300 hover:scale-110 ring-4 ring-red-500/10"
           onClick={onEndCall}
+          title="End Call"
         >
           <PhoneOff className="h-9 w-9" />
         </Button>
@@ -201,6 +236,7 @@ function CallRoom({
                 : "bg-red-500/20 text-red-400 hover:bg-red-500/30 ring-1 ring-red-500/20"
             )}
             onClick={() => setCameraOn(!cameraOn)}
+            title={cameraOn ? "Turn Off Camera" : "Turn On Camera"}
           >
             {cameraOn ? <Video className="h-7 w-7" /> : <VideoOff className="h-7 w-7" />}
           </Button>

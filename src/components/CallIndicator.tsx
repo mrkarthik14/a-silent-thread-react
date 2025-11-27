@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Phone, Video, X } from "lucide-react";
+import { Phone, Video, X, Mic, MicOff } from "lucide-react";
 
 interface CallIndicatorProps {
   callStatus: "idle" | "ringing" | "active" | "ended";
@@ -8,6 +8,8 @@ interface CallIndicatorProps {
   onStartCall: (type: "voice" | "video") => void;
   onEndCall: () => void;
   userName: string;
+  isMuted?: boolean;
+  onToggleMute?: () => void;
 }
 
 export function CallIndicator({
@@ -16,6 +18,8 @@ export function CallIndicator({
   onStartCall,
   onEndCall,
   userName,
+  isMuted,
+  onToggleMute,
 }: CallIndicatorProps) {
   return (
     <>
@@ -37,13 +41,29 @@ export function CallIndicator({
           ) : null}
         </div>
         {callStatus === "active" && (
-          <Button
-            onClick={onEndCall}
-            size="sm"
-            className="rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 ml-2 transition-all hover:scale-105"
-          >
-            End Call
-          </Button>
+          <div className="flex gap-2">
+            {onToggleMute && (
+              <Button
+                onClick={onToggleMute}
+                size="sm"
+                variant="ghost"
+                className={`rounded-xl border ml-2 transition-all hover:scale-105 ${
+                  isMuted 
+                    ? "bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20" 
+                    : "bg-white/5 text-slate-500 dark:text-slate-400 border-white/10 hover:bg-white/10"
+                }`}
+              >
+                {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
+            )}
+            <Button
+              onClick={onEndCall}
+              size="sm"
+              className="rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition-all hover:scale-105"
+            >
+              End Call
+            </Button>
+          </div>
         )}
       </div>
 
