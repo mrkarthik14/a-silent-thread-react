@@ -7,29 +7,17 @@ import { LoadingLogo } from "@/components/LoadingLogo";
 import { ThreadLine } from "@/components/ThreadLine";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem("darkMode");
-    return saved === "true";
-  });
+  const { darkMode, toggleDarkMode, currentAppTheme } = useTheme();
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
   const handleDarkModeToggle = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
+    toggleDarkMode();
   };
 
   const handleImageZoom = (imageSrc: string) => {
@@ -100,7 +88,7 @@ export default function Landing() {
     }> = [];
 
     const colors = darkMode
-      ? ["#ff6b6b", "#ff8787", "#ffa07a", "#ff9999"]
+      ? ["#ffb3b3", "#ffccd5", "#e9c0f5", "#b8d9f0"]
       : ["#f8a5a5", "#f5b5b5", "#e8b4f1", "#b4d7f1"];
 
     let mouseX = 0;
@@ -168,6 +156,7 @@ export default function Landing() {
     <div className="min-h-screen relative w-full overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Background Gradients */}
       <div className="absolute inset-0 w-full h-full pointer-events-none">
+        <div className={`absolute inset-0 bg-gradient-to-br ${currentAppTheme?.bgGradient || "from-slate-50 via-purple-50 to-blue-50"} opacity-40 dark:opacity-20`} />
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-300/30 dark:bg-purple-900/20 blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 dark:bg-blue-900/20 blur-[120px]" />
         <div className="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full bg-pink-300/30 dark:bg-pink-900/20 blur-[120px]" />

@@ -11,14 +11,23 @@ import { SettingsThemeTab } from "@/components/SettingsThemeTab";
 import { SettingsUserTab } from "@/components/SettingsUserTab";
 import { SettingsPrivacyTab } from "@/components/SettingsPrivacyTab";
 import { SettingsSecurityTab } from "@/components/SettingsSecurityTab";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function Settings() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [selectedAppTheme, setSelectedAppTheme] = useState("pastel-light");
-  const [selectedChatTheme, setSelectedChatTheme] = useState("chat-warm");
-  const [selectedFeedTheme, setSelectedFeedTheme] = useState("feed-colorful");
-  const [darkMode, setDarkMode] = useState(false);
+  const { 
+    appTheme, 
+    chatTheme, 
+    feedTheme, 
+    darkMode, 
+    setAppTheme, 
+    setChatTheme, 
+    setFeedTheme, 
+    toggleDarkMode,
+    currentAppTheme
+  } = useTheme();
+  
   const [activeTab, setActiveTab] = useState("theme");
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   
@@ -49,7 +58,7 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+      <div className={`h-screen flex items-center justify-center bg-gradient-to-br ${currentAppTheme?.bgGradient || "from-slate-50 via-purple-50 to-blue-50"}`}>
         <Loader2 className="h-8 w-8 animate-spin text-slate-900" strokeWidth={1.5} />
       </div>
     );
@@ -61,41 +70,20 @@ export default function Settings() {
   }
 
   const handleThemeSelect = (themeType: string, themeId: string) => {
-    if (themeType === "app") setSelectedAppTheme(themeId);
-    if (themeType === "chat") setSelectedChatTheme(themeId);
-    if (themeType === "feed") setSelectedFeedTheme(themeId);
+    if (themeType === "app") setAppTheme(themeId);
+    if (themeType === "chat") setChatTheme(themeId);
+    if (themeType === "feed") setFeedTheme(themeId);
     toast.success(`Theme updated to ${themeId}`);
   };
 
   const handleSaveThemes = () => {
-    localStorage.setItem("appTheme", selectedAppTheme);
-    localStorage.setItem("chatTheme", selectedChatTheme);
-    localStorage.setItem("feedTheme", selectedFeedTheme);
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-    
-    // Apply dark mode to document
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    
+    // Themes are already saved in context/localStorage on set
     toast.success("Theme preferences saved!");
   };
 
   const handleDarkModeToggleWithApply = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    
-    // Apply immediately
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    
-    localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
-    toast.success(newDarkMode ? "Dark mode enabled" : "Light mode enabled");
+    toggleDarkMode();
+    toast.success(!darkMode ? "Dark mode enabled" : "Light mode enabled");
   };
 
   const handlePrivacyChange = (key: string, value: boolean) => {
@@ -117,6 +105,7 @@ export default function Settings() {
     <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative">
       {/* Background Gradients */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        <div className={`absolute inset-0 bg-gradient-to-br ${currentAppTheme?.bgGradient || "from-slate-50 via-purple-50 to-blue-50"} opacity-50 dark:opacity-20`} />
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-300/30 dark:bg-purple-900/20 blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 dark:bg-blue-900/20 blur-[120px]" />
         <div className="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full bg-pink-300/30 dark:bg-pink-900/20 blur-[120px]" />
@@ -133,33 +122,33 @@ export default function Settings() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">Settings</h1>
-            <p className="text-slate-600">Customize your A Silent Thread experience</p>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">Settings</h1>
+            <p className="text-slate-600 dark:text-slate-400">Customize your A Silent Thread experience</p>
           </motion.div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6 rounded-xl bg-white/50 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-1 overflow-x-auto">
-              <TabsTrigger value="theme" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+              <TabsTrigger value="theme" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                 <Palette className="h-4 w-4" />
                 <span className="hidden sm:inline">Theme</span>
               </TabsTrigger>
-              <TabsTrigger value="user" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+              <TabsTrigger value="user" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">User</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+              <TabsTrigger value="privacy" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                 <Eye className="h-4 w-4" />
                 <span className="hidden sm:inline">Privacy</span>
               </TabsTrigger>
-              <TabsTrigger value="security" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+              <TabsTrigger value="security" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Security</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+              <TabsTrigger value="notifications" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                 <Bell className="h-4 w-4" />
                 <span className="hidden sm:inline">Alerts</span>
               </TabsTrigger>
-              <TabsTrigger value="advanced" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
+              <TabsTrigger value="advanced" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Advanced</span>
               </TabsTrigger>
@@ -167,9 +156,9 @@ export default function Settings() {
 
             <TabsContent value="theme">
               <SettingsThemeTab
-                selectedAppTheme={selectedAppTheme}
-                selectedChatTheme={selectedChatTheme}
-                selectedFeedTheme={selectedFeedTheme}
+                selectedAppTheme={appTheme}
+                selectedChatTheme={chatTheme}
+                selectedFeedTheme={feedTheme}
                 darkMode={darkMode}
                 onThemeSelect={handleThemeSelect}
                 onSaveThemes={handleSaveThemes}
