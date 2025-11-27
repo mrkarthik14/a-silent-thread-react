@@ -438,7 +438,7 @@ export default function Profile() {
                       transition={{ delay: idx * 0.1 }}
                       whileHover={{ scale: 1.1, y: -2 }}
                     >
-                      <Badge className="bg-purple-200 text-purple-900 rounded-full hover:shadow-md transition-shadow cursor-pointer">
+                      <Badge className="bg-purple-200 text-purple-900 dark:bg-purple-900/40 dark:text-purple-100 rounded-full hover:shadow-md transition-shadow cursor-pointer">
                         {interest}
                       </Badge>
                     </motion.div>

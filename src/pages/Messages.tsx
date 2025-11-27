@@ -323,8 +323,8 @@ export default function Messages() {
         <Sidebar />
       
         <div className="flex-1 flex ml-0 md:ml-20">
-        <div className="w-80 border-r border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm transition-colors duration-500">
-          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between transition-colors duration-500">
+        <div className="w-80 border-r border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm transition-colors duration-500">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-500">
             <h2 className="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>
             <Button
               size="sm"
@@ -343,8 +343,8 @@ export default function Messages() {
                   key={conv.user?._id}
                   whileHover={{ x: 4 }}
                   onClick={() => setSelectedUserId(conv.user?._id || null)}
-                  className={`p-4 cursor-pointer border-b border-slate-200 hover:bg-purple-50/50 transition-colors ${
-                    selectedUserId === conv.user?._id ? "bg-purple-100/50" : ""
+                  className={`p-4 cursor-pointer border-b border-slate-200 dark:border-slate-800 hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors ${
+                    selectedUserId === conv.user?._id ? "bg-purple-100/50 dark:bg-purple-900/30" : ""
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -392,7 +392,7 @@ export default function Messages() {
         <div className="flex-1 flex flex-col">
           {selectedUserId ? (
             <>
-              <div className="sticky top-0 z-10 p-4 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm transition-colors duration-500">
+              <div className="sticky top-0 z-10 p-4 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm transition-colors duration-500">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
                     <div className="relative">
@@ -508,7 +508,7 @@ export default function Messages() {
                 </div>
               </ScrollArea>
 
-              <div className="sticky bottom-0 z-10 p-4 border-t border-slate-200 bg-white/50 backdrop-blur-sm flex-shrink-0 overflow-hidden">
+              <div className="sticky bottom-0 z-10 p-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm flex-shrink-0 overflow-hidden">
                 {replyMessage && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}

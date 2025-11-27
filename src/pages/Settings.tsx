@@ -138,7 +138,7 @@ export default function Settings() {
           </motion.div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-200 p-1 overflow-x-auto">
+            <TabsList className="grid w-full grid-cols-6 rounded-xl bg-white/50 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-1 overflow-x-auto">
               <TabsTrigger value="theme" className="rounded-lg flex items-center gap-2 text-xs sm:text-sm">
                 <Palette className="h-4 w-4" />
                 <span className="hidden sm:inline">Theme</span>
@@ -201,9 +201,9 @@ export default function Settings() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4 mt-6"
+                className="bg-white/80 dark:bg-slate-900/40 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 mt-6"
               >
-                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <Bell className="h-5 w-5" />
                   Alert Preferences
                 </h2>

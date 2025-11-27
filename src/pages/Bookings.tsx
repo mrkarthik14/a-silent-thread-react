@@ -105,17 +105,17 @@ export default function Bookings() {
   const getCardColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-gradient-to-br from-orange-100 to-amber-100 border-2 border-orange-300";
+        return "bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20 border-2 border-orange-300 dark:border-orange-800/50";
       case "accepted":
-        return "bg-gradient-to-br from-emerald-100 to-teal-100 border-2 border-emerald-300";
+        return "bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 border-2 border-emerald-300 dark:border-emerald-800/50";
       case "rejected":
-        return "bg-gradient-to-br from-red-100 to-pink-100 border-2 border-red-300";
+        return "bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 border-2 border-red-300 dark:border-red-800/50";
       case "completed":
-        return "bg-gradient-to-br from-blue-100 to-cyan-100 border-2 border-blue-300";
+        return "bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 border-2 border-blue-300 dark:border-blue-800/50";
       case "cancelled":
-        return "bg-gradient-to-br from-gray-100 to-slate-100 border-2 border-gray-300";
+        return "bg-gradient-to-br from-gray-100 to-slate-100 dark:from-slate-800/40 dark:to-slate-900/40 border-2 border-gray-300 dark:border-slate-700";
       default:
-        return "bg-gradient-to-br from-slate-100 to-purple-100 border-2 border-slate-300";
+        return "bg-gradient-to-br from-slate-100 to-purple-100 dark:from-slate-800/40 dark:to-purple-900/20 border-2 border-slate-300 dark:border-slate-700";
     }
   };
 
