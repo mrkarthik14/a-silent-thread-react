@@ -3,7 +3,7 @@ export const THEMES = {
     {
       id: "pastel-light",
       name: "Pastel Light",
-      colors: ["#fce7f3", "#e9d5ff", "#dbeafe", "#fef3c7"],
+      colors: ["#f8a5a5", "#f5b5b5", "#e8b4f1", "#b4d7f1"],
       bgGradient: "from-slate-50 via-purple-50 to-blue-50"
     },
     {
