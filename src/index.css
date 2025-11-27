@@ -74,35 +74,37 @@
 }
 
 .dark {
-  /* Deep desaturated base #0d0d0f */
-  --background: 240 10% 4%;
-  --foreground: 0 0% 95%;
+  /* Threads-inspired Dark Theme */
+  /* Background: Very dark, near-black (#0a0a0a) */
+  --background: 0 0% 4%; 
+  --foreground: 0 0% 94%; /* #f0f0f0 */
   
-  /* Glass card base */
-  --card: 240 10% 6%;
-  --card-foreground: 0 0% 95%;
+  /* Secondary backgrounds: Slightly lighter dark grays (#181818) for cards */
+  --card: 0 0% 9.5%; 
+  --card-foreground: 0 0% 94%;
   
-  --popover: 240 10% 6%;
-  --popover-foreground: 0 0% 95%;
+  --popover: 0 0% 9.5%;
+  --popover-foreground: 0 0% 94%;
   
   --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
+  --primary-foreground: 0 0% 4%;
   
-  --secondary: 240 5% 15%;
+  --secondary: 0 0% 15%; /* #262626 */
   --secondary-foreground: 0 0% 98%;
   
-  --muted: 240 5% 15%;
-  --muted-foreground: 240 5% 65%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 63%; /* #a0a0a0 */
   
-  --accent: 240 5% 15%;
+  --accent: 0 0% 15%;
   --accent-foreground: 0 0% 98%;
   
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
   
-  --border: 240 5% 15%;
-  --input: 240 5% 15%;
-  --ring: 240 5% 84%;
+  /* Borders: Subtle dark gray (#2a2a2a) */
+  --border: 0 0% 16%; 
+  --input: 0 0% 16%;
+  --ring: 0 0% 83%;
   
   --chart-1: 220 70% 50%;
   --chart-2: 160 60% 45%;
@@ -121,36 +123,36 @@
 }
 
 @layer utilities {
-  /* Glassmorphism Utilities */
+  /* Glassmorphism Utilities - Adapted for Threads Dark Theme */
   .glass-panel {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.4)];
+    @apply bg-white/5 dark:bg-[#181818]/80 backdrop-blur-xl border border-white/10 dark:border-[#2a2a2a] shadow-[0_4px_20px_rgba(0,0,0,0.4)];
   }
   
   .glass-card {
-    @apply bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md border border-white/10 shadow-lg;
+    @apply bg-white dark:bg-[#181818] border border-slate-100 dark:border-[#2a2a2a] shadow-sm;
   }
   
   .glass-card-hover {
-    @apply hover:bg-white/10 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all duration-300;
+    @apply hover:bg-slate-50 dark:hover:bg-[#202020] transition-all duration-300;
   }
   
   .glass-button {
-    @apply bg-white/10 hover:bg-white/20 active:bg-white/5 backdrop-blur-sm border border-white/10 transition-all duration-300 text-white/90 shadow-sm;
+    @apply bg-white/10 dark:bg-[#262626] hover:bg-white/20 dark:hover:bg-[#333] active:bg-white/5 backdrop-blur-sm border border-white/10 dark:border-[#2a2a2a] transition-all duration-300 text-white/90 dark:text-[#f0f0f0] shadow-sm;
   }
   
   .glass-input {
-    @apply bg-white/5 border border-white/10 focus:border-white/20 focus:bg-white/10 transition-all duration-300 placeholder:text-white/30 text-white;
+    @apply bg-white/5 dark:bg-[#1a1a1a] border border-white/10 dark:border-[#2a2a2a] focus:border-white/20 dark:focus:border-[#404040] focus:bg-white/10 dark:focus:bg-[#202020] transition-all duration-300 placeholder:text-white/30 dark:placeholder:text-[#666] text-white dark:text-[#f0f0f0];
   }
   
   .glass-icon {
-    @apply text-white/80 hover:text-white transition-colors duration-200;
+    @apply text-white/80 dark:text-[#a0a0a0] hover:text-white dark:hover:text-[#f0f0f0] transition-colors duration-200;
   }
   
   .text-glass-muted {
-    @apply text-white/60;
+    @apply text-white/60 dark:text-[#a0a0a0];
   }
   
   .text-glass-foreground {
-    @apply text-white/90;
+    @apply text-white/90 dark:text-[#f0f0f0];
   }
 }

@@ -231,7 +231,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
       whileHover={{ y: -2 }}
       className={`group relative overflow-hidden rounded-3xl p-5 transition-all duration-300 ${
         // Use glass style in dark mode, keep original color logic in light mode
-        "bg-white dark:bg-transparent dark:glass-card dark:glass-card-hover shadow-sm hover:shadow-md border border-slate-100 dark:border-white/10"
+        "bg-white dark:bg-[#181818] shadow-sm hover:shadow-md border border-slate-100 dark:border-[#2a2a2a] dark:hover:bg-[#202020]"
       }`}
     >
       {/* Light mode gradient background (hidden in dark mode) */}
@@ -239,29 +239,27 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
       
       {/* Dark mode subtle gradient glow (hidden in light mode) */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Avatar className="h-10 w-10 border-2 border-white dark:border-white/10 shadow-sm">
+              <Avatar className="h-10 w-10 border-2 border-white dark:border-[#2a2a2a] shadow-sm">
                 <AvatarImage src={userImageUrl || undefined} />
-                <AvatarFallback className="bg-slate-100 dark:bg-white/10 dark:text-white">
+                <AvatarFallback className="bg-slate-100 dark:bg-[#262626] dark:text-[#f0f0f0]">
                   {post.user?.name?.[0] || "U"}
                 </AvatarFallback>
               </Avatar>
               {userPresence?.isOnline && (
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#0d0d0f] rounded-full shadow-sm" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#181818] rounded-full shadow-sm" />
               )}
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white/90 text-sm leading-tight">
+              <h3 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm leading-tight">
                 {post.user?.name || "Anonymous"}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-white/50 font-medium">
+              <p className="text-xs text-slate-500 dark:text-[#a0a0a0] font-medium">
                 {new Date(post._creationTime).toLocaleDateString(undefined, {
                   month: "short",
                   day: "numeric",
@@ -274,31 +272,31 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 w-6 p-0 hover:bg-purple-100/50 active:scale-95 transition-all duration-150"
+              className="h-6 w-6 p-0 hover:bg-purple-100/50 dark:hover:bg-[#333] active:scale-95 transition-all duration-150"
               onClick={handleFollow}
               disabled={loadingAction === "follow"}
               title={isFollowing ? "Following" : "Follow"}
             >
               {loadingAction === "follow" ? (
-                <Loader2 className="h-4 w-4 animate-spin text-slate-600" strokeWidth={1.5} />
+                <Loader2 className="h-4 w-4 animate-spin text-slate-600 dark:text-[#a0a0a0]" strokeWidth={1.5} />
               ) : isFollowing ? (
-                <Users className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <Users className="h-4 w-4 text-slate-900 dark:text-[#f0f0f0]" strokeWidth={1.5} />
               ) : (
-                <UserPlus className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <UserPlus className="h-4 w-4 text-slate-900 dark:text-[#f0f0f0]" strokeWidth={1.5} />
               )}
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 w-6 p-0 hover:bg-blue-100/50 active:scale-95 transition-all duration-150"
+              className="h-6 w-6 p-0 hover:bg-blue-100/50 dark:hover:bg-[#333] active:scale-95 transition-all duration-150"
               onClick={handleMessage}
               disabled={loadingAction === "message"}
               title="Message"
             >
               {loadingAction === "message" ? (
-                <Loader2 className="h-4 w-4 animate-spin text-slate-600" strokeWidth={1.5} />
+                <Loader2 className="h-4 w-4 animate-spin text-slate-600 dark:text-[#a0a0a0]" strokeWidth={1.5} />
               ) : (
-                <Mail className="h-4 w-4 text-slate-900" strokeWidth={1.5} />
+                <Mail className="h-4 w-4 text-slate-900 dark:text-[#f0f0f0]" strokeWidth={1.5} />
               )}
             </Button>
           </div>
@@ -306,23 +304,23 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <MoreVertical className="h-4 w-4 text-slate-600" strokeWidth={1.5} />
+                <MoreVertical className="h-4 w-4 text-slate-600 dark:text-[#a0a0a0]" strokeWidth={1.5} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl">
+            <DropdownMenuContent align="end" className="rounded-xl dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
               {currentUser?._id === post.user?._id ? (
                 <>
-                  <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer">
+                  <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer dark:text-[#f0f0f0] dark:focus:bg-[#262626]">
                     <Edit2 className="h-4 w-4 mr-2" strokeWidth={1.5} />
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDeleteConfirmOpen(true)} className="cursor-pointer text-red-600">
+                  <DropdownMenuItem onClick={() => setDeleteConfirmOpen(true)} className="cursor-pointer text-red-600 dark:text-red-400 dark:focus:bg-[#262626]">
                     <Trash2 className="h-4 w-4 mr-2" strokeWidth={1.5} />
                     Delete
                   </DropdownMenuItem>
                 </>
               ) : (
-                <DropdownMenuItem onClick={handleHidePost} className="cursor-pointer">
+                <DropdownMenuItem onClick={handleHidePost} className="cursor-pointer dark:text-[#f0f0f0] dark:focus:bg-[#262626]">
                   <Eye className="h-4 w-4 mr-2" strokeWidth={1.5} />
                   Not Interested
                 </DropdownMenuItem>
@@ -334,14 +332,14 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
         {/* Content */}
         <div className="mb-4">
           {post.content && (
-            <p className="text-slate-700 dark:text-white/80 text-sm leading-relaxed mb-3 whitespace-pre-wrap">
+            <p className="text-slate-700 dark:text-[#e4e4e4] text-sm leading-relaxed mb-3 whitespace-pre-wrap">
               {post.content.split(/(@[a-zA-Z0-9_-]+|&[a-zA-Z0-9_-]+)/g).map((part, idx) => {
                 if (part.startsWith("@") || part.startsWith("&")) {
                   const mentionName = part.slice(1);
                   return (
                     <motion.span 
                       key={idx} 
-                      className="bg-gradient-to-r from-purple-200 to-pink-200 text-purple-900 font-semibold px-1.5 py-0.5 rounded-md inline-block mx-0.5 cursor-pointer hover:shadow-md hover:scale-105 transition-all"
+                      className="bg-gradient-to-r from-purple-200 to-pink-200 dark:from-purple-900/50 dark:to-pink-900/50 text-purple-900 dark:text-purple-100 font-semibold px-1.5 py-0.5 rounded-md inline-block mx-0.5 cursor-pointer hover:shadow-md hover:scale-105 transition-all"
                       whileHover={{ scale: 1.05 }}
                       onClick={() => {
                         // Search for user with this mention name
@@ -364,7 +362,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
           {post.image && (
             <motion.div
               layout
-              className="rounded-xl mb-3 overflow-hidden flex justify-center"
+              className="rounded-xl mb-3 overflow-hidden flex justify-center bg-slate-100 dark:bg-[#101010]"
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
@@ -406,7 +404,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
                   <ImageSlider images={[...imageUrls, ...videoUrls]} onImageClick={setSelectedImageUrl} />
                 )
               ) : (
-                <div className="overflow-hidden rounded-lg mb-3 flex justify-center">
+                <div className="overflow-hidden rounded-lg mb-3 flex justify-center bg-slate-100 dark:bg-[#101010]">
                   {imageUrls.length > 0 ? (
                     <img 
                       src={imageUrls[0]} 
@@ -436,26 +434,26 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
           )}
           
           {post.serviceDetails && (
-            <div className="bg-white/50 rounded-xl p-3 mb-3 border border-white">
-              <div className="font-black text-base text-black mb-2">{post.serviceDetails.title}</div>
+            <div className="bg-white/50 dark:bg-[#202020] rounded-xl p-3 mb-3 border border-white dark:border-[#2a2a2a]">
+              <div className="font-black text-base text-black dark:text-[#f0f0f0] mb-2">{post.serviceDetails.title}</div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-slate-700 bg-purple-100 px-2.5 py-1 rounded-lg">
+                  <span className="text-xs font-medium text-slate-700 dark:text-[#e0e0e0] bg-purple-100 dark:bg-purple-900/30 px-2.5 py-1 rounded-lg">
                     {post.serviceDetails.category}
                   </span>
                   {bookingCount && (
-                    <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+                    <span className="text-xs font-medium text-slate-600 dark:text-[#a0a0a0] bg-slate-100 dark:bg-[#262626] px-2.5 py-1 rounded-lg">
                       {bookingCount.total} bookings
                     </span>
                   )}
                 </div>
                 {post.serviceDetails.location && (
-                  <div className="text-xs text-slate-600 font-medium">
+                  <div className="text-xs text-slate-600 dark:text-[#a0a0a0] font-medium">
                     📍 {post.serviceDetails.location}
                   </div>
                 )}
                 <div className="pt-1">
-                  <span className="font-extrabold text-sm text-slate-900">₹{post.serviceDetails.price}/day</span>
+                  <span className="font-extrabold text-sm text-slate-900 dark:text-[#f0f0f0]">₹{post.serviceDetails.price}/day</span>
                 </div>
               </div>
             </div>
@@ -470,8 +468,8 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
             size="sm"
             className={`rounded-full px-3 h-9 transition-all duration-300 ${
               isLiked
-                ? "bg-pink-50 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400"
-                : "hover:bg-slate-100 text-slate-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white"
+                ? "bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400"
+                : "hover:bg-slate-100 text-slate-600 dark:text-[#a0a0a0] dark:hover:bg-[#262626] dark:hover:text-[#f0f0f0]"
             }`}
           >
             <Heart className={`h-4 w-4 mr-1.5 ${isLiked ? "fill-current" : ""}`} />
@@ -482,7 +480,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
             onClick={() => setShowComments(!showComments)}
             variant="ghost"
             size="sm"
-            className="rounded-full px-3 h-9 hover:bg-slate-100 text-slate-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white transition-all duration-300"
+            className="rounded-full px-3 h-9 hover:bg-slate-100 text-slate-600 dark:text-[#a0a0a0] dark:hover:bg-[#262626] dark:hover:text-[#f0f0f0] transition-all duration-300"
           >
             <MessageCircle className="h-4 w-4 mr-1.5" />
             <span className="text-xs font-semibold">{post.replies ?? 0}</span>
@@ -492,7 +490,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
             onClick={() => setShareDialogOpen(true)}
             variant="ghost"
             size="sm"
-            className="rounded-full px-3 h-9 hover:bg-slate-100 text-slate-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white transition-all duration-300 ml-auto"
+            className="rounded-full px-3 h-9 hover:bg-slate-100 text-slate-600 dark:text-[#a0a0a0] dark:hover:bg-[#262626] dark:hover:text-[#f0f0f0] transition-all duration-300 ml-auto"
           >
             <motion.div
               animate={isShared ? { 
@@ -535,7 +533,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden"
             >
-              <div className="pt-4 mt-2 border-t border-slate-100 dark:border-white/5">
+              <div className="pt-4 mt-2 border-t border-slate-100 dark:border-[#2a2a2a]">
                 <CommentSection postId={post._id} />
               </div>
             </motion.div>
