@@ -5,6 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useNavigate } from "react-router";
 import { CalendarDays } from "lucide-react";
+import React from "react";
 
 interface UserHoverCardProps {
   userId?: string;
@@ -33,7 +34,7 @@ export function UserHoverCard({ userId, user: initialUser, children }: UserHover
           className="cursor-pointer inline-block" 
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/profile/${user._id}`);
+            if (user._id) navigate(`/profile/${user._id}`);
           }}
         >
             {children}
@@ -52,7 +53,7 @@ export function UserHoverCard({ userId, user: initialUser, children }: UserHover
             <div className="flex items-center pt-2 text-xs text-muted-foreground">
               <CalendarDays className="mr-2 h-3 w-3 opacity-70" />
               <span>
-                Joined {new Date(user._creationTime).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+                Joined {user._creationTime ? new Date(user._creationTime).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : 'recently'}
               </span>
             </div>
             
