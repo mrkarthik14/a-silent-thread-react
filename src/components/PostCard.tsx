@@ -87,13 +87,9 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
     }
   }, [checkIsFollowing]);
 
-  const imageUrls = post.images?.length ? post.images.map(storageId => 
-    useQuery(api.files.getImageUrl, { storageId })
-  ).filter((url): url is string => !!url) : [];
-
-  const videoUrls = post.videos?.length ? post.videos.map(storageId => 
-    useQuery(api.files.getImageUrl, { storageId })
-  ).filter((url): url is string => !!url) : [];
+  // Fix: Use batch query instead of mapping useQuery
+  const imageUrls = useQuery(api.files.getImageUrls, { storageIds: post.images || [] }) || [];
+  const videoUrls = useQuery(api.files.getImageUrls, { storageIds: post.videos || [] }) || [];
 
   useEffect(() => {
     if (post.mentions && post.mentions.length > 0 && currentUser?._id) {

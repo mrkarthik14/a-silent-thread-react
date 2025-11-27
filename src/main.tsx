@@ -18,12 +18,14 @@ import Profile from "./pages/Profile.tsx";
 import Settings from "./pages/Settings.tsx";
 import "./types/global.d.ts";
 import { useTheme } from "./hooks/use-theme.ts";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 function RouteSyncer() {
   const location = useLocation();
-  useTheme();
+  // useTheme is now a context hook, so we don't need to call it here for side effects
+  // The ThemeProvider handles the side effects
   
   useEffect(() => {
     window.parent.postMessage(
@@ -51,22 +53,24 @@ createRoot(document.getElementById("root")!).render(
     <VlyToolbar />
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
-          <RouteSyncer />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<AuthPage redirectAfterAuth="/feed" />}/>
-            <Route path="/feed" element={<Feed />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/bookings" element={<Bookings />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/:userId" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <BrowserRouter>
+            <RouteSyncer />
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/auth" element={<AuthPage redirectAfterAuth="/feed" />}/>
+              <Route path="/feed" element={<Feed />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/bookings" element={<Bookings />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:userId" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </ThemeProvider>
       </ConvexAuthProvider>
     </InstrumentationProvider>
   </StrictMode>,

@@ -11,6 +11,7 @@ import { SettingsThemeTab } from "@/components/SettingsThemeTab";
 import { SettingsUserTab } from "@/components/SettingsUserTab";
 import { SettingsPrivacyTab } from "@/components/SettingsPrivacyTab";
 import { SettingsSecurityTab } from "@/components/SettingsSecurityTab";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Settings() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -18,7 +19,11 @@ export default function Settings() {
   const [selectedAppTheme, setSelectedAppTheme] = useState("pastel-light");
   const [selectedChatTheme, setSelectedChatTheme] = useState("chat-warm");
   const [selectedFeedTheme, setSelectedFeedTheme] = useState("feed-colorful");
-  const [darkMode, setDarkMode] = useState(false);
+  
+  // Use theme context
+  const { theme, setTheme } = useTheme();
+  const darkMode = theme === "dark";
+  
   const [activeTab, setActiveTab] = useState("theme");
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   
@@ -71,31 +76,14 @@ export default function Settings() {
     localStorage.setItem("appTheme", selectedAppTheme);
     localStorage.setItem("chatTheme", selectedChatTheme);
     localStorage.setItem("feedTheme", selectedFeedTheme);
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-    
-    // Apply dark mode to document
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    // Theme is already saved by setTheme
     
     toast.success("Theme preferences saved!");
   };
 
   const handleDarkModeToggleWithApply = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    
-    // Apply immediately
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    
-    localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
-    toast.success(newDarkMode ? "Dark mode enabled" : "Light mode enabled");
+    setTheme(darkMode ? "light" : "dark");
+    toast.success(!darkMode ? "Dark mode enabled" : "Light mode enabled");
   };
 
   const handlePrivacyChange = (key: string, value: boolean) => {

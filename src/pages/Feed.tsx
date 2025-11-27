@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Feed() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -27,28 +28,17 @@ export default function Feed() {
   const [paginationOpts, setPaginationOpts] = useState({ numItems: 10, cursor: null as string | null });
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  
+  // Use the theme context instead of local state
+  const { theme, setTheme } = useTheme();
+  const darkMode = theme === "dark";
+  
   const observerTarget = useRef<HTMLDivElement>(null);
   
-  // Initialize dark mode from localStorage
-  useEffect(() => {
-    const savedDarkMode = localStorage.getItem("darkMode") === "true";
-    setDarkMode(savedDarkMode);
-  }, []);
-
-  // Apply dark mode to document
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
+  // Remove local dark mode effects as ThemeProvider handles it
+  
   const handleDarkModeToggle = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", String(newDarkMode));
+    setTheme(darkMode ? "light" : "dark");
   };
   
   // Track presence
