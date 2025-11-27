@@ -101,16 +101,19 @@ export const getConversations = query({
     const user = await getCurrentUser(ctx);
     if (!user) return [];
 
-    const messages = await ctx.db
+    const sentMessages = await ctx.db
       .query("messages")
-      .filter((q) =>
-        q.or(
-          q.eq(q.field("senderId"), user._id),
-          q.eq(q.field("recipientId"), user._id)
-        )
-      )
-      .order("desc")
+      .withIndex("by_sender", (q) => q.eq("senderId", user._id))
       .collect();
+
+    const receivedMessages = await ctx.db
+      .query("messages")
+      .withIndex("by_recipient", (q) => q.eq("recipientId", user._id))
+      .collect();
+
+    const messages = [...sentMessages, ...receivedMessages].sort(
+      (a, b) => b._creationTime - a._creationTime
+    );
 
     const conversationMap = new Map();
     
@@ -119,16 +122,20 @@ export const getConversations = query({
       
       if (!conversationMap.has(otherUserId)) {
         const otherUser = await ctx.db.get(otherUserId);
-        conversationMap.set(otherUserId, {
-          user: otherUser,
-          lastMessage: message,
-          unreadCount: 0,
-        });
+        if (otherUser) {
+          conversationMap.set(otherUserId, {
+            user: otherUser,
+            lastMessage: message,
+            unreadCount: 0,
+          });
+        }
       }
       
-      if (message.recipientId === user._id && !message.read) {
-        const conv = conversationMap.get(otherUserId);
-        conv.unreadCount++;
+      if (conversationMap.has(otherUserId)) {
+        if (message.recipientId === user._id && !message.read) {
+          const conv = conversationMap.get(otherUserId);
+          conv.unreadCount++;
+        }
       }
     }
 

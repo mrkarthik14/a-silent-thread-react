@@ -1,5 +1,21 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
-import { query, QueryCtx } from "./_generated/server";
+import { v } from "convex/values";
+import { mutation, query, QueryCtx } from "./_generated/server";
+import { auth } from "./auth";
+
+export const getCurrentUser = async (ctx: QueryCtx) => {
+  const userId = await auth.getUserId(ctx);
+  if (!userId) {
+    return null;
+  }
+  return await ctx.db.get(userId);
+};
+
+export const getUser = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId);
+  },
+});
 
 /**
  * Get the current signed in user. Returns null if the user is not signed in.
@@ -18,19 +34,6 @@ export const currentUser = query({
     return user;
   },
 });
-
-/**
- * Use this function internally to get the current user data. Remember to handle the null user case.
- * @param ctx
- * @returns
- */
-export const getCurrentUser = async (ctx: QueryCtx) => {
-  const userId = await getAuthUserId(ctx);
-  if (userId === null) {
-    return null;
-  }
-  return await ctx.db.get(userId);
-};
 
 export const getSuggestedUsers = query({
   args: {},
