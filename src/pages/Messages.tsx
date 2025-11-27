@@ -428,7 +428,7 @@ export default function Messages() {
       <ThemeTransition />
       <Sidebar />
       
-      <div className="flex-1 flex ml-0 md:ml-20">
+      <div className="flex-1 flex">
         <div className="w-80 border-r border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm transition-colors duration-500">
           <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-500">
             <h2 className="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>

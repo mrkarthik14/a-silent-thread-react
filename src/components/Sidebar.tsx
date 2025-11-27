@@ -63,13 +63,16 @@ export function Sidebar() {
   // ========================================================================
   return (
     <>
+      {/* Placeholder to reserve space in the layout flow */}
+      <div className="w-20 h-screen flex-shrink-0 hidden md:block" />
+
       <motion.div
         initial={{ width: 80 }}
         animate={{ width: isCollapsed ? 80 : 256 }}
         onMouseEnter={() => setIsCollapsed(false)}
         onMouseLeave={() => setIsCollapsed(true)}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="h-screen sticky top-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-[#2a2a2a] bg-white/50 dark:bg-[#101010] backdrop-blur-xl shadow-lg dark:shadow-none transition-colors duration-500"
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="h-screen fixed top-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-[#2a2a2a] bg-white/80 dark:bg-[#101010]/90 backdrop-blur-xl shadow-2xl dark:shadow-none transition-colors duration-500"
       >
         <div className="p-6 flex items-center gap-3 overflow-hidden">
           <div className="h-8 w-8 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-[#f0f0f0] dark:to-[#a0a0a0] rounded-xl flex-shrink-0 shadow-lg" />
