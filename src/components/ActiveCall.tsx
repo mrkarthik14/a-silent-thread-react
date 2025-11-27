@@ -8,6 +8,7 @@ import {
   useRemoteUsers,
   useRTCClient,
   useLocalScreenTrack,
+  AgoraRTCProvider,
 } from "agora-rtc-react";
 import AgoraRTC, { IAgoraRTCClient, IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
 import { useEffect, useState } from "react";
@@ -41,26 +42,28 @@ export function ActiveCall({
   const [showChat, setShowChat] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex animate-in fade-in duration-300">
-      <div className={`flex-1 flex flex-col relative overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-[#0a0a0a] to-[#0a0a0a] transition-all duration-300 ${showChat ? 'mr-[400px]' : ''}`}>
-        <CallRoom
-          appId={appId}
-          token={token}
-          channelName={channelName}
-          uid={uid}
-          callType={callType}
-          client={client}
-          onEndCall={onEndCall}
-          startTime={startTime}
-          onToggleChat={() => setShowChat(!showChat)}
-          isChatOpen={showChat}
-        />
+    <AgoraRTCProvider client={client}>
+      <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex animate-in fade-in duration-300">
+        <div className={`flex-1 flex flex-col relative overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-[#0a0a0a] to-[#0a0a0a] transition-all duration-300 ${showChat ? 'mr-[400px]' : ''}`}>
+          <CallRoom
+            appId={appId}
+            token={token}
+            channelName={channelName}
+            uid={uid}
+            callType={callType}
+            client={client}
+            onEndCall={onEndCall}
+            startTime={startTime}
+            onToggleChat={() => setShowChat(!showChat)}
+            isChatOpen={showChat}
+          />
+        </div>
+        
+        <div className={`fixed right-0 top-0 bottom-0 w-[400px] bg-[#0a0a0a]/95 backdrop-blur-2xl border-l border-white/10 transform transition-transform duration-300 z-50 flex flex-col ${showChat ? 'translate-x-0' : 'translate-x-full'}`}>
+          {children}
+        </div>
       </div>
-      
-      <div className={`fixed right-0 top-0 bottom-0 w-[400px] bg-[#0a0a0a]/95 backdrop-blur-2xl border-l border-white/10 transform transition-transform duration-300 z-50 flex flex-col ${showChat ? 'translate-x-0' : 'translate-x-full'}`}>
-        {children}
-      </div>
-    </div>
+    </AgoraRTCProvider>
   );
 }
 
