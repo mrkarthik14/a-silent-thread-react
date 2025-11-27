@@ -6,12 +6,11 @@ import {
   useLocalMicrophoneTrack,
   usePublish,
   useRemoteUsers,
-  useRTCClient,
   useLocalScreenTrack,
   AgoraRTCProvider,
 } from "agora-rtc-react";
-import AgoraRTC, { IAgoraRTCClient, IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
-import { useEffect, useState } from "react";
+import AgoraRTC from "agora-rtc-sdk-ng";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "./ui/button";
 import { Mic, MicOff, Video, VideoOff, PhoneOff, Volume2, VolumeX, Monitor, MonitorOff, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,7 +37,7 @@ export function ActiveCall({
   startTime,
   children,
 }: ActiveCallProps) {
-  const client = useRTCClient(AgoraRTC.createClient({ codec: "vp8", mode: "rtc" }));
+  const client = useMemo(() => AgoraRTC.createClient({ codec: "vp8", mode: "rtc" }), []);
   const [showChat, setShowChat] = useState(false);
 
   return (
