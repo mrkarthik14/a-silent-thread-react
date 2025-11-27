@@ -236,7 +236,7 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
       }`}
     >
       {/* Light mode gradient background (hidden in dark mode) */}
-      <div className={`absolute inset-0 opacity-30 dark:opacity-0 transition-opacity duration-300 ${color}`} />
+      <div className={`absolute inset-0 opacity-60 dark:opacity-0 transition-opacity duration-300 ${color}`} />
       
       {/* Dark mode subtle gradient glow (hidden in light mode) */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 pointer-events-none">

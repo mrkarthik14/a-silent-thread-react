@@ -127,18 +127,18 @@ export default function Feed() {
   }
 
   const colors = [
-    "bg-gradient-to-br from-pink-100 to-pink-200", 
-    "bg-gradient-to-br from-yellow-100 to-yellow-200", 
-    "bg-gradient-to-br from-emerald-100 to-emerald-200", 
-    "bg-gradient-to-br from-purple-100 to-purple-200", 
-    "bg-gradient-to-br from-blue-100 to-blue-200",
-    "bg-gradient-to-br from-rose-100 to-rose-200",
-    "bg-gradient-to-br from-orange-100 to-orange-200",
-    "bg-gradient-to-br from-cyan-100 to-cyan-200",
-    "bg-gradient-to-br from-indigo-100 to-indigo-200",
-    "bg-gradient-to-br from-teal-100 to-teal-200",
-    "bg-gradient-to-br from-fuchsia-100 to-fuchsia-200",
-    "bg-gradient-to-br from-lime-100 to-lime-200"
+    "bg-gradient-to-br from-pink-200 to-pink-300", 
+    "bg-gradient-to-br from-yellow-200 to-yellow-300", 
+    "bg-gradient-to-br from-emerald-200 to-emerald-300", 
+    "bg-gradient-to-br from-purple-200 to-purple-300", 
+    "bg-gradient-to-br from-blue-200 to-blue-300",
+    "bg-gradient-to-br from-rose-200 to-rose-300",
+    "bg-gradient-to-br from-orange-200 to-orange-300",
+    "bg-gradient-to-br from-cyan-200 to-cyan-300",
+    "bg-gradient-to-br from-indigo-200 to-indigo-300",
+    "bg-gradient-to-br from-teal-200 to-teal-300",
+    "bg-gradient-to-br from-fuchsia-200 to-fuchsia-300",
+    "bg-gradient-to-br from-lime-200 to-lime-300"
   ];
 
   const getColorForIndex = (index: number) => {
