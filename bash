@@ -1,1 +1,1 @@
-npx convex dev
+pnpm add -D tailwindcss-animate
