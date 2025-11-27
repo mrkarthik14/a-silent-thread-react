@@ -75,7 +75,11 @@ export function Sidebar() {
         className="h-screen fixed top-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-[#2a2a2a] bg-white/80 dark:bg-[#101010]/90 backdrop-blur-xl shadow-2xl dark:shadow-none transition-colors duration-500"
       >
         <div className="p-6 flex items-center gap-3 overflow-hidden">
-          <div className="h-8 w-8 bg-gradient-to-br from-slate-900 to-slate-700 dark:from-[#f0f0f0] dark:to-[#a0a0a0] rounded-xl flex-shrink-0 shadow-lg" />
+          <img 
+            src="/logo.png" 
+            alt="Logo" 
+            className="h-8 w-8 rounded-xl flex-shrink-0 shadow-lg object-cover"
+          />
           <AnimatePresence>
             {!isCollapsed && (
               <motion.div
