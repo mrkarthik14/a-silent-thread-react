@@ -76,34 +76,34 @@
 .dark {
   /* Threads-inspired Dark Theme */
   /* Background: Very dark, near-black (#0a0a0a) */
-  --background: 0 0% 4%; /* #0a0a0a */
+  --background: 0 0% 4%; 
   --foreground: 0 0% 94%; /* #f0f0f0 */
   
-  /* Secondary backgrounds: Slightly lighter dark grays (#1a1a1a) for cards */
-  --card: 0 0% 10%; /* #1a1a1a */
+  /* Secondary backgrounds: Slightly lighter dark grays (#181818) for cards */
+  --card: 0 0% 9.5%; 
   --card-foreground: 0 0% 94%;
   
-  --popover: 0 0% 10%;
+  --popover: 0 0% 9.5%;
   --popover-foreground: 0 0% 94%;
   
-  --primary: 0 0% 94%; /* #f0f0f0 */
+  --primary: 0 0% 98%;
   --primary-foreground: 0 0% 4%;
   
-  --secondary: 0 0% 16.5%; /* #2a2a2a */
-  --secondary-foreground: 0 0% 94%;
+  --secondary: 0 0% 15%; /* #262626 */
+  --secondary-foreground: 0 0% 98%;
   
-  --muted: 0 0% 16.5%;
+  --muted: 0 0% 15%;
   --muted-foreground: 0 0% 63%; /* #a0a0a0 */
   
-  --accent: 0 0% 16.5%;
-  --accent-foreground: 0 0% 94%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 98%;
   
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
   
   /* Borders: Subtle dark gray (#2a2a2a) */
-  --border: 0 0% 16.5%; /* #2a2a2a */
-  --input: 0 0% 16.5%;
+  --border: 0 0% 16%; 
+  --input: 0 0% 16%;
   --ring: 0 0% 83%;
   
   --chart-1: 220 70% 50%;
