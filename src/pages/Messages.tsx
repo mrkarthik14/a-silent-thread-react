@@ -346,6 +346,7 @@ export default function Messages() {
           uid={callTokenData.uid}
           callType={activeCall.callType as "voice" | "video"}
           onEndCall={handleEndCall}
+          startTime={activeCall.startTime}
         />
       )}
 

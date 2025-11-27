@@ -21,6 +21,7 @@ interface ActiveCallProps {
   uid: number;
   callType: "voice" | "video";
   onEndCall: () => void;
+  startTime: number;
 }
 
 export function ActiveCall({
@@ -30,6 +31,7 @@ export function ActiveCall({
   uid,
   callType,
   onEndCall,
+  startTime,
 }: ActiveCallProps) {
   const client = useRTCClient(AgoraRTC.createClient({ codec: "vp8", mode: "rtc" }));
 
@@ -44,6 +46,7 @@ export function ActiveCall({
           callType={callType}
           client={client}
           onEndCall={onEndCall}
+          startTime={startTime}
         />
       </div>
     </div>
@@ -58,9 +61,26 @@ function CallRoom({
   callType,
   client,
   onEndCall,
+  startTime,
 }: ActiveCallProps & { client: any }) {
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(callType === "video");
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    const updateDuration = () => {
+      setDuration(Math.max(0, Math.floor((Date.now() - startTime) / 1000)));
+    };
+    updateDuration();
+    const interval = setInterval(updateDuration, 1000);
+    return () => clearInterval(interval);
+  }, [startTime]);
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
   
   // Join the channel
   useJoin(
@@ -85,7 +105,17 @@ function CallRoom({
   const remoteUsers = useRemoteUsers();
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full w-full flex flex-col relative">
+      {/* Duration Pill */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
+        <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-lg ring-1 ring-white/5">
+          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+          <span className="text-white font-medium font-mono text-sm tracking-wider">
+            {formatDuration(duration)}
+          </span>
+        </div>
+      </div>
+
       {/* Video Grid */}
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 p-6 md:p-8">
         {/* Local User */}
