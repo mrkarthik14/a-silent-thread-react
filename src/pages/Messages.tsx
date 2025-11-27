@@ -21,6 +21,7 @@ import { ActiveCall } from "@/components/ActiveCall";
 import { IncomingCallDialog } from "@/components/IncomingCallDialog";
 import { useAction } from "convex/react";
 import { ThemeTransition } from "@/components/ThemeTransition";
+import { ChatWindow } from "@/components/ChatWindow";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -210,8 +211,9 @@ export default function Messages() {
     }
   };
 
-  const handleSend = async () => {
-    if (!message.trim() || !selectedUserId) return;
+  const handleSend = async (content?: string) => {
+    const msgContent = content || message;
+    if (!msgContent.trim() || !selectedUserId) return;
 
     try {
       // Clear typing indicator
@@ -219,7 +221,7 @@ export default function Messages() {
       
       await sendMessage({
         recipientId: selectedUserId,
-        content: message,
+        content: msgContent,
         parentMessageId: replyMessage?._id,
       });
       setMessage("");
@@ -335,6 +337,45 @@ export default function Messages() {
     }
   };
 
+  // Define the chat window component to be reused
+  const chatWindowComponent = selectedUserId ? (
+    <ChatWindow
+      selectedUserId={selectedUserId}
+      selectedUserName={selectedUserConv?.user?.name || "User"}
+      selectedUserImage={selectedUserConv?.user?.image}
+      isOnline={!!selectedUserPresence?.isOnline}
+      isTyping={!!isOtherUserTyping}
+      messages={currentConversation || []}
+      currentUserId={user?._id || null}
+      onSendMessage={async (content) => { await handleSend(content); }}
+      onFileUpload={handleFileUpload}
+      isUploading={isUploading}
+      uploadProgress={uploadProgress}
+      onCancelUpload={handleCancelUpload}
+      onStartCall={handleStartCall}
+      
+      replyMessage={replyMessage}
+      onReply={setReplyMessage}
+      onCancelReply={() => setReplyMessage(null)}
+      onDeleteMessage={async (id) => { await deleteMessage({ messageId: id }); }}
+      onAddReaction={async (id, emoji) => { await addReaction({ messageId: id, emoji }); }}
+      onRemoveReaction={async (id, emoji) => { await removeReaction({ messageId: id, emoji }); }}
+      onLikeMessage={async (id) => { await likeMessage({ messageId: id }); }}
+      onUnlikeMessage={async (id) => { await unlikeMessage({ messageId: id }); }}
+      
+      imagePreview={imagePreview}
+      previewFile={previewFile}
+      onCancelPreview={() => { setImagePreview(null); setPreviewFile(null); }}
+      onUploadPreview={() => previewFile && uploadFile(previewFile)}
+      
+      onTyping={handleTyping}
+      messageInput={message}
+      setMessageInput={setMessage}
+      
+      hideHeader={!!activeCall}
+    />
+  ) : null;
+
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
       {/* Active Call Overlay */}
@@ -347,7 +388,9 @@ export default function Messages() {
           callType={activeCall.callType as "voice" | "video"}
           onEndCall={handleEndCall}
           startTime={activeCall.startTime}
-        />
+        >
+          {chatWindowComponent}
+        </ActiveCall>
       )}
 
       {/* Incoming Call Modal */}
@@ -431,287 +474,7 @@ export default function Messages() {
 
         <div className="flex-1 flex flex-col">
           {selectedUserId ? (
-            <>
-              <div className="sticky top-0 z-10 p-4 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm transition-colors duration-500">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1" onClick={() => selectedUserId && navigate(`/profile/${selectedUserId}`)}>
-                    <div className="relative">
-                      <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                        <AvatarImage src={selectedUserConv?.user?.image} />
-                        <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-700 dark:to-blue-700">
-                          {selectedUserConv?.user?.name?.[0] || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      {selectedUserPresence?.isOnline && (
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">
-                        {conversations?.find(c => c.user?._id === selectedUserId)?.user?.name || "User"}
-                      </p>
-                      {isOtherUserTyping ? (
-                        <p className="text-xs text-purple-600 dark:text-purple-400">typing...</p>
-                      ) : selectedUserPresence?.isOnline ? (
-                        <p className="text-xs text-emerald-600 dark:text-emerald-400">online</p>
-                      ) : (
-                        <p className="text-xs text-slate-500 dark:text-slate-400">offline</p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} whileInView={{ opacity: 1 }}>
-                      <Button
-                        onClick={() => {
-                          toast.success("Initiating voice call...");
-                          initiateCall({ recipientId: selectedUserId!, callType: "voice" });
-                        }}
-                        size="sm"
-                        className="rounded-xl bg-gradient-to-r from-blue-300 to-cyan-400 hover:from-blue-400 hover:to-cyan-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
-                        title="Start voice call"
-                      >
-                        <Phone className="h-4 w-4" />
-                        <span className="text-xs">Call</span>
-                      </Button>
-                    </motion.div>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} whileInView={{ opacity: 1 }}>
-                      <Button
-                        onClick={() => {
-                          toast.success("Initiating video call...");
-                          initiateCall({ recipientId: selectedUserId!, callType: "video" });
-                        }}
-                        size="sm"
-                        className="rounded-xl bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 flex items-center gap-1.5"
-                        title="Start video call"
-                      >
-                        <Video className="h-4 w-4" />
-                        <span className="text-xs">Video</span>
-                      </Button>
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-
-              <ScrollArea className="flex-1 p-4 messages-scroll scroll-snap-type-y overflow-hidden">
-                <div className="space-y-3">
-                  {currentConversation?.slice().reverse().map((msg, idx) => {
-                    const isCurrentUserMessage = msg.senderId === user?._id;
-                    const senderImage = isCurrentUserMessage ? user?.image : selectedUserConv?.user?.image;
-                    const senderName = isCurrentUserMessage ? user?.name : selectedUserConv?.user?.name;
-                    
-                    return (
-                    <MessageBubble
-                      key={msg._id}
-                      msg={msg}
-                      currentUserId={user?._id || null}
-                      senderImage={senderImage}
-                      senderName={senderName}
-                      onReply={(message) => setReplyMessage(message)}
-                      onDelete={(messageId) => deleteMessage({ messageId })}
-                      onAddReaction={(messageId, emoji) => addReaction({ messageId, emoji })}
-                      onRemoveReaction={(messageId, emoji) => removeReaction({ messageId, emoji })}
-                      onLike={(messageId) => likeMessage({ messageId })}
-                      onUnlike={(messageId) => unlikeMessage({ messageId })}
-                    />
-                    );
-                  })}
-                  
-                  {isOtherUserTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start"
-                    >
-                      <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-sm">
-                        <div className="flex gap-1">
-                          <motion.span
-                            animate={{ opacity: [0.4, 1, 0.4] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-                            className="w-2 h-2 bg-slate-400 rounded-full"
-                          />
-                          <motion.span
-                            animate={{ opacity: [0.4, 1, 0.4] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-                            className="w-2 h-2 bg-slate-400 rounded-full"
-                          />
-                          <motion.span
-                            animate={{ opacity: [0.4, 1, 0.4] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                            className="w-2 h-2 bg-slate-400 rounded-full"
-                          />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                  
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-
-              <div className="sticky bottom-0 z-10 p-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm flex-shrink-0 overflow-hidden">
-                {replyMessage && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="mb-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-3 shadow-sm border border-blue-100"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold text-slate-600 mb-1">Replying to message</p>
-                        <p className="text-sm text-slate-700 truncate">{replyMessage.content}</p>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setReplyMessage(null)}
-                        className="h-6 w-6 p-0 rounded-lg hover:bg-red-100"
-                      >
-                        <X className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-                {imagePreview && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="mb-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 shadow-sm border border-blue-100"
-                  >
-                    <div className="flex items-start gap-3">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="h-20 w-20 object-cover rounded-lg border-2 border-white shadow-sm"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-slate-900 mb-2">{previewFile?.name}</p>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => uploadFile(previewFile!)}
-                            className="rounded-lg bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 text-white font-semibold active:scale-95 transition-all duration-150"
-                          >
-                            Upload
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setImagePreview(null);
-                              setPreviewFile(null);
-                            }}
-                            className="rounded-lg active:scale-95 transition-all duration-150"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-                {isUploading && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="mb-3 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-4 shadow-sm border border-purple-100"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full"
-                        />
-                        <span className="text-sm font-semibold text-slate-900">Uploading file...</span>
-                      </div>
-                      <span className="text-sm font-bold text-purple-600">{Math.round(uploadProgress)}%</span>
-                    </div>
-                    <div className="flex gap-3 items-center">
-                      <Progress value={uploadProgress} className="h-2.5 rounded-full flex-1 bg-white/50" />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleCancelUpload}
-                        className="h-8 w-8 p-0 rounded-xl hover:bg-red-100 hover:shadow-sm active:scale-95 transition-all duration-150"
-                      >
-                        <X className="h-4 w-4 text-red-500" strokeWidth={2.5} />
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-                <div className="flex gap-2">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <input
-                      id="file-upload"
-                      type="file"
-                      onChange={handleFileUpload}
-                      disabled={isUploading}
-                      className="hidden"
-                      accept="*/*"
-                    />
-                    <label htmlFor="file-upload" className="cursor-pointer block">
-                      <Button
-                        type="button"
-                        size="sm"
-                        asChild
-                        className="rounded-xl bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
-                        title="Upload file"
-                      >
-                        <span>
-                          <Paperclip className="h-4 w-4" />
-                        </span>
-                      </Button>
-                    </label>
-                  </motion.div>
-                  <motion.div className="flex-1">
-                    <Input
-                      value={message}
-                      onChange={(e) => handleTyping(e.target.value)}
-                      placeholder="Type a message..."
-                      disabled={isUploading}
-                      className="rounded-xl border-2 border-cyan-200 bg-white/80 transition-all duration-200 focus:border-cyan-400 focus:bg-white focus:shadow-md focus:ring-0 focus:outline-none hover:border-cyan-300 hover:bg-white/90 disabled:opacity-50"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey && !isUploading) {
-                          e.preventDefault();
-                          handleSend();
-                        }
-                      }}
-                    />
-                  </motion.div>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      onClick={() => toast.info("Voice message feature coming soon")}
-                      disabled={isUploading}
-                      className="rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150 disabled:opacity-70"
-                      title="Record voice message"
-                    >
-                      <Mic className="h-4 w-4" />
-                    </Button>
-                  </motion.div>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      onClick={handleSend}
-                      disabled={!message.trim() || isUploading}
-                      className="rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 active:scale-95 transition-all duration-150 disabled:opacity-70 text-white font-semibold shadow-md hover:shadow-lg"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </motion.div>
-                </div>
-              </div>
-            </>
+            chatWindowComponent
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-600 dark:text-slate-300 p-6">
               <MessageCircle className="h-16 w-16 text-slate-300 dark:text-slate-600 mb-4" />

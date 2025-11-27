@@ -12,7 +12,7 @@ import {
 import AgoraRTC, { IAgoraRTCClient, IAgoraRTCRemoteUser } from "agora-rtc-sdk-ng";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Mic, MicOff, Video, VideoOff, PhoneOff, Volume2, VolumeX, Monitor, MonitorOff } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Volume2, VolumeX, Monitor, MonitorOff, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ interface ActiveCallProps {
   callType: "voice" | "video";
   onEndCall: () => void;
   startTime: number;
+  children?: React.ReactNode;
 }
 
 export function ActiveCall({
@@ -34,12 +35,14 @@ export function ActiveCall({
   callType,
   onEndCall,
   startTime,
+  children,
 }: ActiveCallProps) {
   const client = useRTCClient(AgoraRTC.createClient({ codec: "vp8", mode: "rtc" }));
+  const [showChat, setShowChat] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex flex-col animate-in fade-in duration-300">
-      <div className="flex-1 relative overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-[#0a0a0a] to-[#0a0a0a]">
+    <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex animate-in fade-in duration-300">
+      <div className={`flex-1 flex flex-col relative overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-[#0a0a0a] to-[#0a0a0a] transition-all duration-300 ${showChat ? 'mr-[400px]' : ''}`}>
         <CallRoom
           appId={appId}
           token={token}
@@ -49,7 +52,13 @@ export function ActiveCall({
           client={client}
           onEndCall={onEndCall}
           startTime={startTime}
+          onToggleChat={() => setShowChat(!showChat)}
+          isChatOpen={showChat}
         />
+      </div>
+      
+      <div className={`fixed right-0 top-0 bottom-0 w-[400px] bg-[#0a0a0a]/95 backdrop-blur-2xl border-l border-white/10 transform transition-transform duration-300 z-50 flex flex-col ${showChat ? 'translate-x-0' : 'translate-x-full'}`}>
+        {children}
       </div>
     </div>
   );
@@ -64,7 +73,9 @@ function CallRoom({
   client,
   onEndCall,
   startTime,
-}: ActiveCallProps & { client: any }) {
+  onToggleChat,
+  isChatOpen,
+}: ActiveCallProps & { client: any; onToggleChat: () => void; isChatOpen: boolean }) {
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(callType === "video");
   const [speakerOn, setSpeakerOn] = useState(true);
@@ -275,6 +286,21 @@ function CallRoom({
           title={screenShareOn ? "Stop Screen Share" : "Share Screen"}
         >
           {screenShareOn ? <MonitorOff className="h-6 w-6" /> : <Monitor className="h-6 w-6" />}
+        </Button>
+
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn(
+            "h-14 w-14 rounded-full border-0 transition-all duration-300 shadow-lg hover:scale-105",
+            isChatOpen
+              ? "bg-white/10 hover:bg-white/20 text-white ring-1 ring-white/10"
+              : "bg-white/5 hover:bg-white/10 text-white/70 ring-1 ring-white/5"
+          )}
+          onClick={onToggleChat}
+          title={isChatOpen ? "Close Chat" : "Open Chat"}
+        >
+          <MessageSquare className="h-6 w-6" />
         </Button>
       </div>
     </div>
