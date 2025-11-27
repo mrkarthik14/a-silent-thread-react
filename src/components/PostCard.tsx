@@ -22,6 +22,7 @@ import { LoadingLogo } from "@/components/LoadingLogo";
 import { ImageSlider } from "@/components/ImageSlider";
 import { ShareDialog } from "@/components/ShareDialog";
 import BounceCards from "@/components/BounceCards";
+import { UserHoverCard } from "@/components/UserHoverCard";
 
 interface PostCardProps {
   post: Doc<"posts"> & { user: Doc<"users"> | null };
@@ -245,20 +246,24 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Avatar className="h-10 w-10 border-2 border-white dark:border-[#2a2a2a] shadow-sm">
-                <AvatarImage src={userImageUrl || undefined} />
-                <AvatarFallback className="bg-slate-100 dark:bg-[#262626] dark:text-[#f0f0f0]">
-                  {post.user?.name?.[0] || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <UserHoverCard userId={post.user?._id} user={post.user}>
+                <Avatar className="h-10 w-10 border-2 border-white dark:border-[#2a2a2a] shadow-sm">
+                  <AvatarImage src={userImageUrl || undefined} />
+                  <AvatarFallback className="bg-slate-100 dark:bg-[#262626] dark:text-[#f0f0f0]">
+                    {post.user?.name?.[0] || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </UserHoverCard>
               {userPresence?.isOnline && (
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#181818] rounded-full shadow-sm" />
               )}
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm leading-tight">
-                {post.user?.name || "Anonymous"}
-              </h3>
+              <UserHoverCard userId={post.user?._id} user={post.user}>
+                <h3 className="font-bold text-slate-900 dark:text-[#f0f0f0] text-sm leading-tight hover:underline cursor-pointer">
+                  {post.user?.name || "Anonymous"}
+                </h3>
+              </UserHoverCard>
               <p className="text-xs text-slate-500 dark:text-[#a0a0a0] font-medium">
                 {new Date(post._creationTime).toLocaleDateString(undefined, {
                   month: "short",

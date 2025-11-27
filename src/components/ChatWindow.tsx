@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { MessageBubble } from "@/components/MessageBubble";
 import { Id } from "@/convex/_generated/dataModel";
+import { UserHoverCard } from "@/components/UserHoverCard";
 
 interface ChatWindowProps {
   selectedUserId: string | null;
@@ -116,18 +117,22 @@ export function ChatWindow({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1">
               <div className="relative">
-                <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                  <AvatarImage src={selectedUserImage} />
-                  <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200 dark:from-purple-900 dark:to-blue-900">
-                    {selectedUserName?.[0] || "U"}
-                  </AvatarFallback>
-                </Avatar>
+                <UserHoverCard userId={selectedUserId as any}>
+                  <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                    <AvatarImage src={selectedUserImage} />
+                    <AvatarFallback className="bg-gradient-to-br from-purple-200 to-blue-200 dark:from-purple-900 dark:to-blue-900">
+                      {selectedUserName?.[0] || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </UserHoverCard>
                 {isOnline && (
                   <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
                 )}
               </div>
               <div>
-                <p className="font-semibold text-slate-900 dark:text-white">{selectedUserName}</p>
+                <UserHoverCard userId={selectedUserId as any}>
+                  <p className="font-semibold text-slate-900 dark:text-white hover:underline">{selectedUserName}</p>
+                </UserHoverCard>
                 {isTyping ? (
                   <p className="text-xs text-purple-600 dark:text-purple-400">typing...</p>
                 ) : isOnline ? (

@@ -22,6 +22,7 @@ import { IncomingCallDialog } from "@/components/IncomingCallDialog";
 import { useAction } from "convex/react";
 import { ThemeTransition } from "@/components/ThemeTransition";
 import { ChatWindow } from "@/components/ChatWindow";
+import { UserHoverCard } from "@/components/UserHoverCard";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -455,12 +456,14 @@ export default function Messages() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                        <AvatarImage src={conv.user?.image} alt={conv.user?.name} />
-                        <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200">
-                          {conv.user?.name?.[0] || "U"}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserHoverCard userId={conv.user?._id} user={conv.user}>
+                        <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                          <AvatarImage src={conv.user?.image} alt={conv.user?.name} />
+                          <AvatarFallback className="bg-gradient-to-br from-cyan-200 to-blue-200">
+                            {conv.user?.name?.[0] || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </UserHoverCard>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">

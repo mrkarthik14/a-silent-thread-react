@@ -20,6 +20,7 @@ import { useState } from "react";
 import { CreatePostDialog } from "@/components/CreatePostDialog";
 import { UserSearch } from "@/components/UserSearch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserHoverCard } from "@/components/UserHoverCard";
 
 // ============================================================================
 // STATE AND CONFIGURATION
@@ -208,12 +209,14 @@ export function Sidebar() {
 
         <div className="p-4 border-t border-slate-200 dark:border-[#2a2a2a] bg-slate-50/50 dark:bg-transparent">
           <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
-            <Avatar className="h-9 w-9 border border-slate-200 dark:border-[#2a2a2a] shadow-sm">
-              <AvatarImage src={user?.image} />
-              <AvatarFallback className="bg-slate-100 dark:bg-[#262626] dark:text-[#f0f0f0]">
-                {user?.name?.[0] || "U"}
-              </AvatarFallback>
-            </Avatar>
+            <UserHoverCard userId={user?._id} user={user}>
+              <Avatar className="h-9 w-9 border border-slate-200 dark:border-[#2a2a2a] shadow-sm">
+                <AvatarImage src={user?.image} />
+                <AvatarFallback className="bg-slate-100 dark:bg-[#262626] dark:text-[#f0f0f0]">
+                  {user?.name?.[0] || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </UserHoverCard>
             <AnimatePresence>
               {!isCollapsed && (
                 <motion.div
