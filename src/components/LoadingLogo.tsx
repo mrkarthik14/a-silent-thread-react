@@ -32,7 +32,7 @@ export function LoadingLogo({ size = "md", text, variant = "default" }: LoadingL
             transition={{ duration: 0.6, repeat: Infinity }}
           >
             <img
-              src="/logo.png"
+              src="https://harmless-tapir-303.convex.cloud/api/storage/1d202220-a6f3-4d1f-bc57-9727f260a5f6"
               alt="Loading"
               className="w-full h-full object-contain"
             />
@@ -82,7 +82,7 @@ export function LoadingLogo({ size = "md", text, variant = "default" }: LoadingL
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
           <img
-            src="/logo.png"
+            src="https://harmless-tapir-303.convex.cloud/api/storage/1d202220-a6f3-4d1f-bc57-9727f260a5f6"
             alt="Loading"
             className="w-full h-full object-contain"
           />
