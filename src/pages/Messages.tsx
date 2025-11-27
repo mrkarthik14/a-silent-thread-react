@@ -10,13 +10,17 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
 import { motion } from "framer-motion";
-import { Loader2, Send, Search, UserPlus, MessageCircle, Paperclip, Smile, X, ImageIcon, Video, FileText, Heart, Trash2, Eye, Phone, Mic } from "lucide-react";
+import { Loader2, Send, Search, UserPlus, MessageCircle, Paperclip, Smile, X, ImageIcon, Video, FileText, Heart, Trash2, Eye, Phone, Mic, PhoneOff } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { useNavigate, useLocation } from "react-router";
 import { UserSearch } from "@/components/UserSearch";
 import { MessageBubble } from "@/components/MessageBubble";
+import { ActiveCall } from "@/components/ActiveCall";
+import { IncomingCallDialog } from "@/components/IncomingCallDialog";
+import { useAction } from "convex/react";
+import { ThemeTransition } from "@/components/ThemeTransition";
 
 export default function Messages() {
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -34,12 +38,11 @@ export default function Messages() {
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   const [messageMenuOpen, setMessageMenuOpen] = useState<string | null>(null);
-  const [incomingCall, setIncomingCall] = useState<any>(null);
-  const [activeCall, setActiveCall] = useState<any>(null);
   const [isRecordingVoice, setIsRecordingVoice] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
+  const [callTokenData, setCallTokenData] = useState<{ token: string; uid: number; appId: string } | null>(null);
   
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -85,39 +88,62 @@ export default function Messages() {
   const rejectCall = useMutation(api.calls.rejectCall);
   const endCall = useMutation(api.calls.endCall);
 
-  const handleAcceptCall = async () => {
-    if (!incomingCall) return;
-    try {
-      await acceptCall({ callId: incomingCall._id });
-      setActiveCall(incomingCall);
-      setIncomingCall(null);
-      toast.success("Call accepted");
-    } catch (error) {
-      toast.error("Failed to accept call");
-    }
-  };
+  const generateToken = useAction(api.agora.generateToken);
 
-  const handleRejectCall = async () => {
-    if (!incomingCall) return;
+  const activeCall = useQuery(api.calls.getActiveCall, user ? { userId: user._id } : "skip");
+  const incomingCallQuery = useQuery(api.calls.getIncomingCall);
+
+  // Effect to generate token when call becomes active
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (activeCall && activeCall.status === "active" && !callTokenData) {
+        try {
+          const data = await generateToken({
+            channelName: activeCall._id,
+            role: "publisher",
+          });
+          setCallTokenData(data);
+        } catch (error) {
+          console.error("Failed to generate Agora token:", error);
+          toast.error("Failed to join call");
+        }
+      } else if (!activeCall) {
+        setCallTokenData(null);
+      }
+    };
+
+    fetchToken();
+  }, [activeCall, generateToken, callTokenData]);
+
+  const handleStartCall = async (type: "voice" | "video") => {
+    if (!selectedUserId) return;
     try {
-      await rejectCall({ callId: incomingCall._id });
-      setIncomingCall(null);
-      toast.info("Call rejected");
+      await initiateCall({
+        recipientId: selectedUserId as Id<"users">,
+        callType: type,
+      });
+      toast.success(`Starting ${type} call...`);
     } catch (error) {
-      toast.error("Failed to reject call");
+      toast.error("Failed to start call");
     }
   };
 
   const handleEndCall = async () => {
-    if (!activeCall) return;
-    try {
+    if (activeCall) {
       await endCall({ callId: activeCall._id });
-      setActiveCall(null);
-      setIsRecordingVoice(false);
-      setRecordingTime(0);
-      toast.success("Call ended");
-    } catch (error) {
-      toast.error("Failed to end call");
+      setCallTokenData(null);
+    }
+  };
+
+  const handleAcceptCall = async () => {
+    if (incomingCallQuery) {
+      await acceptCall({ callId: incomingCallQuery._id });
+    }
+  };
+
+  const handleRejectCall = async () => {
+    if (incomingCallQuery) {
+      await rejectCall({ callId: incomingCallQuery._id });
     }
   };
 
@@ -310,19 +336,32 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative">
-      {/* Background Gradients */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-300/30 dark:bg-purple-900/20 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 dark:bg-blue-900/20 blur-[120px]" />
-        <div className="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full bg-pink-300/30 dark:bg-pink-900/20 blur-[120px]" />
-      </div>
+    <div className="flex h-screen bg-slate-50 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
+      {/* Active Call Overlay */}
+      {activeCall && callTokenData && (
+        <ActiveCall
+          channelName={activeCall._id}
+          appId={callTokenData.appId}
+          token={callTokenData.token}
+          uid={callTokenData.uid}
+          callType={activeCall.callType as "voice" | "video"}
+          onEndCall={handleEndCall}
+        />
+      )}
 
-      {/* Glass Overlay & Content */}
-      <div className="relative z-10 flex w-full h-full bg-white/40 dark:bg-slate-950/40 backdrop-blur-3xl saturate-150 transition-colors duration-300">
-        <Sidebar />
+      {/* Incoming Call Modal */}
+      <IncomingCallDialog
+        isOpen={!!incomingCallQuery}
+        callType={incomingCallQuery?.callType}
+        callerName="Incoming Caller" // Ideally fetch this
+        onAccept={handleAcceptCall}
+        onReject={handleRejectCall}
+      />
+
+      <ThemeTransition />
+      <Sidebar />
       
-        <div className="flex-1 flex ml-0 md:ml-20">
+      <div className="flex-1 flex ml-0 md:ml-20">
         <div className="w-80 border-r border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 backdrop-blur-sm transition-colors duration-500">
           <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-500">
             <h2 className="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>
@@ -690,7 +729,6 @@ export default function Messages() {
       </div>
 
       <UserSearch open={searchDialogOpen} onOpenChange={setSearchDialogOpen} />
-      </div>
     </div>
   );
 }

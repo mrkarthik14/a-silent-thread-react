@@ -1,11 +1,136 @@
-const handleLike = async () => {
+import {
+  AgoraRTCProvider,
+  LocalUser,
+  RemoteUser,
+  useJoin,
+  useLocalCameraTrack,
+  useLocalMicrophoneTrack,
+  usePublish,
+  useRemoteUsers,
+} from "agora-rtc-react";
+import AgoraRTC, { IAgoraRTCClient } from "agora-rtc-sdk-ng";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { PhoneOff } from "lucide-react";
+import { ActiveCall } from "@/components/ActiveCall";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Video } from "lucide-react";
+import { toast } from "sonner";
+import { useState, useEffect, useAction } from "react";
+import { Id } from "@/types";
+import { api } from "@/lib/api";
+
+const handleStartCall = async (type: "voice" | "video") => {
+  if (!selectedUserId) return;
   try {
-    setIsLiked(!isLiked);  // Optimistic update
-    await likePostMutation({ postId: post._id });
-    onLike?.();
+    await initiateCall({
+      recipientId: selectedUserId as Id<"users">,
+      callType: type,
+    });
+    toast.success(`Starting ${type} call...`);
   } catch (error) {
-    setIsLiked(!isLiked);  // Revert on error
-    toast.error("Failed to update like");
-    console.error("Like error:", error);
+    toast.error("Failed to start call");
   }
 };
+
+const [callTokenData, setCallTokenData] = useState<{ token: string; uid: number; appId: string } | null>(null);
+const generateToken = useAction(api.agora.generateToken);
+
+useEffect(() => {
+  const fetchToken = async () => {
+    if (activeCall && activeCall.status === "active" && !callTokenData) {
+      try {
+        const data = await generateToken({
+          channelName: activeCall._id,
+          role: "publisher",
+        });
+        setCallTokenData(data);
+      } catch (error) {
+        console.error("Failed to generate Agora token:", error);
+        toast.error("Failed to join call");
+      }
+    } else if (!activeCall) {
+      setCallTokenData(null);
+    }
+  };
+
+  fetchToken();
+}, [activeCall, generateToken, callTokenData]);
+
+const handleEndCall = async () => {
+  if (activeCall) {
+    await endCall({ callId: activeCall._id });
+    setCallTokenData(null);
+  }
+};
+
+const handleAcceptCall = async () => {
+  if (incomingCall) {
+    await acceptCall({ callId: incomingCall._id });
+  }
+};
+
+const handleRejectCall = async () => {
+  if (incomingCall) {
+    await rejectCall({ callId: incomingCall._id });
+  }
+};
+
+return (
+  <div className="flex h-screen bg-slate-50 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
+    {activeCall && callTokenData && (
+      <ActiveCall
+        channelName={activeCall._id}
+        appId={callTokenData.appId}
+        token={callTokenData.token}
+        uid={callTokenData.uid}
+        callType={activeCall.callType as "voice" | "video"}
+        onEndCall={handleEndCall}
+      />
+    )}
+
+    <Dialog open={!!incomingCall} onOpenChange={(open) => !open && handleRejectCall()}>
+      <DialogContent className="sm:max-w-md bg-white/90 dark:bg-[#1a1a1a]/90 backdrop-blur-xl border-slate-200 dark:border-[#2a2a2a]">
+        <DialogHeader>
+          <DialogTitle className="text-center text-xl font-bold dark:text-[#f0f0f0]">Incoming Call</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center py-6 space-y-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-purple-500/20 rounded-full animate-ping" />
+            <Avatar className="h-24 w-24 border-4 border-white dark:border-[#2a2a2a] shadow-xl relative z-10">
+              <AvatarImage src={undefined} />
+              <AvatarFallback className="text-2xl bg-gradient-to-br from-purple-500 to-blue-500 text-white">
+                IC
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-semibold dark:text-[#f0f0f0]">Incoming {incomingCall?.callType} call</p>
+            <p className="text-sm text-slate-500 dark:text-[#a0a0a0]">Someone is calling you...</p>
+          </div>
+          <div className="flex gap-8 mt-4">
+            <Button
+              onClick={handleRejectCall}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30 shadow-lg transition-all hover:scale-110"
+            >
+              <PhoneOff className="h-6 w-6" />
+            </Button>
+            <Button
+              onClick={handleAcceptCall}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/30 transition-all hover:scale-110 animate-bounce"
+            >
+              {incomingCall?.callType === "video" ? <Video className="h-6 w-6" /> : <Phone className="h-6 w-6" />}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </div>
+);

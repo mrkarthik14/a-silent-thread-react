@@ -21,6 +21,7 @@ interface ChatWindowProps {
   isUploading: boolean;
   uploadProgress: number;
   onCancelUpload: () => void;
+  onStartCall?: (type: "voice" | "video") => void;
 }
 
 export function ChatWindow({
@@ -36,6 +37,7 @@ export function ChatWindow({
   isUploading,
   uploadProgress,
   onCancelUpload,
+  onStartCall,
 }: ChatWindowProps) {
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,7 +98,7 @@ export function ChatWindow({
           <div className="flex gap-2">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
-                onClick={() => toast.info("Voice call feature coming soon")}
+                onClick={() => onStartCall?.("voice")}
                 size="sm"
                 className="rounded-xl bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
               >
@@ -105,7 +107,7 @@ export function ChatWindow({
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
-                onClick={() => toast.info("Video call feature coming soon")}
+                onClick={() => onStartCall?.("video")}
                 size="sm"
                 className="rounded-xl bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-150"
               >
