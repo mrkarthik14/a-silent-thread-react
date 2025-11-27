@@ -232,11 +232,11 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
       whileHover={{ y: -2 }}
       className={`group relative overflow-hidden rounded-3xl p-5 transition-all duration-300 ${
         // Use glass style in dark mode, keep original color logic in light mode
-        "bg-white dark:bg-[#181818] shadow-sm hover:shadow-md border border-slate-100 dark:border-[#2a2a2a] dark:hover:bg-[#202020]"
+        "bg-white dark:bg-[#1a1a1a] shadow-sm hover:shadow-md border border-slate-100 dark:border-[#2a2a2a] dark:hover:bg-[#202020]"
       }`}
     >
       {/* Light mode gradient background (hidden in dark mode) */}
-      <div className={`absolute inset-0 opacity-60 dark:opacity-0 transition-opacity duration-300 ${color}`} />
+      <div className={`absolute inset-0 opacity-60 dark:opacity-10 transition-opacity duration-300 ${color}`} />
       
       {/* Dark mode subtle gradient glow (hidden in light mode) */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 pointer-events-none">

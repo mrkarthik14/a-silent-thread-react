@@ -127,18 +127,18 @@ export default function Feed() {
   }
 
   const colors = [
-    "bg-gradient-to-br from-pink-200 to-pink-300", 
-    "bg-gradient-to-br from-yellow-200 to-yellow-300", 
-    "bg-gradient-to-br from-emerald-200 to-emerald-300", 
-    "bg-gradient-to-br from-purple-200 to-purple-300", 
-    "bg-gradient-to-br from-blue-200 to-blue-300",
-    "bg-gradient-to-br from-rose-200 to-rose-300",
-    "bg-gradient-to-br from-orange-200 to-orange-300",
-    "bg-gradient-to-br from-cyan-200 to-cyan-300",
-    "bg-gradient-to-br from-indigo-200 to-indigo-300",
-    "bg-gradient-to-br from-teal-200 to-teal-300",
-    "bg-gradient-to-br from-fuchsia-200 to-fuchsia-300",
-    "bg-gradient-to-br from-lime-200 to-lime-300"
+    "bg-gradient-to-br from-pink-200 to-pink-300 dark:from-[#ffb3b3] dark:to-[#ffa5a5]", 
+    "bg-gradient-to-br from-yellow-200 to-yellow-300 dark:from-[#ffccd5] dark:to-[#ffc0cb]", 
+    "bg-gradient-to-br from-emerald-200 to-emerald-300 dark:from-[#e9c0f5] dark:to-[#f0c4f7]", 
+    "bg-gradient-to-br from-purple-200 to-purple-300 dark:from-[#b8d9f0] dark:to-[#c0e0f5]", 
+    "bg-gradient-to-br from-blue-200 to-blue-300 dark:from-[#ffb3b3] dark:to-[#ffa5a5]",
+    "bg-gradient-to-br from-rose-200 to-rose-300 dark:from-[#ffccd5] dark:to-[#ffc0cb]",
+    "bg-gradient-to-br from-orange-200 to-orange-300 dark:from-[#e9c0f5] dark:to-[#f0c4f7]",
+    "bg-gradient-to-br from-cyan-200 to-cyan-300 dark:from-[#b8d9f0] dark:to-[#c0e0f5]",
+    "bg-gradient-to-br from-indigo-200 to-indigo-300 dark:from-[#ffb3b3] dark:to-[#ffa5a5]",
+    "bg-gradient-to-br from-teal-200 to-teal-300 dark:from-[#ffccd5] dark:to-[#ffc0cb]",
+    "bg-gradient-to-br from-fuchsia-200 to-fuchsia-300 dark:from-[#e9c0f5] dark:to-[#f0c4f7]",
+    "bg-gradient-to-br from-lime-200 to-lime-300 dark:from-[#b8d9f0] dark:to-[#c0e0f5]"
   ];
 
   const getColorForIndex = (index: number) => {
