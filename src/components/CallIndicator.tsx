@@ -22,11 +22,15 @@ export function CallIndicator({
       {/* Header Status */}
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="font-semibold text-slate-900">{userName}</p>
+          <p className="font-semibold text-slate-900 dark:text-white">{userName}</p>
           {callStatus === "ringing" ? (
-            <p className="text-xs text-orange-600 animate-pulse">Ringing...</p>
+            <p className="text-xs text-orange-500 animate-pulse font-medium">Ringing...</p>
           ) : callStatus === "active" ? (
-            <p className="text-xs text-emerald-600 font-semibold">
+            <p className="text-xs text-emerald-500 font-medium flex items-center gap-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
               On call • {Math.floor(callDuration / 60)}:
               {String(callDuration % 60).padStart(2, "0")}
             </p>
@@ -36,7 +40,7 @@ export function CallIndicator({
           <Button
             onClick={onEndCall}
             size="sm"
-            className="rounded-xl bg-red-500 hover:bg-red-600 text-white ml-2"
+            className="rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 ml-2 transition-all hover:scale-105"
           >
             End Call
           </Button>
@@ -48,14 +52,14 @@ export function CallIndicator({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-3 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-2xl p-3 border border-emerald-200 flex items-center gap-2"
+          className="mt-3 bg-emerald-500/5 backdrop-blur-md rounded-xl p-3 border border-emerald-500/10 flex items-center gap-3 shadow-sm"
         >
           <motion.div
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-3 h-3 bg-emerald-500 rounded-full"
+            className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"
           />
-          <span className="text-sm font-semibold text-emerald-700">
+          <span className="text-sm font-medium text-emerald-500">
             Call in progress
           </span>
         </motion.div>
@@ -66,18 +70,20 @@ export function CallIndicator({
         <Button
           onClick={() => onStartCall("voice")}
           disabled={callStatus !== "idle"}
-          className="rounded-xl bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 active:scale-95 transition-all duration-150 disabled:opacity-70 text-white font-semibold shadow-md hover:shadow-lg"
+          className="flex-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-700 dark:text-white transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow-md active:scale-95"
           title="Start voice call"
         >
-          <Phone className="h-4 w-4" />
+          <Phone className="h-4 w-4 mr-2" />
+          <span className="text-xs font-medium">Voice</span>
         </Button>
         <Button
           onClick={() => onStartCall("video")}
           disabled={callStatus !== "idle"}
-          className="rounded-xl bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 active:scale-95 transition-all duration-150 disabled:opacity-70 text-white font-semibold shadow-md hover:shadow-lg"
+          className="flex-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-700 dark:text-white transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow-md active:scale-95"
           title="Start video call"
         >
-          <Video className="h-4 w-4" />
+          <Video className="h-4 w-4 mr-2" />
+          <span className="text-xs font-medium">Video</span>
         </Button>
       </div>
     </>
