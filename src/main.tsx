@@ -3,6 +3,7 @@ import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { InstrumentationProvider } from "@/instrumentation.tsx";
 import AuthPage from "@/pages/Auth.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
@@ -46,27 +47,35 @@ function RouteSyncer() {
   return null;
 }
 
+function App() {
+  return (
+    <BrowserRouter>
+      <RouteSyncer />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/bookings" element={<Bookings />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Toaster />
+    </BrowserRouter>
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <VlyToolbar />
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
-          <RouteSyncer />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<AuthPage redirectAfterAuth="/feed" />}/>
-            <Route path="/feed" element={<Feed />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/bookings" element={<Bookings />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/:userId" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </ConvexAuthProvider>
     </InstrumentationProvider>
   </StrictMode>,

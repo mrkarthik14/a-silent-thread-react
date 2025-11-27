@@ -15,10 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function Feed() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { currentFeedTheme, currentAppTheme, darkMode, toggleDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState<"all" | "users" | "posts" | "listings">("all");
   const [minPrice, setMinPrice] = useState("");
@@ -27,30 +29,11 @@ export default function Feed() {
   const [paginationOpts, setPaginationOpts] = useState({ numItems: 10, cursor: null as string | null });
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const observerTarget = useRef<HTMLDivElement>(null);
   
-  // Initialize dark mode from localStorage
-  useEffect(() => {
-    const savedDarkMode = localStorage.getItem("darkMode") === "true";
-    setDarkMode(savedDarkMode);
-  }, []);
-
-  // Apply dark mode to document
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
   const handleDarkModeToggle = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", String(newDarkMode));
+    toggleDarkMode();
   };
-  
+
   // Track presence
   usePresence();
   
@@ -87,6 +70,8 @@ export default function Feed() {
     }
   }, [paginatedPosts?.page]);
 
+  const observerTarget = useRef<HTMLDivElement>(null);
+
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -115,7 +100,7 @@ export default function Feed() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+      <div className={`h-screen flex items-center justify-center bg-gradient-to-br ${currentAppTheme?.bgGradient || "from-slate-50 via-purple-50 to-blue-50"}`}>
         <Loader2 className="h-8 w-8 animate-spin text-slate-900" strokeWidth={1.5} />
       </div>
     );
@@ -155,6 +140,9 @@ export default function Feed() {
       <Sidebar />
       
       <div className="flex-1 overflow-y-auto feed-scroll bg-slate-50 dark:bg-[#0a0a0a] transition-colors duration-500 relative">
+        {/* App Theme Background */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${currentAppTheme?.bgGradient || "from-slate-50 via-purple-50 to-blue-50"} opacity-30 dark:opacity-10 pointer-events-none`} />
+
         {/* Dark mode ambient background effects - Minimal for Threads style */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20 dark:opacity-10">
           <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/5 blur-[120px] dark:bg-white/5" />

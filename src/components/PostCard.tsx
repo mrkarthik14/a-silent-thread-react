@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { BookingDialog } from "@/components/BookingDialog";
@@ -32,6 +33,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, color, onLike }: PostCardProps) {
+  const { currentFeedTheme } = useTheme();
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
@@ -235,8 +237,8 @@ export function PostCard({ post, color, onLike }: PostCardProps) {
         "bg-white dark:bg-[#1a1a1a] shadow-sm hover:shadow-md border border-slate-100 dark:border-[#2a2a2a] dark:hover:bg-[#202020]"
       }`}
     >
-      {/* Light mode gradient background (hidden in dark mode) */}
-      <div className={`absolute inset-0 opacity-60 dark:opacity-10 transition-opacity duration-300 ${color}`} />
+      {/* Feed Theme Gradient Override if selected, otherwise use default color prop */}
+      <div className={`absolute inset-0 opacity-60 dark:opacity-10 transition-opacity duration-300 ${currentFeedTheme?.cardGradient ? currentFeedTheme.cardGradient : color}`} />
       
       {/* Dark mode subtle gradient glow (hidden in light mode) */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 pointer-events-none">
