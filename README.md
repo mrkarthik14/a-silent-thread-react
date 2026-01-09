@@ -1,33 +1,91 @@
-## Overview
+# A Silent Thread 🧵
 
-This project uses the following tech stack:
-- Vite
-- Typescript
-- React Router v7 (all imports from `react-router` instead of `react-router-dom`)
-- React 19 (for frontend components)
-- Tailwind v4 (for styling)
-- Shadcn UI (for UI components library)
-- Lucide Icons (for icons)
-- Convex (for backend & database)
-- Convex Auth (for authentication)
-- Framer Motion (for animations)
-- Three js (for 3d models)
+> Where connections flow like gentle threads
+
+A modern community renting platform that visualizes connections, services, and conversations as beautiful, flowing threads. Experience a new way to discover services, book rentals, and connect with your community.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
+![React](https://img.shields.io/badge/React-19.1-61dafb)
+![Convex](https://img.shields.io/badge/Convex-1.27-orange)
+
+## Features
+
+- **Thread Connections**: Visualize your connections through beautiful, flowing thread animations
+- **Service Discovery**: Find and offer services within your community
+- **Seamless Bookings**: Manage rentals with an intuitive calendar interface
+- **Real-Time Messaging**: Communicate instantly with threaded conversations
+- **User Profiles**: Showcase your services and manage your offerings
+- **Dark/Light Themes**: Beautiful glass morphism design with pastel theming
+- **Responsive Design**: Fully mobile-responsive interface
+
+## Tech Stack
+
+- **Frontend**:
+  - Vite
+  - TypeScript
+  - React 19 (for frontend components)
+  - React Router v7 (all imports from `react-router`)
+  - Tailwind CSS v4 (for styling)
+  - shadcn/ui (for UI components library)
+  - Lucide Icons (for icons)
+  - Framer Motion (for animations)
+  - Three.js (for 3D models)
+
+- **Backend**:
+  - Convex (for backend & database)
+  - Convex Auth (for authentication)
+
+- **Package Manager**: pnpm
 
 All relevant files live in the 'src' directory.
 
-Use pnpm for the package manager.
+## Quick Start
 
-## Setup
+```bash
+# Install dependencies
+pnpm install
 
-This project is set up already and running on a cloud environment, as well as a convex development in the sandbox.
+# Start development server
+pnpm dev
+
+# Start Convex backend
+npx convex dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## Project Structure
+
+```
+src/
+├── components/       # Reusable UI components
+│   ├── ui/          # shadcn/ui components
+│   └── ...          # Custom components
+├── pages/           # Application pages/routes
+│   ├── Landing.tsx  # Landing page
+│   ├── Feed.tsx     # Main feed
+│   ├── Services.tsx # Service discovery
+│   ├── Messages.tsx # Messaging interface
+│   ├── Bookings.tsx # Booking management
+│   ├── Profile.tsx  # User profiles
+│   └── Settings.tsx # User settings
+├── hooks/           # Custom React hooks
+├── convex/          # Convex backend functions
+└── index.css        # Global styles & theme
+```
 
 ## Environment Variables
 
-The project is set up with project specific CONVEX_DEPLOYMENT and VITE_CONVEX_URL environment variables on the client side.
+### Client-side
+- `VITE_CONVEX_URL` - Convex deployment URL
 
-The convex server has a separate set of environment variables that are accessible by the convex backend.
+### Server-side (Convex)
+- `JWKS` - JSON Web Key Set for authentication
+- `JWT_PRIVATE_KEY` - Private key for JWT signing
+- `SITE_URL` - Application site URL
 
-Currently, these variables include auth-specific keys: JWKS, JWT_PRIVATE_KEY, and SITE_URL.
+This project is set up to run on a cloud environment with Convex development in the sandbox.
 
 
 # Using Authentication (Important!)
@@ -46,36 +104,125 @@ Also, DO NOT MODIFY THESE AUTH FILES: `src/convex/auth.config.ts` and `src/conve
 
 On the `src/convex/users.ts` file, you can use the `getCurrentUser` function to get the current user's data.
 
-## Using Convex Auth on the frontend
+## Authentication
 
-The `/auth` page is already set up to use auth. Navigate to `/auth` for all log in / sign up sequences.
+The application uses Convex Auth with email OTP (One-Time Password) for secure authentication.
 
-You MUST use this hook to get user data. Never do this yourself without the hook:
+### Using Authentication
+
+Navigate to `/auth` for login/signup.
+
+**Frontend Usage:**
 ```typescript
 import { useAuth } from "@/hooks/use-auth";
 
 const { isLoading, isAuthenticated, user, signIn, signOut } = useAuth();
 ```
 
-## Protected Routes
+**Backend Usage:**
+```typescript
+import { getCurrentUser } from "@/convex/users";
 
-When protecting a page, use the auth hooks to check for authentication and redirect to /auth.
+const user = await getCurrentUser(ctx);
+```
 
-## Auth Page
+### Protected Routes
 
-The auth page is defined in `src/pages/Auth.tsx`. Redirect authenticated pages and sign in / sign up to /auth.
+Use the `useAuth` hook to check authentication status and redirect to `/auth` when needed.
 
-## Authorization
+### Configuration
 
-You can perform authorization checks on the frontend and backend.
+- Auth configuration: `src/convex/auth.config.ts`
+- Email OTP settings: `src/convex/auth/emailOtp.ts`
+- Auth page: `src/pages/Auth.tsx`
 
-On the frontend, you can use the `useAuth` hook to get the current user's data and authentication state.
+After authentication, users are redirected to `/feed` (configured in `src/main.tsx`).
 
-You should also be protecting queries, mutations, and actions at the base level, checking for authorization securely.
+## Available Scripts
 
-## Adding a redirect after auth
+```bash
+# Development
+pnpm dev              # Start Vite dev server
+npx convex dev        # Start Convex backend in dev mode
 
-In `src/main.tsx`, you must add a redirect after auth URL to redirect to the correct dashboard/profile/page that should be created after authentication.
+# Building
+pnpm build            # Build for production
+pnpm preview          # Preview production build
+
+# Code Quality
+pnpm lint             # Run ESLint
+pnpm format           # Format code with Prettier
+
+# Type Checking
+npx tsc -b --noEmit   # Check TypeScript types
+```
+
+## Development Guidelines
+
+### Frontend
+
+- **Components**: Place reusable components in `src/components/`, page components in `src/pages/`
+- **Routing**: Add new routes in `src/main.tsx` using React Router v7
+- **Styling**: Use Tailwind CSS classes with shadcn/ui components
+- **Animations**: Use Framer Motion for smooth transitions
+- **Icons**: Use Lucide React icons
+- **Mobile First**: Always ensure responsive design
+
+### Backend (Convex)
+
+- **Schema**: Define database schema in `src/convex/schema.ts`
+- **Functions**: Use `query`, `mutation`, and `action` for public functions
+- **Internal Functions**: Use `internalQuery`, `internalMutation`, `internalAction` for private functions
+- **Node Runtime**: Add `"use node"` at the top of files requiring Node.js APIs
+- **Type Safety**: Use `Doc<"tableName">` and `Id<"tableName">` types
+
+### Best Practices
+
+- Keep code simple and minimal
+- Avoid over-engineering and unnecessary abstractions
+- Use TypeScript strictly for type safety
+- Implement proper error handling
+- Always use toast notifications for user feedback
+- Never create files unnecessarily - prefer editing existing files
+
+## Theming
+
+The application supports light and dark themes with a glass morphism aesthetic.
+
+**Theme Configuration**: `src/index.css`
+- Uses OKLCH color format for Tailwind v4
+- Supports seamless theme switching
+- Pastel color palette for soft, approachable design
+
+**Toggle Theme:**
+```typescript
+import { useTheme } from "@/components/ThemeProvider";
+
+const { theme, setTheme } = useTheme();
+setTheme(theme === "dark" ? "light" : "dark");
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For issues and questions:
+- Create an issue in the GitHub repository
+- Check existing documentation in this README
+
+---
+
+Built with ❤️ using React, TypeScript, and Convex
 
 # Frontend Conventions
 
