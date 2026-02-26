@@ -47,7 +47,11 @@
     "@react-three/fiber": "^9.1.2",
     "@tailwindcss/vite": "^4.1.8",
     "@types/three": "^0.177.0",
+    "@vly-ai/integrations": "0.6.2",
     "@zumer/snapdom": "^1.7.1",
+    "agora-access-token": "^2.0.4",
+    "agora-rtc-react": "^2.3.0",
+    "agora-rtc-sdk-ng": "^4.22.0",
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -59,6 +63,7 @@
     "framer-motion": "^12.15.0",
     "gsap": "^3.13.0",
     "hono": "^4.7.11",
+    "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.511.0",
     "next-themes": "^0.4.6",
@@ -78,10 +83,7 @@
     "tailwindcss": "^4.1.8",
     "three": "^0.177.0",
     "vaul": "^1.1.2",
-    "zod": "^3.25.46",
-    "agora-access-token": "^2.0.4",
-    "agora-rtc-react": "^2.3.0",
-    "agora-rtc-sdk-ng": "^4.22.0"
+    "zod": "^3.25.46"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

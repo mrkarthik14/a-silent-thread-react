@@ -1,3 +1,4 @@
+import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { InstrumentationProvider } from "@/instrumentation.tsx";
@@ -16,6 +17,7 @@ import Messages from "./pages/Messages.tsx";
 import Bookings from "./pages/Bookings.tsx";
 import Profile from "./pages/Profile.tsx";
 import Settings from "./pages/Settings.tsx";
+import ScreenshotTest from "./pages/ScreenshotTest.tsx";
 import "./types/global.d.ts";
 import { useTheme } from "./hooks/use-theme.ts";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -66,6 +68,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/screenshot-test" element={<ScreenshotTest />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
